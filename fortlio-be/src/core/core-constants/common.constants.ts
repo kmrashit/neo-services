@@ -21,9 +21,11 @@ export const BYPASS_USERS = [
 ];
 
 export const BULLMQQUEUES = {
-  NOTIFICATION_FALL_DETECTION_QUEUE: 'notification-fall-detection-queue',
+  NOTIFICATION_FALL_DETECTION_QUEUE: 'notification-fall-detection-queue', // Kept for implementation reference
   TYPSENSE_LEETCODE_QUESTIONS_SYNC: 'typesense-leetcode-questions-sync',
   TYPSENSE_CANDIDATES_SYNC: 'typesense-candidates-sync',
+  FORTI_INSIGHTS_QUEUE: 'forti-insights-queue',
+  CANDIDATE_NOTIFICATIONS_QUEUE: 'candidate-notifications-queue',
 };
 
 export const TYPSENSE_COLLECTION_NAME = {

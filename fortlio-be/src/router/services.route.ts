@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import type { CachingMiddleware } from '../middleware/cache.middleware';
-import type { LeetcodeRoutes } from './leetcode.route';
-import type { ShortnerRoutes } from './shortner.route';
+import type { LeetcodeRoutes } from '../modules/leetcode';
+import type { ShortnerRoutes } from '../modules/link-shortener';
 
 export class ServicesRoutes {
   router: Router = Router();
@@ -20,4 +20,3 @@ export class ServicesRoutes {
     this.router.use('/shortner', this.cacheMiddleware.cacheReqRes.bind(this.cacheMiddleware), this.shortnerRoutes.router); // ROUTE CODE : 2200
   }
 }
-

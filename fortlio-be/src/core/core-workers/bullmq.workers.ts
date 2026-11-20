@@ -1,27 +1,58 @@
 import { bullMQService, sensiSearch } from '../../clients';
-import DsaQuestions from '../../models/dsa-quests.model';
-import { dsaQuestionsTypesenseSchema } from '../../models/typesense-collections/questions.collections';
-import { candidateTypesenseSchema } from '../../models/typesense-collections/candidates.collections';
-import CandidateProfile from '../../models/candidate.model';
-import CandidateBlog from '../../models/candidate-blog.model';
+import DsaQuestions from '../../modules/leetcode/models/dsa-quests.model';
+import { dsaQuestionsTypesenseSchema } from '../../modules/leetcode/models/questions.collections';
+import { candidateTypesenseSchema } from '../../modules/candidate/models/candidates.collections';
+import CandidateProfile from '../../modules/candidate/models/candidate.model';
+import CandidateBlog from '../../modules/candidate/models/candidate-blog.model';
 import { BULLMQQUEUES, TYPSENSE_COLLECTION_NAME } from '../core-constants/common.constants';
 
+/**
+ * Reference worker implementation kept for queue pattern reference.
+ */
 export const initializeBullMQSendNotification = async () => {
   await bullMQService.createWorker(
     BULLMQQUEUES.NOTIFICATION_FALL_DETECTION_QUEUE,
     async (job) => {
       const { IMEI, message } = job.data;
-      job.id;
+      console.info('Reference worker job:', IMEI, message, job.id);
+    },
+  );
+};
 
-      console.info('Sending notification:', IMEI, message, job.id);
-      //TODO fetch user emergency contacts  by IMEI
-      //TODO send message sms to emergency contacts
+/**
+ * Forti AI Worker: Triggered when candidate publishes or updates a blog post.
+ * Synthesizes learning velocity, knowledge depth, topic diversity, and leadership qualities.
+ */
+export const initializeBullMQFortiInsightsWorker = async () => {
+  await bullMQService.createWorker(
+    BULLMQQUEUES.FORTI_INSIGHTS_QUEUE,
+    async (job) => {
+      const { candidateId, blogId } = job.data;
+      console.info(`[Forti AI Worker] Processing insight synthesis for candidate: ${candidateId}, blog: ${blogId}`);
+      // 1. Fetch candidate's previous insights baseline & new blog post content
+      // 2. Invoke Forti AI prompt pipeline to evaluate learning speed, topic diversity, and leadership cues
+      // 3. Upsert into candidate_insights collection & update Typesense search index
+    },
+  );
+};
+
+/**
+ * Candidate Notifications Worker: Dispatches in-app, email, and connection alerts asynchronously.
+ */
+export const initializeBullMQSendCandidateNotification = async () => {
+  await bullMQService.createWorker(
+    BULLMQQUEUES.CANDIDATE_NOTIFICATIONS_QUEUE,
+    async (job) => {
+      const { recipientId, title, message, type, metadata } = job.data;
+      console.info(`[Candidate Notification Worker] Sending ${type} notification to user: ${recipientId}`, title, message, metadata);
+      // 1. Create notification document in MongoDB
+      // 2. Dispatch real-time WebSocket alert via wsHandler
+      // 3. Send email notification via SES if email notifications enabled
     },
   );
 };
 
 export const initializeBullMQTypesenseSync = async () => {
-  // await bullMQService.obliterateQueue(BULLMQQUEUES.TYPSENSE_LEETCODE_QUESTIONS_SYNC);
   await bullMQService.createWorker(
     BULLMQQUEUES.TYPSENSE_LEETCODE_QUESTIONS_SYNC,
     async (job) => {
@@ -36,7 +67,7 @@ export const initializeBullMQTypesenseSync = async () => {
             await sensiSearch.createCollection(dsaQuestionsTypesenseSchema);
           } else { throw err; }
         }
-        // 1. Fetch questions from your DB
+        // 1. Fetch questions from DB
         const questions = await DsaQuestions.find({ questionTitle: { $exists: true } }).lean();
 
         // 2. Format for Typesense (Ensure ID is a string)
@@ -54,7 +85,6 @@ export const initializeBullMQTypesenseSync = async () => {
             if (err?.importResults) {
               const printList = err.importResults.filter((item: any) => item.success !== true);
               console.error('[BullMQ] importResults', printList);
-              // console.error('[BullMQ] errorDocs', JSON.stringify(err));
             }
             return;
           });
@@ -63,7 +93,7 @@ export const initializeBullMQTypesenseSync = async () => {
         }
       } catch (error) {
         console.error('Typesense Sync Failed:', error);
-        throw error; // Let BullMQ handle the retry
+        throw error;
       }
     },
   );
@@ -148,8 +178,26 @@ export async function scheduleCandidatesTypesenseSync() {
   console.info('Typesense candidates sync job scheduled for every 2 hours.');
 }
 
-// other Usage
-// await bullMQService.addDelayedJob(bullMQQueues.NOTIFICATION_FALL_DETECTION_QUEUE, 'sms-emergency-contacts', { IMEI: imei, title: commsTemplate.appTitle, message: appContent }, 3 * 60 * 1000, jobId);
-// const job = await bullMQService.getJob(bullMQQueues.NOTIFICATION_FALL_DETECTION_QUEUE, args.jobId);
-// bullMQService.removeJob(bullMQQueues.NOTIFICATION_FALL_DETECTION_QUEUE, args.jobId);
-// await bullMQService.addJob(bullMQQueues.NOTIFICATION_FALL_DETECTION_QUEUE, job.name, job.data, { removeOnComplete: true, removeOnFail: true, attempts: 2, jobId: job.id });
+// ============================================================================
+// BullMQ Fortlio Implementation Reference & Usage Patterns:
+// ============================================================================
+// 1. Trigger Forti AI Insights on Blog Publish:
+// await bullMQService.addJob(
+//   BULLMQQUEUES.FORTI_INSIGHTS_QUEUE,
+//   'synthesize-candidate-insights',
+//   { candidateId: blog.authorId, blogId: blog._id },
+//   { removeOnComplete: true, attempts: 3 }
+// );
+//
+// 2. Delayed Notification (e.g., follow-up alert 5 minutes later):
+// await bullMQService.addDelayedJob(
+//   BULLMQQUEUES.CANDIDATE_NOTIFICATIONS_QUEUE,
+//   'connection-request-alert',
+//   { recipientId: receiverId, title: 'New Connection Request', message: '...' },
+//   5 * 60 * 1000,
+//   jobId
+// );
+//
+// 3. Remove or Re-queue an existing job:
+// const job = await bullMQService.getJob(BULLMQQUEUES.CANDIDATE_NOTIFICATIONS_QUEUE, jobId);
+// if (job) await bullMQService.removeJob(BULLMQQUEUES.CANDIDATE_NOTIFICATIONS_QUEUE, jobId);

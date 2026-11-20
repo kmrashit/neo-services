@@ -1,0 +1,42 @@
+{
+  "command-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/guard-command.mjs",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "post-edit-linter": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "edit_file|write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/post-edit.mjs",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "stop-verifier": {
+    "enabled": true,
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node hooks/stop-progress.mjs",
+        "timeout": 10
+      }
+    ]
+  }
+}

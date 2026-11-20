@@ -1,6 +1,6 @@
 import { expect, describe, it, mock, beforeEach } from 'bun:test';
 import { AppError } from '../src/core/core-utils/err-util';
-import { UserController } from '../src/controller/user.controller';
+import { UserController } from '../src/modules/user/user.controller';
 import { USER_MSGS } from '../src/constants';
 import { Request, Response } from 'express';
 

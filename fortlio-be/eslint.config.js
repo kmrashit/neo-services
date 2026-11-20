@@ -1,6 +1,46 @@
 
 import tseslint from 'typescript-eslint';
 
+// Custom rule: enforce import declarations to be on a single line (replaces Prettier plugin)
+const singleLineImportRule = {
+  meta: {
+    type: 'layout',
+    docs: {
+      description: 'Enforce import statements to be on a single line',
+    },
+    fixable: 'whitespace',
+    schema: [],
+    messages: {
+      singleLine: 'Import declaration must be on a single line.',
+    },
+  },
+  create(context) {
+    const sourceCode = context.sourceCode;
+    return {
+      ImportDeclaration(node) {
+        if (node.loc.start.line !== node.loc.end.line) {
+          context.report({
+            node,
+            messageId: 'singleLine',
+            fix(fixer) {
+              const comments = sourceCode.getCommentsInside(node);
+              // Do not auto-fix if single-line comment exists inside the import
+              if (comments.some((c) => c.type === 'Line')) {
+                return null;
+              }
+              const text = sourceCode.getText(node);
+              const singleLine = text
+                .replace(/\s*\n\s*/g, ' ')
+                .replace(/,\s*\}/g, ' }');
+              return fixer.replaceText(node, singleLine);
+            },
+          });
+        }
+      },
+    };
+  },
+};
+
 export default [
   {
     ignores: ['node_modules/', 'dist/', 'coverage/', '**/*.js.map', '**/*.d.ts'],
@@ -36,9 +76,15 @@ export default [
       }
     },
     plugins: {
-      '@typescript-eslint': tseslint.plugin
+      '@typescript-eslint': tseslint.plugin,
+      local: {
+        rules: {
+          'single-line-import': singleLineImportRule,
+        },
+      },
     },
     rules: {
+      'local/single-line-import': 'error',
       'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
       'no-unused-vars': 'off',
       'no-var': 'error',

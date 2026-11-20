@@ -1,6 +1,6 @@
 import { AppError } from '../core-utils/err-util';
 import mongoose, { FilterQuery, PipelineStage } from 'mongoose';
-import { Db } from 'mongodb';
+import { Db, ReadPreference } from 'mongodb';
 import { FILTER_CONSTANTS } from '../core-constants/common.constants';
 import { IFilter } from '../../interface/common.interface';
 
@@ -115,7 +115,7 @@ export const runQueryMongoDriverSecondary = async (mongoDB: Db, collectionName: 
   }
 };
 
-export const getDataWithLookupsAfterFilter = async <T>(filterQuery: IFilter, basepipeline: PipelineStage[], lookupPipeline: any[], searchFields: string[], model: mongoose.Model<T>) => {
+export const getDataWithLookupsAfterFilter = async <T>(filterQuery: IFilter, basepipeline: PipelineStage[], lookupPipeline: any[], searchFields: string[], model: mongoose.Model<T>, readPref: ReadPreference) => {
   try {
     const { search = '', sortBy = 'createdAt', sortOrder = 'desc', page = FILTER_CONSTANTS.page, pageSize = FILTER_CONSTANTS.pageSize, fromDate = '', toDate = '' } = filterQuery;
     const limit = Number(pageSize), skip = ((Number(page) - 1) * Number(pageSize)) || 0, pageNumber = Number(page);
@@ -151,7 +151,7 @@ export const getDataWithLookupsAfterFilter = async <T>(filterQuery: IFilter, bas
       },
     ];
 
-    const result = await model.aggregate(pipeline).exec();
+    const result = await model.aggregate(pipeline).read(readPref).exec();
 
     const data: any[] = result[0]?.data || [];
     const totalCount = result[0]?.totalCount[0]?.count || 0;
