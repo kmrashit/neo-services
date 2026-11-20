@@ -1,6 +1,6 @@
 import { expect, describe, it, mock, beforeEach } from 'bun:test';
 import { AppError } from '../src/core/core-utils/err-util';
-import { ConnectionController } from '../src/controller/connection.controller';
+import { ConnectionController } from '../src/modules/connection/connection.controller';
 import { Request, Response } from 'express';
 
 describe('ConnectionController Unit Tests', () => {

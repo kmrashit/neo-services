@@ -1,6 +1,6 @@
 import { expect, describe, it, mock, beforeEach } from 'bun:test';
 import { AppError } from '../src/core/core-utils/err-util';
-import { ShortnerController } from '../src/controller/shortner.controller';
+import { ShortnerController } from '../src/modules/link-shortener/shortener.controller';
 import { Request, Response } from 'express';
 
 describe('ShortnerController Unit Tests', () => {

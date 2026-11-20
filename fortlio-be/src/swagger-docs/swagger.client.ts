@@ -1,13 +1,13 @@
 import { OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
 import { backendBaseURL, openApiRegistry } from '../clients';
-import { registerUserRoutes } from './user.registry';
-import { registerRoleRoutes } from './role.registry';
-import { registerAuthnRoutes } from './authn.registry';
-import { registerShortenerRoutes } from './shorten.registry';
-import { registerLeetcodeRoutes } from './leetcode.registry';
-import { registerCandidateRoutes } from './candidate.registry';
-import { registerHrRoutes } from './hr.registry';
-import { registerConnectionRoutes } from './connection.registry';
+import { registerUserRoutes } from '../modules/user';
+import { registerRoleRoutes } from '../modules/role';
+import { registerAuthnRoutes } from '../modules/auth';
+import { registerShortenerRoutes } from '../modules/link-shortener';
+import { registerLeetcodeRoutes } from '../modules/leetcode';
+import { registerCandidateRoutes } from '../modules/candidate';
+import { registerHrRoutes } from '../modules/hr';
+import { registerConnectionRoutes } from '../modules/connection';
 
 openApiRegistry.registerComponent('securitySchemes', 'bearerAuth', { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' });
 

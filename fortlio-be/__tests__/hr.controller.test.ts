@@ -1,10 +1,10 @@
 import { expect, describe, it, mock, beforeEach } from 'bun:test';
 import { AppError } from '../src/core/core-utils/err-util';
-import { HrController } from '../src/controller/hr.controller';
+import { HrController } from '../src/modules/hr/hr.controller';
 import { Request, Response } from 'express';
-import ProfileViewHistory from '../src/models/profile-view.model';
-import SearchHistory from '../src/models/search-history.model';
-import User from '../src/models/user.model';
+import ProfileViewHistory from '../src/modules/hr/models/profile-view.model';
+import SearchHistory from '../src/modules/hr/models/search-history.model';
+import User from '../src/modules/user/models/user.model';
 import { sensiSearch } from '../src/clients';
 
 describe('HrController Unit Tests', () => {

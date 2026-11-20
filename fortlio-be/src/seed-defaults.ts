@@ -1,8 +1,8 @@
-import Role from './models/role.model';
+import Role from './modules/role/models/role.model';
 import { ObjectId } from 'mongodb';
 import { candidateDefaultAccess, hrDefaultAccess, privilegesAllDefault } from './core/core-helper/default-role-access';
-import User from './models/user.model';
-import Privilege from './models/privilege.model';
+import User from './modules/user/models/user.model';
+import Privilege from './modules/role/models/privilege.model';
 import { DB_CONSTANTS } from './core/core-constants/mongodb.constants';
 import { AppError } from './core/core-utils/err-util';
 
