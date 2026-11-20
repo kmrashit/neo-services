@@ -90,3 +90,12 @@ create skills
 
 
 search users  - open | role candidate | hr
+
+<!-- DAILY DIGEST DSA -->
+Given: You are building a custom job recommendation engine.
+
+LLM_PROVIDER = "aws" #"microsoft"
+PASSKEY = "replace-with-passkey" # qjjpeQ
+MONGODB_URI="mongodb://localhost:27017/?directConnection=true"
+SERVERLESS_URL="https://vtqjvgchmwcjwsrela2oyhlegu0hwqnw.lambda-url.us-west-2.on.aws/"
+PROXY_ENDPOINT="https://vtqjvgchmwcjwsrela2oyhlegu0hwqnw.lambda-url.us-west-2.on.aws/"
