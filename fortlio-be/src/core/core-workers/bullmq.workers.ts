@@ -1,9 +1,9 @@
 import { bullMQService, sensiSearch } from '../../clients';
-import DsaQuestions from '../../models/dsa-quests.model';
-import { dsaQuestionsTypesenseSchema } from '../../models/typesense-collections/questions.collections';
-import { candidateTypesenseSchema } from '../../models/typesense-collections/candidates.collections';
-import CandidateProfile from '../../models/candidate.model';
-import CandidateBlog from '../../models/candidate-blog.model';
+import DsaQuestions from '../../modules/leetcode/models/dsa-quests.model';
+import { dsaQuestionsTypesenseSchema } from '../../modules/leetcode/models/questions.collections';
+import { candidateTypesenseSchema } from '../../modules/candidate/models/candidates.collections';
+import CandidateProfile from '../../modules/candidate/models/candidate.model';
+import CandidateBlog from '../../modules/candidate/models/candidate-blog.model';
 import { BULLMQQUEUES, TYPSENSE_COLLECTION_NAME } from '../core-constants/common.constants';
 
 export const initializeBullMQSendNotification = async () => {

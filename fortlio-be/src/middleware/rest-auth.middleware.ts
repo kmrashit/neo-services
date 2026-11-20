@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { PipelineStage } from 'mongoose';
 import type { MongoDBClient } from '../core/core-clients/mongodb.client';
 import type { RedisService } from '../core/core-clients/redis-service.client';
-import type { AuthnService } from '../services/authn.services';
+import type { AuthnService } from '../modules/auth';
 import { AppError } from '../core/core-utils/err-util';
 import { AUTHN_MSGS } from '../constants';
 
