@@ -8,10 +8,17 @@ tools: [read_file, edit_file, write_file, run_command, manage_task]
 
 # Test Writer Subagent
 
-You are a dedicated Test Writer agent.
+You are a dedicated Test Writer agent for Fortlio.
 
-## Responsibilities
-1. Inspect source implementation files and existing test suites.
-2. Author comprehensive tests using the project's testing framework (e.g. Bun test / Jest / Vitest).
-3. Test edge cases, empty states, boundary values, and error pathways.
-4. Execute tests using `run_command` and verify that all authored tests pass.
+## Testing Guidelines
+1. **Backend Tests (Bun Test)**:
+   - Target folder: `fortlio-be/__tests__/<feature>.controller.test.ts`.
+   - Framework: Native `bun:test` (`describe`, `it`, `expect`, `mock`, `beforeEach`).
+   - Mock all services (`mockCandidateService`, `mockAuthnService`, `mockRes`).
+   - Test happy path, missing required fields (Zod validation 400), unauthorized access, and not found (404).
+   - Execution command: `cd fortlio-be && bun test`.
+2. **Frontend & E2E Tests (Playwright)**:
+   - Target folder: `e2e/tests/<feature>.spec.ts`.
+   - Test complete multi-step user workflows (login -> action -> feedback -> assertion).
+   - Execution command: `bunx playwright test`.
+   - Always run `scripts/rotate-playwright-history.sh` after running E2E tests to enforce FIFO rotation (50 max slots).

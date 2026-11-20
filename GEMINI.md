@@ -25,15 +25,21 @@
 1. **Module Isolation**: Every core feature MUST live in `fortlio-be/src/modules/<feature-name>/`.
    - Each module contains: `controller.ts`, `service.ts`, `route.ts`, `validation.ts`, `types.ts` (or `interface.ts`), `queries.ts`, `constants.ts`, `registry.ts`.
    - **NO cross-module imports**: Modules MUST NOT import from each other. Shared logic goes in `fortlio-be/src/core/` or `fortlio-be/src/interface/`. Cross-module triggers use BullMQ queues (e.g. `BULLMQQUEUES.FORTI_INSIGHTS_QUEUE`).
-2. **MongoDB Coding Rules**:
+2. **MongoDB Coding Rules & Helper Priority**:
    - **Aggregations First**: All data fetching, joins, sorting, pagination, and projections MUST use MongoDB Aggregation Pipelines in `*.queries.ts`.
+   - **Prioritize `mongo.helper.ts`**: For all record retrieval, **PRIORITIZE** using shared aggregation helper functions in `fortlio-be/src/core/core-helper/mongo.helper.ts`:
+     - `getDataWithLookupsAfterFilter`: **The primary standard for paginated list queries.** It executes `$lookup` stages **after** `$match`, `$sort`, `$skip`, and `$limit` inside a `$facet`, ensuring lookups run only on the sliced page documents rather than the full collection.
+     - `getDataByFilter`: For paginated filtering without relational `$lookup` stages.
+     - `getDataByFilterSecondary`: For read-heavy operations routed to secondary replicas.
+     - `runQueryMongoDriverSecondary`: For running raw driver aggregations on secondary nodes.
+   - **Helper Extension Standard**: If an operation requires a specialized or more optimized aggregation pattern, **never write ad-hoc in-memory JavaScript loops or unoptimized pipelines**. Create/extend a reusable, typed helper function in `fortlio-be/src/core/core-helper/mongo.helper.ts` first, and then consume it in `*.queries.ts`.
    - **Mongoose Scope**: Use Mongoose models solely for basic write operations (`create`, `updateOne`, `deleteOne`).
    - **Bun Optimization**: Offload all computations and shape transformations to MongoDB. Minimize in-memory JavaScript loops and modifications in Bun.
 3. **Core Modules vs Deprecation Policy**:
    - **Core Modules (F01–F09)**: `auth`, `user`, `role`, `candidate`, `hr`, `connection`, `link-shortener`, `forti`.
-   - **Deprecation Policy**: The following codebases are identified as **irrelevant leftovers** outside the candidate portfolio domain and MUST NOT be extended:
-     - `fortlio-be/src/modules/leetcode/` (LeetCode scraper / DSA questions / Typesense sync job) — **DEPRECATED / IRRELEVANT**
-     - Fall detection IoT code in `core/core-workers/bullmq.workers.ts` — **DEPRECATED / IRRELEVANT**
+   - **Deprecation Policy**:
+     - `fortlio-be/src/modules/leetcode/`: **DO NOT DELETE** for now (the user will relocate/move it). Do NOT extend it, import from it, or introduce dependencies on it.
+     - Fall detection IoT code in `core/core-workers/bullmq.workers.ts` is replaced by `initializeBullMQFortiInsightsWorker` and `initializeBullMQSendCandidateNotification`.
 
 ### B. Frontend Architecture & Shadcn UI Revamp
 1. **Feature-Based Folder Structure**: Every feature MUST live in `fortlio-ui/src/features/<feature-name>/`:
@@ -90,7 +96,25 @@
 
 ---
 
-## 6. Testing & Quality Rules
+## 6. Master Feature Implementation Priority Order & Roadmap
+
+To maximize token efficiency, eliminate rework, and respect cross-module dependency chains, features MUST be implemented in this exact sequence:
+
+| Priority | Feature ID | Feature Name | Dependency & Architectural Rationale |
+|:---:|:---|:---|:---|
+| **P1** | **F01** | **Auth & Session Management** | Foundation: Establishes JWT tokens, Redis sessions, and candidate/HR identity required by all other endpoints. |
+| **P2** | **F02** | **User Account & RBAC** | Identity: Manages user roles (`candidate` vs `hr`), privileges, and the video ad-watch coin counter. |
+| **P3** | **F03** | **Candidate Profile & Resume (MD-to-PDF)** | Core Showcase: Builds the candidate portfolio, skills matrix, and PDF resume generator. |
+| **P4** | **F04** | **Candidate Blogs & Knowledge** | Content Engine: Enables markdown publishing; acts as the primary data source feeding AI insight synthesis. |
+| **P5** | **F08** | **Link Shortener & Share Analytics** | Viral Distribution: Generates trackable links for resumes & blog previews with active dwell-time beacon tracking. |
+| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Consumes F04 blogs to synthesize learning velocity, topic diversity, and leadership qualities; powers the HR profile Q&A chatbot. |
+| **P7** | **F05** | **HR Search & Monetization** | Discovery & Revenue: Recruiter candidate search querying Typesense candidate records & F09 AI insights, gated by the 2-query video ad rule. |
+| **P8** | **F06** | **Connections & Notifications** | Networking: Bi-directional connection requests and notification popovers between candidates and HRs. |
+| **P9** | **F07** | **Real-Time Chat & WebSocket** | Communication: Direct 1-on-1 messaging between connected candidates and recruiters over WebSockets. |
+
+---
+
+## 7. Testing & Quality Rules
 1. **Unit & Integration Tests**:
    - Write Bun tests in `fortlio-be/__tests__/<feature>.controller.test.ts`.
    - Run via: `cd fortlio-be && bun test`.
@@ -103,17 +127,18 @@
 
 ---
 
-## 7. Developer Feature Workflow & Progress Hook Guidelines
+## 8. Developer Feature Workflow & Progress Hook Guidelines
 When implementing or modifying any feature:
-1. **Consult Feature Spec**: Read `docs/F0<X>.md` for exact endpoints, aggregation pipelines, and Shadcn UI components.
-2. **Backend Implementation**:
+1. **Follow Priority Sequence**: Implement features in the order defined in Section 6.
+2. **Consult Feature Spec**: Read `docs/F0<X>.md` for exact endpoints, aggregation pipelines, and Shadcn UI components.
+3. **Backend Implementation**:
    - Edit only `fortlio-be/src/modules/<feature>/`.
-   - Place all complex queries in `*.queries.ts` as MongoDB aggregation pipelines.
+   - Prioritize `mongo.helper.ts` functions (especially `getDataWithLookupsAfterFilter`) for data fetching.
    - Run `bun test` to verify zero regressions.
-3. **Frontend Revamp**:
+4. **Frontend Revamp**:
    - Build in `fortlio-ui/src/features/<feature>/` (`components/`, `hooks/`, `api.ts`, `types.ts`).
    - Use exclusively Shadcn UI components from `@/components/ui/*`.
-4. **Synchronize Progress Hooks**:
+5. **Synchronize Progress Hooks**:
    - Update checklist items in Section 2 of `docs/F0<X>.md`.
    - Append an entry in Section 6 (`Changelog & Progress Log`) of `docs/F0<X>.md`.
    - Recalculate and update the feature's status percentage in the Main Master Progress Tracker in `GEMINI.md`.

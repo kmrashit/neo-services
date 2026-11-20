@@ -2,11 +2,12 @@
 
 ## 1. Executive Summary
 This document provides:
-1. **Backend Architecture Audit**: Detailed inventory and isolation/cleanup plan for truly irrelevant and deprecated modules (`leetcode` and IoT remnants).
+1. **Backend Architecture Audit**: Detailed inventory and isolation plan for non-core modules (`leetcode` and legacy IoT fall-detection remnants).
 2. **Re-Architected Core Modules**:
    - `link-shortener`: Repurposed into **Feature F08** for resume sharing, blog previews, view counters, and visitor dwell-time tracking.
    - `forti`: Repurposed into **Feature F09 (Forti AI Engine)** for automatic candidate profile insight synthesis, learning velocity calculation, leadership trait detection, and HR interactive profile chatbot.
 3. **Frontend Revamp & Shadcn UI Standard**: Architectural specification to migrate `fortlio-ui` from flat, unstructured pages into a clean feature-based modular system using **Shadcn UI exclusively** (https://ui.shadcn.com/) for all UI primitives.
+4. **Master Feature Priority Roadmap**: The token-optimal execution order (P1 through P9) across all platform layers.
 
 ---
 
@@ -15,28 +16,23 @@ This document provides:
 The core domain of Fortlio is:
 > *A candidate portfolio and recruitment platform where candidates create profiles, showcase skills, write learning blogs, generate PDF resumes, and share tracked resume/blog links; an integrated AI engine (Forti) evaluates learning velocity, topic diversity, and leadership from candidate posts; HRs search candidates using keyword filters backed by Typesense, chat interactively with candidate profiles via Forti AI, with monetization via video ads triggered after every 2 searches; and candidates and HRs network via connections and real-time chat.*
 
-### 2.1. Irrelevant Modules Slated for Cleanup
+### 2.1. Non-Core Modules & Retention Policy
 
 #### A. The `leetcode` Module (`fortlio-be/src/modules/leetcode/`)
 - **What it contains**:
-  - `leetcode.service.ts`: Scrapes `https://leetcode.com/graphql` for question descriptions and solution code, and generates AI explanations using OpenRouter/Ollama.
+  - `leetcode.service.ts`: Scrapes `https://leetcode.com/graphql` for question descriptions and solution code, and generates AI explanations.
   - `models/dsa-quests.model.ts` & `models/dsa-answers.model.ts`: MongoDB models storing LeetCode questions and DSA solutions.
   - `models/questions.collections.ts`: Typesense schema for DSA questions.
-  - `core/core-workers/bullmq.workers.ts`: Background job `typesense-leetcode-questions-sync-job` and queue `BULLMQQUEUES.TYPSENSE_LEETCODE_QUESTIONS_SYNC`.
-  - `router/services.route.ts`: Exposes `/services/leetcode/explain` and `/services/leetcode/search`.
-- **Why it is irrelevant**: Fortlio is not a DSA practice platform or LeetCode solver. It is a candidate portfolio and HR recruitment platform. This module clutters the codebase, adds heavy external GraphQL calls, and wastes Typesense indexing capacity.
-- **Action Plan**:
-  1. Remove `/services/leetcode` from `src/router/services.route.ts` and `src/router/index.route.ts`.
-  2. Deprecate and remove `dsa-quests.model.ts`, `dsa-answers.model.ts`, and `questions.collections.ts`.
-  3. Remove `typesense-leetcode-questions-sync-job` from `core/core-workers/bullmq.workers.ts`.
-  4. Archive or remove `fortlio-be/src/modules/leetcode/`.
+  - `core/core-workers/bullmq.workers.ts`: Background job `typesense-leetcode-questions-sync-job`.
+- **Policy & Action**:
+  - **DO NOT DELETE**: The files in `fortlio-be/src/modules/leetcode/` are kept on disk as requested. The user will relocate/move them.
+  - **Isolation Rule**: Core candidate portfolio modules (F01–F09) must NOT import from `leetcode` or introduce new dependencies on it.
 
-#### B. IoT Fall Detection Leftovers in `bullmq.workers.ts`
+#### B. Legacy Fall Detection in `bullmq.workers.ts`
 - **What it contains**:
-  - `initializeBullMQSendNotification`: Worker referencing `IMEI`, fall detection SMS to emergency contacts.
-- **Why it is irrelevant**: Copy-paste residue from an unrelated hardware/IoT project.
-- **Action Plan**:
-  1. Remove `initializeBullMQSendNotification` and `BULLMQQUEUES.NOTIFICATION_FALL_DETECTION_QUEUE`.
+  - `initializeBullMQSendNotification`: Worker referencing `IMEI` and fall detection emergency SMS queues.
+- **Action**:
+  - Replaced by Fortlio-relevant workers: `initializeBullMQFortiInsightsWorker` (for candidate insight synthesis) and `initializeBullMQSendCandidateNotification`. The original worker function signature is preserved for reference.
 
 ---
 
@@ -183,19 +179,16 @@ fortlio-ui/
 
 ---
 
-### 3.3. Shadcn UI Setup Specification
-1. **Utility Helper (`src/lib/utils.ts`)**:
-   ```ts
-   import { type ClassValue, clsx } from "clsx";
-   import { twMerge } from "tailwind-merge";
+## 4. Master Feature Priority Roadmap (Token-Optimal Order)
 
-   export function cn(...inputs: ClassValue[]) {
-     return twMerge(clsx(inputs));
-   }
-   ```
-2. **Dependencies**:
-   `clsx`, `tailwind-merge`, `class-variance-authority`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-tabs`, `@radix-ui/react-avatar`, `@radix-ui/react-scroll-area`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-sheet`, `lucide-react`.
-3. **Component Design Rules**:
-   - Every input, button, card, modal, and badge MUST import from `@/components/ui/<component>`.
-   - No custom raw HTML form elements (`<button className="...">`) across features.
-   - All colors must utilize semantic CSS variables (`bg-background`, `text-foreground`, `bg-primary`, `text-muted-foreground`, `border-border`) ensuring automatic Light/Dark mode consistency.
+| Priority | Feature ID | Feature Name | Core Rationale & Dependencies |
+|:---:|:---|:---|:---|
+| **P1** | **F01** | **Auth & Session Management** | Required first: Provides JWT credentials, user roles, and Redis sessions needed by all other modules. |
+| **P2** | **F02** | **User Account & RBAC** | Identity: Handles user profiles, role enforcement (`candidate` vs `hr`), and search quota coin counters. |
+| **P3** | **F03** | **Candidate Profile & Resume Builder** | Core Showcase: Builds candidate profile, skills matrix, and PDF resume generator. |
+| **P4** | **F04** | **Candidate Blogs & Knowledge** | Content Engine: Enables markdown blogs; serves as raw input feeding Forti AI insights. |
+| **P5** | **F08** | **Link Shortener & Share Analytics** | Viral Distribution: Generates trackable short links for resumes & blogs with active dwell-time beacon tracking. |
+| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Asynchronously evaluates learning velocity, topic diversity, and leadership qualities from F04 blogs; powers HR profile chatbot. |
+| **P7** | **F05** | **HR Search & Monetization** | Discovery & Revenue: Typesense candidate search querying candidate profiles & F09 AI insights, gated by the 2-query video ad rule. |
+| **P8** | **F06** | **Connections & Notifications** | Networking: Bi-directional connection requests and notification popovers between candidates and HRs. |
+| **P9** | **F07** | **Real-Time Chat & WebSocket** | Communication: Direct 1-on-1 messaging between connected candidates and recruiters over WebSockets. |
