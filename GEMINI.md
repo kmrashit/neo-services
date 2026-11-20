@@ -1,0 +1,119 @@
+# GEMINI.md - Fortlio Project Master Context
+
+## 1. Project Overview & Mission
+**Fortlio** is a developer candidate portfolio and recruitment discovery platform where:
+- **Candidates** create rich professional profiles, showcase verified skills, publish markdown technical blogs, export pixel-perfect PDF resumes generated from Markdown, and share trackable short links to their resumes and blogs with real-time visitor count and dwell-time analytics.
+- **AI-Powered Candidate Insights & Leadership Detection (Forti Engine)**: Automatically synthesizes candidate progression, learning velocity, knowledge breadth/depth, and leadership qualities whenever a blog is published, enabling HRs to discover candidates based on mindset and technical trajectory.
+- **HRs & Recruiters** discover talent using keyword and skill-based search powered by Typesense, chat interactively with candidate profiles via the Forti AI chatbot, and evaluate candidates with full privacy controls.
+- **Monetization** is enforced via video ads: recruiters receive 2 searches before being required to watch a video ad (`/user/watch-ad`) to replenish search quota.
+- **Networking** is facilitated through bi-directional connection requests, real-time 1-on-1 chat (WebSocket), and in-app notifications.
+
+---
+
+## 2. Tech Stack
+- **Runtime**: Bun (`>=1.0.0`)
+- **Backend**: TypeScript, Express, MongoDB (Aggregations first), Typesense (Candidate search & AI insights search), Redis (Sessions & Caching), BullMQ (Async tasks & Forti AI event queues), AWS SES (Email), Puppeteer (Markdown-to-PDF), OpenRouter/Ollama (Forti LLM)
+- **Frontend**: Vite, React 19, TypeScript, Tailwind CSS, **Shadcn UI exclusively** (https://ui.shadcn.com/)
+- **Testing**: Bun Test (`fortlio-be/__tests__/`), Playwright (`e2e/tests/`)
+- **CI/CD**: Jenkins (`Jenkinsfile-dev.cicd`, `Jenkinsfile-prod.cicd`)
+
+---
+
+## 3. Strict Architecture & Coding Rules
+
+### A. Backend Architecture & Modularity
+1. **Module Isolation**: Every core feature MUST live in `fortlio-be/src/modules/<feature-name>/`.
+   - Each module contains: `controller.ts`, `service.ts`, `route.ts`, `validation.ts`, `types.ts` (or `interface.ts`), `queries.ts`, `constants.ts`, `registry.ts`.
+   - **NO cross-module imports**: Modules MUST NOT import from each other. Shared logic goes in `fortlio-be/src/core/` or `fortlio-be/src/interface/`. Cross-module triggers use BullMQ queues (e.g. `BULLMQQUEUES.FORTI_INSIGHTS_QUEUE`).
+2. **MongoDB Coding Rules**:
+   - **Aggregations First**: All data fetching, joins, sorting, pagination, and projections MUST use MongoDB Aggregation Pipelines in `*.queries.ts`.
+   - **Mongoose Scope**: Use Mongoose models solely for basic write operations (`create`, `updateOne`, `deleteOne`).
+   - **Bun Optimization**: Offload all computations and shape transformations to MongoDB. Minimize in-memory JavaScript loops and modifications in Bun.
+3. **Core Modules vs Deprecation Policy**:
+   - **Core Modules (F01–F09)**: `auth`, `user`, `role`, `candidate`, `hr`, `connection`, `link-shortener`, `forti`.
+   - **Deprecation Policy**: The following codebases are identified as **irrelevant leftovers** outside the candidate portfolio domain and MUST NOT be extended:
+     - `fortlio-be/src/modules/leetcode/` (LeetCode scraper / DSA questions / Typesense sync job) — **DEPRECATED / IRRELEVANT**
+     - Fall detection IoT code in `core/core-workers/bullmq.workers.ts` — **DEPRECATED / IRRELEVANT**
+
+### B. Frontend Architecture & Shadcn UI Revamp
+1. **Feature-Based Folder Structure**: Every feature MUST live in `fortlio-ui/src/features/<feature-name>/`:
+   ```
+   fortlio-ui/src/features/<feature-name>/
+   ├── components/      # Feature-specific UI components
+   ├── hooks/           # Feature-specific business logic & query/mutation hooks
+   ├── api.ts           # Feature-specific API endpoints using axios client
+   └── types.ts         # Feature-specific TypeScript DTOs and interfaces
+   ```
+2. **STRICT SHADCN UI STANDARD**:
+   - The UI MUST ONLY use **Shadcn UI** (https://ui.shadcn.com/) for all interactive primitives (Buttons, Inputs, Dialogs, Cards, Badges, Tabs, Dropdowns, Sheets, Tables, Sliders, Avatars, Toast).
+   - All primitives reside in `fortlio-ui/src/components/ui/`.
+   - No raw HTML unstyled buttons (`<button>`) or custom ad-hoc dropdown/modal state machines.
+   - Use `cn()` helper (`clsx` + `tailwind-merge`) in `fortlio-ui/src/lib/utils.ts`.
+
+---
+
+## 4. Master Feature Map & Documentation Index
+
+| ID | Feature Name | Backend Module | Frontend Feature | Spec Document |
+|:---:|:---|:---|:---|:---|
+| **F01** | Authentication & Session Management | `fortlio-be/src/modules/auth/` | `fortlio-ui/src/features/auth/` | [`docs/F01.md`](file:///home/ashit/neo-services/docs/F01.md) |
+| **F02** | User Account & RBAC (Roles & Privileges) | `fortlio-be/src/modules/user/`, `role/` | `fortlio-ui/src/features/user/` | [`docs/F02.md`](file:///home/ashit/neo-services/docs/F02.md) |
+| **F03** | Candidate Profile & Resume Generator (MD-to-PDF) | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/candidate/` | [`docs/F03.md`](file:///home/ashit/neo-services/docs/F03.md) |
+| **F04** | Candidate Blogs & Knowledge Showcase | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/blogs/` | [`docs/F04.md`](file:///home/ashit/neo-services/docs/F04.md) |
+| **F05** | HR Search Engine & Video Ad Monetization | `fortlio-be/src/modules/hr/` | `fortlio-ui/src/features/hr/` | [`docs/F05.md`](file:///home/ashit/neo-services/docs/F05.md) |
+| **F06** | Connections & Notification System | `fortlio-be/src/modules/connection/` | `fortlio-ui/src/features/connections/`| [`docs/F06.md`](file:///home/ashit/neo-services/docs/F06.md) |
+| **F07** | Real-Time & Stored Chat Messaging | `fortlio-be/src/modules/connection/` | `fortlio-ui/src/features/chat/` | [`docs/F07.md`](file:///home/ashit/neo-services/docs/F07.md) |
+| **F08** | Link Shortener & Share Analytics (Resume & Blog Previews) | `fortlio-be/src/modules/link-shortener/` | `fortlio-ui/src/features/shortener/` | [`docs/F08.md`](file:///home/ashit/neo-services/docs/F08.md) |
+| **F09** | Forti AI Engine (Insights, Leadership & HR Chatbot) | `fortlio-be/src/modules/forti/` | `fortlio-ui/src/features/forti/` | [`docs/F09.md`](file:///home/ashit/neo-services/docs/F09.md) |
+| **AUDIT** | Backend Audit & Frontend Revamp Guide | Architecture & Deprecations | UI Revamp & Shadcn Setup | [`docs/AUDIT_AND_REVAMP.md`](file:///home/ashit/neo-services/docs/AUDIT_AND_REVAMP.md) |
+
+---
+
+## 5. Main Master Progress Tracker
+
+> Track completion progress across all architectural layers. Keep updated after each feature milestone.
+
+| Feature ID | Feature Description | Backend API | Mongo Aggregations | Typesense | Shadcn UI | Bun Tests | Playwright E2E | Overall Progress |
+|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟡 40% | 🔴 0% | 🔴 0% | **60%** |
+| **F02** | User & RBAC Management | 🟢 100% | 🟢 90% | N/A | 🔴 20% | 🟡 70% | 🔴 0% | **56%** |
+| **F03** | Candidate Profile & MD-to-PDF | 🟢 100% | 🟢 95% | 🟢 100% | 🟡 45% | 🟢 100% | 🔴 0% | **68%** |
+| **F04** | Candidate Blogs & Knowledge | 🟢 100% | 🟢 90% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **61%** |
+| **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 90% | 🟢 100% | 🔴 15% | 🟢 100% | 🔴 0% | **67%** |
+| **F06** | Connections & Notifications | 🟢 100% | 🟢 90% | N/A | 🟡 40% | 🟢 100% | 🔴 0% | **66%** |
+| **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
+| **F08** | Link Shortener & Share Analytics | 🟢 85% | 🟡 60% | N/A | 🔴 20% | 🟢 100% | 🔴 0% | **52%** |
+| **F09** | Forti AI Engine & Profile Chatbot | 🟡 35% | 🔴 20% | 🔴 20% | 🔴 0% | 🔴 0% | 🔴 0% | **22%** |
+| **Total** | **Fortlio Platform Master** | **90%** | **80%** | **70%** | **28%** | **70%** | **0%** | **57%** |
+
+*Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
+
+---
+
+## 6. Testing & Quality Rules
+1. **Unit & Integration Tests**:
+   - Write Bun tests in `fortlio-be/__tests__/<feature>.controller.test.ts`.
+   - Run via: `cd fortlio-be && bun test`.
+   - Ensure all controller and service edge cases (happy path, validation errors, unauthorized access) are covered.
+2. **E2E Playwright Tests**:
+   - Write tests in `e2e/tests/<feature>.spec.ts`.
+   - Run via: `bunx playwright test`.
+3. **History Rotation**:
+   - E2E test history is limited to 50 slots. Run `scripts/rotate-playwright-history.sh` after every E2E run to enforce FIFO rotation in `e2e/history/`.
+
+---
+
+## 7. Developer Feature Workflow & Progress Hook Guidelines
+When implementing or modifying any feature:
+1. **Consult Feature Spec**: Read `docs/F0<X>.md` for exact endpoints, aggregation pipelines, and Shadcn UI components.
+2. **Backend Implementation**:
+   - Edit only `fortlio-be/src/modules/<feature>/`.
+   - Place all complex queries in `*.queries.ts` as MongoDB aggregation pipelines.
+   - Run `bun test` to verify zero regressions.
+3. **Frontend Revamp**:
+   - Build in `fortlio-ui/src/features/<feature>/` (`components/`, `hooks/`, `api.ts`, `types.ts`).
+   - Use exclusively Shadcn UI components from `@/components/ui/*`.
+4. **Synchronize Progress Hooks**:
+   - Update checklist items in Section 2 of `docs/F0<X>.md`.
+   - Append an entry in Section 6 (`Changelog & Progress Log`) of `docs/F0<X>.md`.
+   - Recalculate and update the feature's status percentage in the Main Master Progress Tracker in `GEMINI.md`.
