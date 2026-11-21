@@ -275,4 +275,41 @@ describe('CandidateController Unit Tests', () => {
       expect(mockRes.body.data.title).toBe('My First Blog');
     });
   });
+
+  describe('listBlogs', () => {
+    it('should successfully list blogs with pagination', async () => {
+      const req = {
+        query: { page: '1', pageSize: '10' },
+      } as unknown as Request;
+
+      mockCandidateService.listBlogs.mockResolvedValue({
+        data: [{ title: 'Blog 1' }],
+        totalCount: 1,
+      });
+
+      await candidateController.listBlogs(req, mockRes);
+
+      expect(mockCandidateService.listBlogs).toHaveBeenCalled();
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.totalCount).toBe(1);
+    });
+
+    it('should throw AppError if pagination query is invalid', async () => {
+      const req = {
+        query: { page: '-1' },
+      } as unknown as Request;
+
+      expect(candidateController.listBlogs(req, mockRes)).rejects.toThrow();
+    });
+  });
+
+  describe('convertMdToPdf', () => {
+    it('should throw AppError if markdown content is empty', async () => {
+      const req = {
+        body: { content: '' },
+      } as unknown as Request;
+
+      expect(candidateController.convertMdToPdf(req, mockRes)).rejects.toThrow();
+    });
+  });
 });
