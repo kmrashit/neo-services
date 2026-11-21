@@ -15,11 +15,9 @@ export class ShortnerRoutes {
   }
 
   private initializeShortnerRoutes() {
-    // new routes
-
     this.router.post(
       '/shortIt',
-      this.authGuard.checkAccess('createShortUrl'),
+      this.authGuard.authenticate,
       (req, res, next) => this.cacheMiddleware.cacheReqRes(req, res, next, 0),
       this.shortUrlController.createShortUrl.bind(this.shortUrlController),
     );
@@ -34,6 +32,22 @@ export class ShortnerRoutes {
       '/s/:shortValue',
       (req, res, next) => this.cacheMiddleware.cacheReqRes(req, res, next, 0),
       this.shortUrlController.redirectToUrl.bind(this.shortUrlController),
+    );
+
+    this.router.post(
+      '/analytics/dwell-time',
+      this.shortUrlController.recordDwellTime.bind(this.shortUrlController),
+    );
+
+    this.router.get(
+      '/analytics/:shortCode',
+      this.shortUrlController.getLinkAnalytics.bind(this.shortUrlController),
+    );
+
+    this.router.get(
+      '/my-links',
+      this.authGuard.authenticate,
+      this.shortUrlController.getMyLinks.bind(this.shortUrlController),
     );
 
     this.router.get(

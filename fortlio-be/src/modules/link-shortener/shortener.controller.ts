@@ -4,10 +4,9 @@ import { ShortenerService } from './shortener.service';
 import { fmtRes } from '../../core/core-utils/res-util';
 import { AppError } from '../../core/core-utils/err-util';
 import * as SHORTNER_MSGS from './shortener.constants';
-import { ShortItValidation, IsKeyAvailableValidation, ShortValueValidation } from './shortener.validation';
+import { ShortItValidation, IsKeyAvailableValidation, ShortValueValidation, ShortCodeValidation, DwellTimeValidation } from './shortener.validation';
 
 export class ShortnerController {
-
   constructor(private shortenerService: ShortenerService) { }
 
   redirectToUrl = async (req: Request, res: Response) => {
@@ -39,7 +38,7 @@ export class ShortnerController {
   createShortUrl = async (req: Request, res: Response) => {
     try {
       const body = req.body;
-      const { originalUrl, customAlias } = ShortItValidation.parse(body);
+      const { originalUrl, customAlias, targetType, targetId } = ShortItValidation.parse(body);
       const userId = req.headers.userId as string;
 
       let shortCode: string;
@@ -60,8 +59,8 @@ export class ShortnerController {
         shortCode = generatedCode;
       }
 
-      const data = await this.shortenerService.createShortUrl(shortCode, originalUrl, userId);
-      return fmtRes(res, { added: data, shortCode, originalUrl });
+      const data = await this.shortenerService.createShortUrl(shortCode, originalUrl, userId, targetType, targetId);
+      return fmtRes(res, { added: true, link: data, shortCode, originalUrl, targetType: targetType || 'custom' });
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: SHORTNER_MSGS.ERR.FAILED_TO_CREATE_SHORT_URL, apiName: 'createShortUrl', error }, error.statusCode || 400);
     }
@@ -70,7 +69,7 @@ export class ShortnerController {
   createShortUrlByGuest = async (req: Request, res: Response) => {
     try {
       const body = req.body;
-      const { originalUrl, customAlias } = ShortItValidation.parse(body);
+      const { originalUrl, customAlias, targetType, targetId } = ShortItValidation.parse(body);
 
       let shortCode: string;
       if (customAlias) {
@@ -90,11 +89,52 @@ export class ShortnerController {
         shortCode = generatedCode;
       }
 
-      const data = await this.shortenerService.createShortUrl(shortCode, originalUrl, null);
-      return fmtRes(res, { added: data, shortCode, originalUrl });
+      const data = await this.shortenerService.createShortUrl(shortCode, originalUrl, null, targetType, targetId);
+      return fmtRes(res, { added: true, link: data, shortCode, originalUrl, targetType: targetType || 'custom' });
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: SHORTNER_MSGS.ERR.FAILED_TO_CREATE_SHORT_URL_BY_GUEST, apiName: 'createShortUrlByGuest', error }, error.statusCode || 400);
     }
   };
 
+  recordDwellTime = async (req: Request, res: Response) => {
+    try {
+      const { shortCode, durationSeconds } = DwellTimeValidation.parse(req.body);
+      const recorded = await this.shortenerService.recordDwellTime(shortCode, durationSeconds);
+      return fmtRes(res, { recorded, shortCode, durationSeconds });
+    } catch (error: any) {
+      throw new AppError(error.message || 'unknown', { msg: SHORTNER_MSGS.ERR.FAILED_TO_RECORD_DWELL_TIME, apiName: 'recordDwellTime', error }, error.statusCode || 400);
+    }
+  };
+
+  getLinkAnalytics = async (req: Request, res: Response) => {
+    try {
+      const { shortCode } = ShortCodeValidation.parse(req.params);
+      const analytics = await this.shortenerService.getLinkAnalytics(shortCode);
+      if (!analytics) {
+        throw new AppError('Link analytics not found', { msg: 'Link analytics not found', apiName: 'getLinkAnalytics', debugValues: { shortCode } }, 404);
+      }
+      return fmtRes(res, analytics);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: SHORTNER_MSGS.ERR.FAILED_TO_GET_LINK_ANALYTICS, apiName: 'getLinkAnalytics', error }, error.statusCode || 400);
+    }
+  };
+
+  getMyLinks = async (req: Request, res: Response) => {
+    try {
+      const userId = req.headers.userId as string;
+      if (!userId) {
+        throw new AppError('Unauthorized', { msg: 'User ID missing in headers', apiName: 'getMyLinks' }, 401);
+      }
+      const links = await this.shortenerService.getMyLinks(userId);
+      return fmtRes(res, { links, total: links.length });
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: SHORTNER_MSGS.ERR.FAILED_TO_FETCH_MY_LINKS, apiName: 'getMyLinks', error }, error.statusCode || 400);
+    }
+  };
 }
