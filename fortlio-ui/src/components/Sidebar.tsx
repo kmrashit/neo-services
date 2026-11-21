@@ -11,13 +11,20 @@ import {
   LogOut,
   FolderGit2,
   Palette,
-  Bot
+  Bot,
+  Search,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const navSections = [
+  {
+    title: "Recruiter Discovery",
+    items: [
+      { name: "Candidate Search", path: "/candidates", icon: Search },
+    ],
+  },
   {
     title: "Portfolio",
     items: [

@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 
 import CandidateProfile from "./pages/CandidateProfile";
+import CandidateSearch from "./pages/CandidateSearch";
 import EditorPage from "./pages/EditorPage";
 import CandidateBlogs from "./pages/CandidateBlogs";
 
@@ -37,6 +38,8 @@ function App() {
           }
         >
           <Route path="/candidate-profile" element={<CandidateProfile />}/>
+          <Route path="/candidates" element={<CandidateSearch />}/>
+          <Route path="/hr/search" element={<CandidateSearch />}/>
           <Route path="/create-profile" element={<CreateCandidateProfile />}/>
           <Route path="/edit-profile" element={<CandidateEditProfile />}/>
           <Route path="/candidate-blogs" element={<CandidateBlogs />}/>

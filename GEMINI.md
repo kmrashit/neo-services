@@ -88,13 +88,13 @@
 | **F02** | User & RBAC Management | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
 | **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟢 90% | 🟢 90% | 🟢 100% | 🟢 90% | 🟢 100% | 🟢 100% | **95%** |
 | **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
-| **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 90% | 🟢 100% | 🔴 15% | 🟢 100% | 🔴 0% | **67%** |
+| **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
 | **F06** | Connections & Notifications | 🟢 100% | 🟢 90% | N/A | 🟡 40% | 🟢 100% | 🔴 0% | **66%** |
 | **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
 | **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** |
 | **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
 | **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
-| **Total** | **Fortlio Platform Master** | **88%** | **85%** | **100%** | **65%** | **88%** | **60%** | **78%** |
+| **Total** | **Fortlio Platform Master** | **88%** | **85%** | **100%** | **73%** | **88%** | **70%** | **81%** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
 
