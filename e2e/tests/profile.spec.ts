@@ -95,21 +95,25 @@ test.describe('Candidate Profile & Tabs E2E Tests', () => {
   test('Navigate to Resume Editor page (/editor), verify Markdown editor & live preview, and export options', async ({ page }) => {
     await page.goto('/editor');
 
-    // Check title and description
-    await expect(page.getByRole('heading', { name: 'Markdown Resume Studio' })).toBeVisible();
-    await expect(page.getByText('Author pixel-perfect Markdown resumes and export to PDF via headless Puppeteer.')).toBeVisible();
+    // Check mode selector and title buttons
+    await expect(page.getByRole('button', { name: /Resume Builder/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Blog Creator/i })).toBeVisible();
+
+    // Verify Draw Imagination and AI Copilot tools
+    await expect(page.getByRole('button', { name: /Draw Imagination/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Help Me Write Resume/i })).toBeVisible();
 
     // Verify editor textarea
     const textarea = page.getByRole('textbox', { name: 'Markdown Source Editor' });
     await expect(textarea).toBeVisible();
 
-    // Verify live preview heading
-    await expect(page.getByText('Print Preview (Pixel-Perfect A4)')).toBeVisible();
+    // Verify live preview heading & watermark
+    await expect(page.getByText('Paginated A4 Resume Preview')).toBeVisible();
+    await expect(page.getByText('By :').first()).toBeVisible();
 
     // Check Export PDF and Save controls
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
-    await expect(page.getByRole('button', { name: '.MD' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Export PDF' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Export PDF/i })).toBeVisible();
 
     // Test Save action
     await page.getByRole('button', { name: 'Save' }).click();

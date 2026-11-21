@@ -13,52 +13,80 @@ import {
   Palette,
   Bot,
   Search,
+  Briefcase,
+  Eye,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const navSections = [
-  {
-    title: "Recruiter Discovery",
-    items: [
-      { name: "Candidate Search", path: "/candidates", icon: Search },
-    ],
-  },
-  {
-    title: "Portfolio",
-    items: [
-      { name: "My Profile", path: "/candidate-profile", icon: User },
-      { name: "Edit Profile", path: "/edit-profile", icon: FileText },
-      { name: "Markdown Resume", path: "/editor", icon: FileCode },
-    ],
-  },
-  {
-    title: "Knowledge & Creation",
-    items: [
-      { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
-      { name: "Draw Imagination", path: "/candidate-blogs?mode=draw", icon: Palette },
-    ],
-  },
-  {
-    title: "AI Career Suite",
-    items: [
-      { name: "AI Interviews", path: "/candidate-profile?tab=interviews", icon: Bot },
-    ],
-  },
-  {
-    title: "Networking",
-    items: [
-      { name: "Connections", path: "/connections", icon: Users },
-      { name: "Direct Chat", path: "/chat", icon: MessageSquare },
-      { name: "Notifications", path: "/notifications", icon: Bell },
-    ],
-  },
-];
-
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const isHr = (user?.role || '').toLowerCase() === 'hr';
 
+  const candidateSections = [
+    {
+      title: "Career & Opportunities",
+      items: [
+        { name: "Job Suggestions", path: "/jobs", icon: Briefcase },
+      ],
+    },
+    {
+      title: "Portfolio Showcase",
+      items: [
+        { name: "My Profile", path: "/candidate-profile", icon: User },
+        { name: "Edit Profile", path: "/edit-profile", icon: FileText },
+        { name: "Resume Studio", path: "/editor", icon: FileCode },
+      ],
+    },
+    {
+      title: "Knowledge & Creation",
+      items: [
+        { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
+        { name: "Draw Imagination", path: "/editor?mode=draw", icon: Palette },
+      ],
+    },
+    {
+      title: "AI Career Suite",
+      items: [
+        { name: "AI Interviews", path: "/candidate-profile?tab=interviews", icon: Bot },
+      ],
+    },
+    {
+      title: "Networking",
+      items: [
+        { name: "Connections", path: "/connections", icon: Users },
+        { name: "Direct Chat", path: "/chat", icon: MessageSquare },
+        { name: "Notifications", path: "/notifications", icon: Bell },
+      ],
+    },
+  ];
+
+  const hrSections = [
+    {
+      title: "Recruiter Discovery",
+      items: [
+        { name: "Candidate Search", path: "/candidates", icon: Search },
+        { name: "Job Postings", path: "/hr/jobs", icon: Briefcase },
+      ],
+    },
+    {
+      title: "Candidate Pipeline",
+      items: [
+        { name: "Candidate Discovery", path: "/candidates", icon: Eye },
+      ],
+    },
+    {
+      title: "Networking",
+      items: [
+        { name: "Connections", path: "/connections", icon: Users },
+        { name: "Direct Chat", path: "/chat", icon: MessageSquare },
+        { name: "Notifications", path: "/notifications", icon: Bell },
+      ],
+    },
+  ];
+
+  const activeSections = isHr ? hrSections : candidateSections;
   const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
 
   return (
@@ -83,7 +111,7 @@ export default function Sidebar() {
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
-        {navSections.map((section) => (
+        {activeSections.map((section) => (
           <div key={section.title} className="space-y-1.5">
             <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {section.title}

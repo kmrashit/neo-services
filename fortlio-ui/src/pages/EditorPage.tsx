@@ -1,5 +1,33 @@
-import { ResumeEditor } from "@/features/candidate";
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { UnifiedMarkdownEditor } from '@/features/editor';
+import { useResumePdfExport } from '@/features/candidate/hooks/useResumePdfExport';
+import { useCreateBlog } from '@/features/blogs/hooks/useCreateBlog';
 
 export default function EditorPage() {
-  return <ResumeEditor />;
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const modeParam = searchParams.get('mode');
+  const initialMode = modeParam === 'blog' ? 'blog' : 'resume';
+
+  const { exportPdf } = useResumePdfExport();
+  const { publishBlog } = useCreateBlog();
+
+  const handleExportPdf = async (markdown: string) => {
+    await exportPdf(markdown, 'Resume.pdf');
+  };
+
+  const handlePublishBlog = async (data: { title: string; content: string; tags: string[] }) => {
+    await publishBlog(data);
+    navigate('/candidate-blogs');
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <UnifiedMarkdownEditor
+        initialMode={initialMode}
+        onExportPdf={handleExportPdf}
+        onPublishBlog={handlePublishBlog}
+      />
+    </div>
+  );
 }

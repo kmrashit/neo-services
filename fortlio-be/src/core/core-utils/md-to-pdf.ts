@@ -25,15 +25,58 @@ export async function convertMdToPdf(markdown: string, settings?: any, s3Options
 
   let pdfBuffer: Buffer;
   try {
+    const watermarkCss = `
+      @media print {
+        .fortlio-pdf-watermark {
+          position: fixed;
+          bottom: 10px;
+          right: 20px;
+          font-size: 8px;
+          font-weight: 600;
+          color: #94a3b8;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          pointer-events: none;
+          z-index: 99999;
+        }
+      }
+    `;
+
+    const watermarkHtml = `\n\n<div class="fortlio-pdf-watermark"><span>By :</span> <strong style="color: #6366f1;">Fortlio</strong></div>`;
+    const contentWithWatermark = markdown.includes('fortlio-pdf-watermark')
+      ? markdown
+      : markdown + watermarkHtml;
+
     const options = {
       ...settings,
+      css: settings?.css ? `${settings.css}\n${watermarkCss}` : watermarkCss,
+      pdf_options: {
+        format: 'A4',
+        margin: {
+          top: '15mm',
+          right: '15mm',
+          bottom: '15mm',
+          left: '15mm',
+        },
+        displayHeaderFooter: true,
+        headerTemplate: '<div></div>',
+        footerTemplate: `
+          <div style="width: 100%; font-size: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #94a3b8; display: flex; justify-content: flex-end; align-items: center; padding-right: 15mm; box-sizing: border-box;">
+            <span style="opacity: 0.85; margin-right: 3px;">By :</span>
+            <strong style="color: #6366f1; font-weight: 700;">Fortlio</strong>
+          </div>
+        `,
+        ...(settings?.pdf_options || {}),
+      },
       launch_options: {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
         ...(settings?.launch_options || {}),
       },
     };
 
-    const output = await mdToPdf({ content: markdown }, options);
+    const output = await mdToPdf({ content: contentWithWatermark }, options);
     pdfBuffer = output.content;
   } catch (err: any) {
     throw new AppError(`Failed to convert markdown to PDF: ${err.message}`, { error: err });
