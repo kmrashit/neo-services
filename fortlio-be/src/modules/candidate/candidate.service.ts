@@ -5,8 +5,8 @@ import User from '../user/models/user.model';
 import { ICandidateCreate, ICandidateBlogCreate } from './candidate.interface';
 import { IFilter } from '../../interface/common.interface';
 import { AppError } from '../../core/core-utils/err-util';
-import { sensiSearch } from '../../clients';
-import { TYPSENSE_COLLECTION_NAME } from '../../core/core-constants/common.constants';
+import { sensiSearch, bullMQService } from '../../clients';
+import { TYPSENSE_COLLECTION_NAME, BULLMQQUEUES } from '../../core/core-constants/common.constants';
 import { getDataByFilter } from '../../core/core-helper';
 import * as CANDIDATE_MSGS from './candidate.constants';
 import { getCandidateBlogsPipeline } from './candidate.queries';
@@ -75,6 +75,18 @@ export class CandidateService {
         status: data.status || 'published',
       });
       await blog.save();
+
+      // Trigger Forti AI Engine asynchronous insight synthesis
+      try {
+        await bullMQService.addJob(
+          BULLMQQUEUES.FORTI_INSIGHTS_QUEUE,
+          'synthesize-candidate-insights',
+          { candidateId: userId, blogId: blog._id.toString() },
+        );
+      } catch (err: any) {
+        console.warn('Failed to enqueue Forti AI insights synthesis job:', err.message || err);
+      }
+
       return blog;
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CANDIDATE_MSGS.ERR.FAILED_TO_CREATE_BLOG, apiName: 'createBlog', debugValues: { userId } });

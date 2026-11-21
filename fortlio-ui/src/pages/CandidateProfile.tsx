@@ -14,6 +14,7 @@ import {
   GraduationCap,
   CheckCircle2,
   Check,
+  Bot,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCandidateProfile } from "@/features/candidate";
@@ -223,7 +224,7 @@ export default function CandidateProfile() {
 
       {/* Tabs Layout */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
+        <TabsList className="grid w-full grid-cols-4 max-w-lg">
           <TabsTrigger value="overview" className="gap-1.5">
             <Briefcase className="size-4" />
             Overview
@@ -235,6 +236,10 @@ export default function CandidateProfile() {
           <TabsTrigger value="forti" className="gap-1.5">
             <Sparkles className="size-4 text-purple-500" />
             Forti AI Insights
+          </TabsTrigger>
+          <TabsTrigger value="interviews" className="gap-1.5">
+            <Bot className="size-4 text-amber-500" />
+            AI Interviews
           </TabsTrigger>
         </TabsList>
 
@@ -398,6 +403,70 @@ export default function CandidateProfile() {
                       {domain}
                     </Badge>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* AI Interviews Tab Content */}
+        <TabsContent value="interviews" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="border-amber-500/30">
+              <CardHeader className="text-center pb-2">
+                <CardDescription className="text-xs font-semibold uppercase tracking-wider">
+                  Domain Readiness Score
+                </CardDescription>
+                <div className="text-4xl font-extrabold text-amber-600 dark:text-amber-400 pt-2">
+                  92<span className="text-sm font-normal text-muted-foreground">/100</span>
+                </div>
+              </CardHeader>
+              <CardContent className="text-center text-xs text-muted-foreground">
+                <Badge variant="success" className="text-[10px] mb-2">Verified Ready</Badge>
+                <p>Simulated across architecture case studies and behavioral leadership scenarios.</p>
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base font-semibold flex items-center gap-2">
+                      <Bot className="size-4 text-amber-500" />
+                      AI Interactive Interview Simulator
+                    </CardTitle>
+                    <CardDescription className="text-xs pt-1">
+                      Practice adaptive real-time domain interviews tailored to your specialty.
+                    </CardDescription>
+                  </div>
+                  <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-600 dark:text-amber-400">
+                    F10 Ready
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 text-xs">
+                <div className="grid grid-cols-3 gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+                  <div>
+                    <p className="font-semibold text-foreground">Domain Rigor</p>
+                    <p className="text-muted-foreground pt-0.5">94% Accuracy</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Communication</p>
+                    <p className="text-muted-foreground pt-0.5">90% Clarity</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Problem Solving</p>
+                    <p className="text-muted-foreground pt-0.5">93% Structure</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-1">
+                  <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs">
+                    Start Mock Interview
+                  </Button>
+                  <span className="text-[11px] text-muted-foreground">
+                    Available in text and real-time voice mode.
+                  </span>
                 </div>
               </CardContent>
             </Card>

@@ -9,7 +9,9 @@ import {
   Bell,
   Sparkles,
   LogOut,
-  FolderGit2
+  FolderGit2,
+  Palette,
+  Bot
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +27,16 @@ const navSections = [
     ],
   },
   {
-    title: "Knowledge",
+    title: "Knowledge & Creation",
     items: [
       { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
+      { name: "Draw Imagination", path: "/candidate-blogs?mode=draw", icon: Palette },
+    ],
+  },
+  {
+    title: "AI Career Suite",
+    items: [
+      { name: "AI Interviews", path: "/candidate-profile?tab=interviews", icon: Bot },
     ],
   },
   {
