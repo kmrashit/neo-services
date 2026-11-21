@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Clock, Calendar, Sparkles, Share2 } from 'lucide-react';
@@ -11,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { ShareLinkModal } from '@/features/shortener';
 import type { IBlog } from '../types';
 
 interface BlogDetailViewProps {
@@ -20,6 +22,7 @@ interface BlogDetailViewProps {
 }
 
 export function BlogDetailView({ blog, isOpen, onClose }: BlogDetailViewProps) {
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   if (!blog) return null;
 
   const authorName = blog.authorDetails?.fullName || blog.author || 'Candidate';
@@ -28,37 +31,35 @@ export function BlogDetailView({ blog, isOpen, onClose }: BlogDetailViewProps) {
   const score = blog.fortiAnalysisScore || 92;
 
   const handleShare = () => {
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Article link copied to clipboard!');
-    }
+    setIsShareModalOpen(true);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
-        <DialogHeader className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-            >
-              <ArrowLeft className="size-4" />
-              Back to Articles
-            </Button>
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
+          <DialogHeader className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                <ArrowLeft className="size-4" />
+                Back to Articles
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="gap-1.5 text-xs cursor-pointer"
-            >
-              <Share2 className="size-3.5" />
-              Share
-            </Button>
-          </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                className="gap-1.5 text-xs cursor-pointer"
+              >
+                <Share2 className="size-3.5" />
+                Share
+              </Button>
+            </div>
 
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -128,5 +129,14 @@ export function BlogDetailView({ blog, isOpen, onClose }: BlogDetailViewProps) {
         </div>
       </DialogContent>
     </Dialog>
+
+    <ShareLinkModal
+      isOpen={isShareModalOpen}
+      onClose={() => setIsShareModalOpen(false)}
+      targetType="blog"
+      targetTitle={blog.title}
+      originalUrl={window.location.href}
+    />
+  </>
   );
 }

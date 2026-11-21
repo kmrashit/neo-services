@@ -15,9 +15,25 @@ import {
   CheckCircle2,
   Check,
   Bot,
+  TrendingUp,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCandidateProfile } from "@/features/candidate";
+import {
+  useTrackLinkDwellTime,
+  useLinkAnalytics,
+  ShareAnalyticsCard,
+  ShareLinkModal,
+  MySharedLinksTable,
+} from "@/features/shortener";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +43,11 @@ export default function CandidateProfile() {
   const { user } = useAuth();
   const { profile } = useCandidateProfile();
   const [copied, setCopied] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
+
+  useTrackLinkDwellTime();
+  const { links } = useLinkAnalytics();
 
   // Candidate portfolio data (connected to active user credentials & candidate profile)
   const candidate = {
@@ -158,6 +179,16 @@ export default function CandidateProfile() {
               >
                 {copied ? <Check className="size-3.5 text-emerald-500" /> : <Share2 className="size-3.5" />}
                 <span>{copied ? "Link Copied" : "Share Profile"}</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsShareModalOpen(true)}
+                className="gap-1.5 text-xs font-medium cursor-pointer"
+              >
+                <LinkIcon className="size-3.5 text-purple-600 dark:text-purple-400" />
+                <span>Short Link</span>
               </Button>
 
               <Link to="/editor">
@@ -309,19 +340,11 @@ export default function CandidateProfile() {
                 </CardContent>
               </Card>
 
-              {/* Dwell Time telemetry highlight */}
-              <Card className="bg-gradient-to-br from-purple-500/10 via-transparent to-indigo-500/10 border-purple-500/20">
-                <CardHeader className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400">
-                    <Sparkles className="size-3.5" />
-                    Telemetry Analytics Active
-                  </div>
-                  <CardTitle className="text-sm">Recruiter Dwell Tracking</CardTitle>
-                  <CardDescription className="text-xs">
-                    Short links created for this portfolio measure recruiter review duration in real-time.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              {/* Share & Dwell Time analytics card */}
+              <ShareAnalyticsCard
+                links={links}
+                onOpenMyLinks={() => setIsLinksModalOpen(true)}
+              />
             </div>
           </div>
         </TabsContent>
@@ -473,6 +496,31 @@ export default function CandidateProfile() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Share Trackable Short Link Modal */}
+      <ShareLinkModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        targetType="resume"
+        targetTitle={`${candidate.fullName}'s Professional Portfolio & Resume`}
+        originalUrl={window.location.href}
+      />
+
+      {/* My Shared Links Modal */}
+      <Dialog open={isLinksModalOpen} onOpenChange={setIsLinksModalOpen}>
+        <DialogContent className="max-w-2xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <TrendingUp className="size-5 text-purple-600" />
+              My Trackable Shared Links
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Review visitor reach, total clicks, and active dwell time across your portfolio and blog links.
+            </DialogDescription>
+          </DialogHeader>
+          <MySharedLinksTable links={links} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

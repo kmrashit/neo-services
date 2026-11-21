@@ -90,7 +90,7 @@ describe('ShortnerController Unit Tests', () => {
       await shortnerController.createShortUrl(req, mockRes);
 
       expect(mockShortenerService.checkIfAvailable).toHaveBeenCalledWith('my-alias');
-      expect(mockShortenerService.createShortUrl).toHaveBeenCalledWith('my-alias', ORIGINAL_URL, VALID_USER_ID);
+      expect(mockShortenerService.createShortUrl).toHaveBeenCalledWith('my-alias', ORIGINAL_URL, VALID_USER_ID, undefined, undefined);
       expect(mockRes.body.success).toBe(true);
       expect(mockRes.body.data.shortCode).toBe('my-alias');
     });
@@ -120,7 +120,7 @@ describe('ShortnerController Unit Tests', () => {
     });
   });
 
-  describe('createShortUrlByGuest', () => {
+    describe('createShortUrlByGuest', () => {
     it('should successfully create short URL for guest with null createdBy', async () => {
       const req = {
         body: { originalUrl: ORIGINAL_URL },
@@ -128,8 +128,95 @@ describe('ShortnerController Unit Tests', () => {
 
       await shortnerController.createShortUrlByGuest(req, mockRes);
 
-      expect(mockShortenerService.createShortUrl).toHaveBeenCalledWith(expect.any(String), ORIGINAL_URL, null);
+      expect(mockShortenerService.createShortUrl).toHaveBeenCalledWith(expect.any(String), ORIGINAL_URL, null, undefined, undefined);
       expect(mockRes.body.success).toBe(true);
+    });
+  });
+
+  describe('recordDwellTime', () => {
+    it('should successfully record visitor dwell time', async () => {
+      mockShortenerService.recordDwellTime = mock(() => Promise.resolve(true));
+
+      const req = {
+        body: { shortCode: 'res-alex123', durationSeconds: 45 },
+      } as unknown as Request;
+
+      await shortnerController.recordDwellTime(req, mockRes);
+
+      expect(mockShortenerService.recordDwellTime).toHaveBeenCalledWith('res-alex123', 45);
+      expect(mockRes.body.success).toBe(true);
+      expect(mockRes.body.data.recorded).toBe(true);
+    });
+
+    it('should throw AppError if durationSeconds is invalid', async () => {
+      const req = {
+        body: { shortCode: 'res-alex123', durationSeconds: -5 },
+      } as unknown as Request;
+
+      expect(shortnerController.recordDwellTime(req, mockRes)).rejects.toThrow(AppError);
+    });
+  });
+
+  describe('getLinkAnalytics', () => {
+    it('should return link analytics data if code exists', async () => {
+      const mockAnalytics = {
+        shortCode: 'res-alex123',
+        viewsCount: 15,
+        totalTimeSpentSeconds: 600,
+        averageTimeSpentSeconds: 40,
+        targetType: 'resume',
+      };
+      mockShortenerService.getLinkAnalytics = mock(() => Promise.resolve(mockAnalytics));
+
+      const req = {
+        params: { shortCode: 'res-alex123' },
+      } as unknown as Request;
+
+      await shortnerController.getLinkAnalytics(req, mockRes);
+
+      expect(mockShortenerService.getLinkAnalytics).toHaveBeenCalledWith('res-alex123');
+      expect(mockRes.body.success).toBe(true);
+      expect(mockRes.body.data.viewsCount).toBe(15);
+      expect(mockRes.body.data.averageTimeSpentSeconds).toBe(40);
+    });
+
+    it('should throw 404 AppError if analytics are not found', async () => {
+      mockShortenerService.getLinkAnalytics = mock(() => Promise.resolve(null));
+
+      const req = {
+        params: { shortCode: 'not-found' },
+      } as unknown as Request;
+
+      expect(shortnerController.getLinkAnalytics(req, mockRes)).rejects.toThrow(AppError);
+    });
+  });
+
+  describe('getMyLinks', () => {
+    it('should successfully fetch candidate links list', async () => {
+      const mockLinks = [
+        { shortCode: 'link1', viewsCount: 10, totalTimeSpentSeconds: 300 },
+        { shortCode: 'link2', viewsCount: 5, totalTimeSpentSeconds: 120 },
+      ];
+      mockShortenerService.getMyLinks = mock(() => Promise.resolve(mockLinks));
+
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      await shortnerController.getMyLinks(req, mockRes);
+
+      expect(mockShortenerService.getMyLinks).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockRes.body.success).toBe(true);
+      expect(mockRes.body.data.total).toBe(2);
+      expect(mockRes.body.data.links).toHaveLength(2);
+    });
+
+    it('should throw 401 AppError if userId header is missing', async () => {
+      const req = {
+        headers: {},
+      } as unknown as Request;
+
+      expect(shortnerController.getMyLinks(req, mockRes)).rejects.toThrow(AppError);
     });
   });
 });
