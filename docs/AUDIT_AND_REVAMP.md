@@ -7,14 +7,14 @@ This document provides:
    - `link-shortener`: Repurposed into **Feature F08** for resume sharing, blog previews, view counters, and visitor dwell-time tracking.
    - `forti`: Repurposed into **Feature F09 (Forti AI Engine)** for automatic candidate profile insight synthesis, learning velocity calculation, leadership trait detection, and HR interactive profile chatbot.
 3. **Frontend Revamp & Shadcn UI Standard**: Architectural specification to migrate `fortlio-ui` from flat, unstructured pages into a clean feature-based modular system using **Shadcn UI exclusively** (https://ui.shadcn.com/) for all UI primitives.
-4. **Master Feature Priority Roadmap**: The token-optimal execution order (P1 through P9) across all platform layers.
+4. **Master Feature Priority Roadmap**: The token-optimal execution order (P1 through P10) across all platform layers, incorporating AI Resume OCR, Draw Your Imagination, AI Blog Improver with Authentic Input Evaluation, and AI Interactive Interviews.
 
 ---
 
 ## 2. Backend Architecture Audit
 
 The core domain of Fortlio is:
-> *An all-inclusive, universal professional portfolio and talent discovery platform for **anyone and everyone** across all professions, backgrounds, specialties, and education paths (engineering, design, medicine, law, finance, science, research, marketing, education, operations, and more) where candidates create showcase profiles, verify domain skills, write specialty learning blogs, generate pixel-perfect PDF resumes, and share tracked resume/blog links; an integrated AI engine (Forti) evaluates learning velocity, domain depth, topic diversity, and leadership qualities from candidate writings; HRs search candidates across all professions using keyword filters backed by Typesense, chat interactively with candidate profiles via Forti AI, with video-ad monetization after every 2 searches; and candidates and HRs network via connections and real-time chat.*
+> *An all-inclusive, universal professional portfolio and talent discovery platform for **anyone and everyone** across all professions, backgrounds, specialties, and education paths (engineering, design, medicine, law, finance, science, research, marketing, education, operations, and more) where candidates create showcase profiles, verify domain skills, write specialty learning blogs, generate pixel-perfect PDF resumes, ingest resumes via AI Resume OCR, illustrate ideas via Draw Your Imagination, refine writing with AI while preserving authentic input evaluation, practice with adaptive AI Interviews, and share tracked resume/blog links; an integrated AI engine (Forti) evaluates learning velocity, domain depth, topic diversity, and leadership qualities strictly based on candidate authentic inputs; HRs search candidates across all professions using keyword filters backed by Typesense, chat interactively with candidate profiles via Forti AI, with video-ad monetization after every 2 searches; and candidates and HRs network via connections and real-time chat.*
 
 ### 2.1. Non-Core Modules & Retention Policy
 
@@ -185,10 +185,11 @@ fortlio-ui/
 |:---:|:---|:---|:---|
 | **P1** | **F01** | **Auth & Session Management** | Required first: Provides JWT credentials, user roles, and Redis sessions needed by all other modules. |
 | **P2** | **F02** | **User Account & RBAC** | Identity: Handles user profiles, role enforcement (`candidate` vs `hr`), and search quota coin counters. |
-| **P3** | **F03** | **Candidate Profile & Resume Builder** | Core Showcase: Builds candidate profile, skills matrix, and PDF resume generator. |
-| **P4** | **F04** | **Candidate Blogs & Knowledge** | Content Engine: Enables markdown blogs; serves as raw input feeding Forti AI insights. |
+| **P3** | **F03** | **Candidate Profile, Resume & AI Resume OCR** | Core Showcase: Builds candidate profile, skills matrix, PDF resume generator, and OCR ingestion of existing PDF/image resumes. |
+| **P4** | **F04** | **Candidate Blogs, Draw Imagination & AI Improver** | Content Engine: Enables markdown blogs, visual architectural canvas ("Draw Your Imagination"), and AI writing refinement tracking authentic candidate inputs. |
 | **P5** | **F08** | **Link Shortener & Share Analytics** | Viral Distribution: Generates trackable short links for resumes & blogs with active dwell-time beacon tracking. |
-| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Asynchronously evaluates learning velocity, topic diversity, and leadership qualities from F04 blogs; powers HR profile chatbot. |
+| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Asynchronously evaluates learning velocity, topic diversity, and leadership qualities from F04 blogs **strictly judging candidates on authentic inputs**; powers HR profile chatbot. |
 | **P7** | **F05** | **HR Search & Monetization** | Discovery & Revenue: Typesense candidate search querying candidate profiles & F09 AI insights, gated by the 2-query video ad rule. |
 | **P8** | **F06** | **Connections & Notifications** | Networking: Bi-directional connection requests and notification popovers between candidates and HRs. |
 | **P9** | **F07** | **Real-Time Chat & WebSocket** | Communication: Direct 1-on-1 messaging between connected candidates and recruiters over WebSockets. |
+| **P10** | **F10** | **AI Interactive Interviews & Readiness** | Career Simulation: Adaptive, domain-specific simulated interviews across all disciplines providing candidates and HRs with detailed readiness scorecards. |

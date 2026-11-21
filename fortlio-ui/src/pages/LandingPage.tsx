@@ -3,11 +3,11 @@ import {
   FileCode,
   Sparkles,
   BookOpen,
-  Search,
   ArrowRight,
-  ShieldCheck,
   Clock,
-  FolderGit2
+  FolderGit2,
+  Palette,
+  Bot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -141,9 +141,9 @@ export default function LandingPage() {
                 <div className="size-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                   <FileCode className="size-5" />
                 </div>
-                <CardTitle className="text-lg">Markdown-to-PDF Resumes</CardTitle>
+                <CardTitle className="text-lg">Markdown-to-PDF & AI Resume OCR</CardTitle>
                 <CardDescription>
-                  Write your resume in clean markdown and export pixel-perfect, printer-ready PDFs rendered via headless Puppeteer.
+                  Write in clean markdown or ingest past resumes in seconds via AI OCR Vision extraction for pixel-perfect PDF export.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -153,9 +153,33 @@ export default function LandingPage() {
                 <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                   <BookOpen className="size-5" />
                 </div>
-                <CardTitle className="text-lg">Specialty Blogs & Case Studies</CardTitle>
+                <CardTitle className="text-lg">Specialty Blogs & AI Writing Improver</CardTitle>
                 <CardDescription>
-                  Publish domain case studies, professional analyses, and problem-solving methodologies that showcase your field expertise.
+                  Publish domain case studies with AI writing polish. Forti AI evaluates your trajectory strictly from your authentic thoughts and inputs.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-border/80 bg-card/80 backdrop-blur-sm">
+              <CardHeader className="space-y-2">
+                <div className="size-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                  <Palette className="size-5" />
+                </div>
+                <CardTitle className="text-lg">Draw Your Imagination</CardTitle>
+                <CardDescription>
+                  Interactive visual whiteboard to sketch system architectures, clinical pathways, product wireframes, and concept mindmaps.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-border/80 bg-card/80 backdrop-blur-sm">
+              <CardHeader className="space-y-2">
+                <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Bot className="size-5" />
+                </div>
+                <CardTitle className="text-lg">AI Interactive Interviews</CardTitle>
+                <CardDescription>
+                  Adaptive, domain-specific simulated interviews across all professions testing technical rigor, problem-solving, and communication.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -167,7 +191,7 @@ export default function LandingPage() {
                 </div>
                 <CardTitle className="text-lg">Forti AI Leadership Synthesis</CardTitle>
                 <CardDescription>
-                  Evaluates your learning velocity, topic diversity, and mentorship qualities automatically as you publish.
+                  Evaluates your learning velocity, topic diversity, and mentorship qualities automatically based on authentic candidate contributions.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -180,30 +204,6 @@ export default function LandingPage() {
                 <CardTitle className="text-lg">Dwell-Time Share Analytics</CardTitle>
                 <CardDescription>
                   Share short links for resumes & blogs with active telemetry tracking how long recruiters review your work.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-border/80 bg-card/80 backdrop-blur-sm">
-              <CardHeader className="space-y-2">
-                <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <Search className="size-5" />
-                </div>
-                <CardTitle className="text-lg">Recruiter Talent Discovery</CardTitle>
-                <CardDescription>
-                  Keyword and trait search powered by Typesense with fair 2-query video ad replenishments.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-border/80 bg-card/80 backdrop-blur-sm">
-              <CardHeader className="space-y-2">
-                <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <ShieldCheck className="size-5" />
-                </div>
-                <CardTitle className="text-lg">Privacy & Contact Masking</CardTitle>
-                <CardDescription>
-                  Full privacy controls protecting your phone and email from unauthorized scrapers and unverified accounts.
                 </CardDescription>
               </CardHeader>
             </Card>

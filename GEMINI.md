@@ -2,8 +2,10 @@
 
 ## 1. Project Overview & Mission
 **Fortlio** is an all-inclusive, universal professional portfolio and recruitment discovery platform for **anyone and everyone** across all professions, backgrounds, specialties, and education paths (engineering, design, medicine, law, finance, science, research, marketing, education, operations, and beyond) where:
-- **Candidates & Professionals** create rich showcase profiles across their respective professions and education backgrounds, showcase verified domain skills, publish markdown specialty blogs sharing their knowledge and deep domain expertise, export pixel-perfect PDF resumes generated from Markdown, and share trackable short links to their portfolios and articles with real-time visitor count and dwell-time analytics.
+- **Candidates & Professionals** create rich showcase profiles across their respective professions and education backgrounds, showcase verified domain skills, publish markdown specialty blogs sharing their knowledge and deep domain expertise, export pixel-perfect PDF resumes generated from Markdown, ingest existing resumes seamlessly via **AI Resume OCR**, visually illustrate complex concepts using **Draw Your Imagination** (interactive canvas/whiteboard), and share trackable short links to their portfolios and articles with real-time visitor count and dwell-time analytics.
+- **Improve Your Blog with AI & Authentic Input Evaluation**: Candidates can refine their writing with an integrated AI writing assistant, while the **Forti AI Engine** strictly evaluates candidates based on their **authentic inputs, original thoughts, and problem-solving trajectory**, rather than synthetic generated text.
 - **AI-Powered Candidate Insights & Leadership Detection (Forti Engine)**: Automatically synthesizes candidate progression, learning velocity, knowledge breadth/depth, and leadership qualities whenever a specialty blog is published, enabling HRs and recruiters to discover talent based on mindset, domain mastery, and intellectual trajectory.
+- **AI Interactive Interviews**: Adaptive, domain-specific simulated interviews across all professions (system architecture, clinical cases, legal hypotheticals, design reviews, financial models) providing real-time evaluation reports for candidates and recruiters.
 - **HRs & Recruiters** discover talent across diverse backgrounds, professions, and education credentials using keyword and skill-based search powered by Typesense, chat interactively with candidate profiles via the Forti AI chatbot, and evaluate candidates with full privacy controls.
 - **Monetization** is enforced via video ads: recruiters receive 2 searches before being required to watch a video ad (`/user/watch-ad`) to replenish search quota.
 - **Networking** is facilitated through bi-directional connection requests, real-time 1-on-1 chat (WebSocket), and in-app notifications.
@@ -64,13 +66,14 @@
 |:---:|:---|:---|:---|:---|
 | **F01** | Authentication & Session Management | `fortlio-be/src/modules/auth/` | `fortlio-ui/src/features/auth/` | [`docs/F01.md`](file:///home/ashit/neo-services/docs/F01.md) |
 | **F02** | User Account & RBAC (Roles & Privileges) | `fortlio-be/src/modules/user/`, `role/` | `fortlio-ui/src/features/user/` | [`docs/F02.md`](file:///home/ashit/neo-services/docs/F02.md) |
-| **F03** | Candidate Profile & Resume Generator (MD-to-PDF) | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/candidate/` | [`docs/F03.md`](file:///home/ashit/neo-services/docs/F03.md) |
-| **F04** | Candidate Blogs & Knowledge Showcase | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/blogs/` | [`docs/F04.md`](file:///home/ashit/neo-services/docs/F04.md) |
+| **F03** | Candidate Profile, Resume Generator (MD-to-PDF) & AI Resume OCR | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/candidate/` | [`docs/F03.md`](file:///home/ashit/neo-services/docs/F03.md) |
+| **F04** | Candidate Blogs, Knowledge Showcase, Draw Your Imagination & AI Blog Improver | `fortlio-be/src/modules/candidate/` | `fortlio-ui/src/features/blogs/` | [`docs/F04.md`](file:///home/ashit/neo-services/docs/F04.md) |
 | **F05** | HR Search Engine & Video Ad Monetization | `fortlio-be/src/modules/hr/` | `fortlio-ui/src/features/hr/` | [`docs/F05.md`](file:///home/ashit/neo-services/docs/F05.md) |
 | **F06** | Connections & Notification System | `fortlio-be/src/modules/connection/` | `fortlio-ui/src/features/connections/`| [`docs/F06.md`](file:///home/ashit/neo-services/docs/F06.md) |
 | **F07** | Real-Time & Stored Chat Messaging | `fortlio-be/src/modules/connection/` | `fortlio-ui/src/features/chat/` | [`docs/F07.md`](file:///home/ashit/neo-services/docs/F07.md) |
 | **F08** | Link Shortener & Share Analytics (Resume & Blog Previews) | `fortlio-be/src/modules/link-shortener/` | `fortlio-ui/src/features/shortener/` | [`docs/F08.md`](file:///home/ashit/neo-services/docs/F08.md) |
-| **F09** | Forti AI Engine (Insights, Leadership & HR Chatbot) | `fortlio-be/src/modules/forti/` | `fortlio-ui/src/features/forti/` | [`docs/F09.md`](file:///home/ashit/neo-services/docs/F09.md) |
+| **F09** | Forti AI Engine (Authentic Input Evaluation, Insights, Leadership & HR Chatbot) | `fortlio-be/src/modules/forti/` | `fortlio-ui/src/features/forti/` | [`docs/F09.md`](file:///home/ashit/neo-services/docs/F09.md) |
+| **F10** | AI Interactive Interviews & Domain Readiness Evaluation | `fortlio-be/src/modules/interview/` | `fortlio-ui/src/features/interview/` | [`docs/F10.md`](file:///home/ashit/neo-services/docs/F10.md) |
 | **AUDIT** | Backend Audit & Frontend Revamp Guide | Architecture & Deprecations | UI Revamp & Shadcn Setup | [`docs/AUDIT_AND_REVAMP.md`](file:///home/ashit/neo-services/docs/AUDIT_AND_REVAMP.md) |
 
 ---
@@ -83,14 +86,15 @@
 |:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟢 85% | 🟢 100% | 🟢 100% | **97%** |
 | **F02** | User & RBAC Management | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
-| **F03** | Candidate Profile & MD-to-PDF | 🟢 100% | 🟢 100% | 🟢 100% | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
-| **F04** | Candidate Blogs & Knowledge | 🟢 100% | 🟢 90% | N/A | 🟡 60% | 🟢 80% | 🔴 0% | **66%** |
+| **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟢 90% | 🟢 90% | 🟢 100% | 🟢 90% | 🟢 100% | 🟢 100% | **95%** |
+| **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
 | **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 90% | 🟢 100% | 🔴 15% | 🟢 100% | 🔴 0% | **67%** |
 | **F06** | Connections & Notifications | 🟢 100% | 🟢 90% | N/A | 🟡 40% | 🟢 100% | 🔴 0% | **66%** |
 | **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
 | **F08** | Link Shortener & Share Analytics | 🟢 85% | 🟡 60% | N/A | 🔴 20% | 🟢 100% | 🔴 0% | **52%** |
-| **F09** | Forti AI Engine & Profile Chatbot | 🟡 35% | 🔴 20% | 🔴 20% | 🔴 0% | 🔴 0% | 🔴 0% | **22%** |
-| **Total** | **Fortlio Platform Master** | **90%** | **82%** | **70%** | **51%** | **84%** | **33%** | **70%** |
+| **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟡 35% | 🔴 20% | 🔴 20% | 🔴 0% | 🔴 0% | 🔴 0% | **22%** |
+| **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
+| **Total** | **Fortlio Platform Master** | **80%** | **73%** | **64%** | **48%** | **78%** | **40%** | **66%** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
 
@@ -104,13 +108,14 @@ To maximize token efficiency, eliminate rework, and respect cross-module depende
 |:---:|:---|:---|:---|
 | **P1** | **F01** | **Auth & Session Management** | Foundation: Establishes JWT tokens, Redis sessions, and candidate/HR identity required by all other endpoints. |
 | **P2** | **F02** | **User Account & RBAC** | Identity: Manages user roles (`candidate` vs `hr`), privileges, and the video ad-watch coin counter. |
-| **P3** | **F03** | **Candidate Profile & Resume (MD-to-PDF)** | Core Showcase: Builds the candidate portfolio, skills matrix, and PDF resume generator. |
-| **P4** | **F04** | **Candidate Blogs & Knowledge** | Content Engine: Enables markdown publishing; acts as the primary data source feeding AI insight synthesis. |
+| **P3** | **F03** | **Candidate Profile, Resume (MD-to-PDF) & AI Resume OCR** | Core Showcase: Builds candidate portfolio, skills matrix, PDF resume generator, and PDF/image OCR ingestion for instant profile population. |
+| **P4** | **F04** | **Candidate Blogs, Draw Imagination & AI Blog Improver** | Content Engine: Enables markdown publishing, visual architecture drawing with interactive canvas, and AI writing refinement while tracking authentic inputs. |
 | **P5** | **F08** | **Link Shortener & Share Analytics** | Viral Distribution: Generates trackable links for resumes & blog previews with active dwell-time beacon tracking. |
-| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Consumes F04 blogs to synthesize learning velocity, topic diversity, and leadership qualities; powers the HR profile Q&A chatbot. |
+| **P6** | **F09** | **Forti AI Engine & HR Chatbot** | Intelligence: Consumes F04 blogs to synthesize learning velocity, topic diversity, and leadership qualities **judging candidates strictly on authentic inputs**; powers HR profile Q&A chatbot. |
 | **P7** | **F05** | **HR Search & Monetization** | Discovery & Revenue: Recruiter candidate search querying Typesense candidate records & F09 AI insights, gated by the 2-query video ad rule. |
 | **P8** | **F06** | **Connections & Notifications** | Networking: Bi-directional connection requests and notification popovers between candidates and HRs. |
 | **P9** | **F07** | **Real-Time Chat & WebSocket** | Communication: Direct 1-on-1 messaging between connected candidates and recruiters over WebSockets. |
+| **P10** | **F10** | **AI Interactive Interviews & Domain Readiness** | Career & Readiness: Adaptive simulated AI interviews across all disciplines providing candidates and HRs with detailed domain mastery and leadership scorecards. |
 
 ---
 
