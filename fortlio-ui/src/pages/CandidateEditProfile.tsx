@@ -1,488 +1,347 @@
-import { useEffect, useState } from "react";
-import { User, Globe, X } from "lucide-react";
-import { useParams, useNavigate } from "react-router-dom";
-import api from "../api/api";
-import { useTheme } from "../contexts/ThemeContext";
-
-interface CandidateProfile {
-  fullName: string;
-  email: string;
-  mobile: string;
-  experience: string;
-  github: string;
-  linkedin: string;
-  portfolio: string;
-  resume: string;
-  bio: string;
-}
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Save, Plus, X, User, Globe, Check, Briefcase } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { PROFESSIONS_TAXONOMY, INDUSTRIES_LIST, EDUCATION_LEVELS } from "@/constants/taxonomy";
 
 export default function CandidateEditProfile() {
-  const { id } = useParams();
   const navigate = useNavigate();
-  const { isDark } = useTheme();
+  const { user, updateUser } = useAuth();
 
-  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState(user?.fullName || "Alex Mercer");
+  const [headline, setHeadline] = useState("Staff Systems Engineer & Distributed Architect");
+  const [location, setLocation] = useState("San Francisco, CA (Open to Remote)");
+  const [bio, setBio] = useState(
+    "Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling."
+  );
+  const [selectedCategory, setSelectedCategory] = useState("tech-software");
+  const [industry, setIndustry] = useState("Technology & Software");
+  const [educationLevel, setEducationLevel] = useState("Bachelor's Degree (BA / BS / BFA / B.Tech / BBA)");
 
-  const [profile, setProfile] = useState<CandidateProfile>({
-    fullName: "",
-    email: "",
-    mobile: "",
-    experience: "",
-    github: "",
-    linkedin: "",
-    portfolio: "",
-    resume: "",
-    bio: "",
-  });
-
+  const [skills, setSkills] = useState<string[]>([
+    "TypeScript", "Go", "Distributed Systems", "Kubernetes", "Kafka",
+    "MongoDB Aggregations", "Redis", "Bun"
+  ]);
   const [skillInput, setSkillInput] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
+  const [github, setGithub] = useState("https://github.com/alexmercer");
+  const [linkedin, setLinkedin] = useState("https://linkedin.com/in/alexmercer");
+  const [website, setWebsite] = useState("https://alexmercer.dev");
 
-  useEffect(() => {
-    fetchCandidate();
-  }, []);
+  const [isSaved, setIsSaved] = useState(false);
 
-  const fetchCandidate = async () => {
-    try {
-      setLoading(true);
+  const currentCategory = PROFESSIONS_TAXONOMY.find((c) => c.id === selectedCategory) || PROFESSIONS_TAXONOMY[0];
 
-      const res = await api.get(`/candidate/${id}`);
-
-      const data = res.data;
-
-      setProfile({
-        fullName: data.fullName || "",
-        email: data.email || "",
-        mobile: data.mobile || "",
-        experience: data.experience?.toString() || "",
-        github: data.github || "",
-        linkedin: data.linkedin || "",
-        portfolio: data.portfolio || "",
-        resume: data.resume || "",
-        bio: data.bio || "",
-      });
-
-      setSkills(data.skills || []);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+  const handleAddSkill = () => {
+    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
+      setSkills([...skills, skillInput.trim()]);
+      setSkillInput("");
     }
   };
 
-  const addSkill = () => {
-    if (!skillInput.trim()) return;
-
-    if (skills.includes(skillInput.trim())) return;
-
-    setSkills([...skills, skillInput.trim()]);
-    setSkillInput("");
+  const handleRemoveSkill = (skillToRemove: string) => {
+    setSkills(skills.filter((s) => s !== skillToRemove));
   };
 
-  const removeSkill = (skill: string) => {
-    setSkills(skills.filter((s) => s !== skill));
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUser({ fullName });
+    setIsSaved(true);
+    setTimeout(() => {
+      navigate("/candidate-profile");
+    }, 1500);
   };
-
-  const handleUpdate = async () => {
-    try {
-      await api.put(`/candidate/${id}`, {
-        ...profile,
-        skills,
-      });
-
-      alert("Profile Updated Successfully");
-    } catch (error) {
-      console.log(error);
-      alert("Failed to update profile");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className={`min-h-screen flex justify-center items-center transition-colors duration-300 ${
-        isDark ? 'bg-gray-900' : 'bg-[#f7f8fc]'
-      }`}>
-        <div className={`text-lg font-medium transition-colors duration-300 ${
-          isDark ? 'text-gray-400' : 'text-gray-500'
-        }`}>
-          Loading Profile...
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDark ? 'bg-gray-900' : 'bg-[#f7f8fc]'
-    }`}>
-      <div className="px-10 py-8">
-        {/* PAGE TITLE */}
-        <div className="flex justify-center mb-8">
-          <h1 className={`text-[40px] font-semibold transition-colors duration-300 ${
-            isDark ? 'text-white' : 'text-[#0f172a]'
-          }`}>
-            Edit Candidate Profile
-          </h1>
-        </div>
+    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in-50 duration-300">
+      {/* Top action bar */}
+      <div className="flex items-center justify-between border-b border-border/80 pb-5">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/candidate-profile")}
+          className="gap-2 text-xs font-medium cursor-pointer"
+        >
+          <ArrowLeft className="size-4" />
+          Back to Profile
+        </Button>
 
-        <div className={`rounded-[24px] border shadow-sm p-8 transition-colors duration-300 ${
-          isDark 
-            ? 'bg-gray-800 border-gray-700' 
-            : 'bg-white border-gray-100'
-        }`}>
-          <div className="flex items-center gap-3 mb-8">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
-              isDark ? 'bg-purple-900/30' : 'bg-purple-100'
-            }`}>
-              <User
-                size={22}
-                className={`transition-colors duration-300 ${
-                  isDark ? 'text-purple-400' : 'text-purple-600'
-                }`}
-              />
-            </div>
+        <h1 className="text-xl font-bold text-foreground">Edit Candidate Profile</h1>
 
-            <h2 className={`text-[24px] font-semibold transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-[#0f172a]'
-            }`}>
-              Basic Information
-            </h2>
-          </div>
+        <Button
+          type="button"
+          onClick={handleSave}
+          className="gap-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer shadow-sm"
+        >
+          {isSaved ? <Check className="size-4 text-emerald-400" /> : <Save className="size-4" />}
+          {isSaved ? "Saved!" : "Save Changes"}
+        </Button>
+      </div>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Full Name <span className="text-red-500">*</span>
-              </label>
+      <form onSubmit={handleSave} className="space-y-6">
+        {/* Core Identity Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <User className="size-4 text-primary" />
+              General Information
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Primary profile details visible on your public portfolio page.
+            </CardDescription>
+          </CardHeader>
 
-              <input
-                value={profile.fullName}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    fullName: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Email <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                value={profile.email}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    email: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Mobile Number
-              </label>
-
-              <input
-                value={profile.mobile}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    mobile: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Experience (Years)
-              </label>
-
-              <input
-                value={profile.experience}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    experience: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* SKILLS */}
-          <div className="mt-6">
-            <label className={`block text-lg font-medium mb-3 transition-colors duration-300 ${
-              isDark ? 'text-gray-200' : ''
-            }`}>
-              Skills
-            </label>
-
-            <div className={`flex items-center gap-3 border rounded-xl px-3 py-2 min-h-[60px] transition-colors duration-300 ${
-              isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'
-            }`}>
-              <div className="flex flex-wrap gap-2 flex-1">
-                {skills.map((skill) => (
-                  <div
-                    key={skill}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-lg font-medium transition-colors duration-300 ${
-                      isDark 
-                        ? 'bg-purple-900/30 text-purple-300' 
-                        : 'bg-purple-100 text-purple-700'
-                    }`}
-                  >
-                    {skill}
-
-                    <button
-                      type="button"
-                      onClick={() => removeSkill(skill)}
-                      className={isDark ? 'text-purple-300 hover:text-purple-200' : 'text-purple-700 hover:text-purple-900'}
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-
-                <input
-                  value={skillInput}
-                  onChange={(e) =>
-                    setSkillInput(e.target.value)
-                  }
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && addSkill()
-                  }
-                  placeholder="Add a skill (e.g., Python)"
-                  className={`flex-1 min-w-[180px] outline-none py-2 transition-colors duration-300 ${
-                    isDark 
-                      ? 'bg-gray-700 text-white placeholder-gray-400' 
-                      : 'bg-white text-gray-800 placeholder-gray-400'
-                  }`}
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName" className="text-xs font-medium">Full Name</Label>
+                <Input
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Alex Mercer"
+                  required
                 />
               </div>
 
-              <button
+              <div className="space-y-1.5">
+                <Label htmlFor="headline" className="text-xs font-medium">Professional Headline</Label>
+                <Input
+                  id="headline"
+                  value={headline}
+                  onChange={(e) => setHeadline(e.target.value)}
+                  placeholder="e.g. Senior Full Stack Engineer"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="location" className="text-xs font-medium">Location</Label>
+              <Input
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. San Francisco, CA (Open to Remote)"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="bio" className="text-xs font-medium">About / Bio</Label>
+              <textarea
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={4}
+                className="w-full rounded-lg border border-input bg-background p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                placeholder="Describe your domain expertise, analytical philosophy, and what kind of roles or collaborations you are seeking..."
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Professional Specialty, Industry & Education Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Briefcase className="size-4 text-primary" />
+              Specialty, Industry & Education
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Universal taxonomy indexing your profile for recruiter discovery across all disciplines.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="category" className="text-xs font-medium">Field / Profession</Label>
+                <select
+                  id="category"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {PROFESSIONS_TAXONOMY.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="industry" className="text-xs font-medium">Industry</Label>
+                <select
+                  id="industry"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {INDUSTRIES_LIST.map((ind) => (
+                    <option key={ind} value={ind}>
+                      {ind}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="education" className="text-xs font-medium">Highest Education</Label>
+                <select
+                  id="education"
+                  value={educationLevel}
+                  onChange={(e) => setEducationLevel(e.target.value)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {EDUCATION_LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {lvl}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Quick Suggestions from selected category */}
+            <div className="space-y-1.5 pt-2 border-t border-border/50">
+              <span className="text-xs text-muted-foreground font-medium">
+                Suggested specialties for {currentCategory.name} (click to add):
+              </span>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {currentCategory.specialties.map((spec) => (
+                  <button
+                    key={spec}
+                    type="button"
+                    onClick={() => {
+                      if (!skills.includes(spec)) {
+                        setSkills([...skills, spec]);
+                      }
+                    }}
+                    className="text-[11px] px-2 py-0.5 rounded-full bg-muted hover:bg-primary/10 hover:text-primary border border-border/60 transition-colors cursor-pointer"
+                  >
+                    + {spec}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Verified Skills & Specialties Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Verified Skills & Specialties</CardTitle>
+            <CardDescription className="text-xs">
+              Add domain disciplines, methodologies, clinical or system tools you specialize in.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Input
+                value={skillInput}
+                onChange={(e) => setSkillInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddSkill();
+                  }
+                }}
+                placeholder="Add skill or specialty (e.g. Distributed Systems, Clinical Research, Corporate Law) and press Enter"
+                className="text-xs h-10"
+              />
+              <Button
                 type="button"
-                onClick={addSkill}
-                className={`h-12 px-6 text-xl rounded-xl border-2 font-semibold transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-purple-400 text-purple-400 hover:bg-purple-600 hover:text-white' 
-                    : 'border-purple-500 text-purple-600 hover:bg-purple-600 hover:text-white'
-                }`}
+                variant="outline"
+                size="sm"
+                onClick={handleAddSkill}
+                className="h-10 text-xs gap-1.5 font-medium shrink-0 cursor-pointer"
               >
+                <Plus className="size-4" />
                 Add
-              </button>
+              </Button>
             </div>
-          </div>
 
-          <div className={`border-t my-8 transition-colors duration-300 ${
-            isDark ? 'border-gray-700' : 'border-gray-200'
-          }`} />
+            <div className="flex flex-wrap gap-2 pt-2">
+              {skills.map((skill) => (
+                <Badge
+                  key={skill}
+                  variant="secondary"
+                  className="gap-1.5 py-1 px-3 text-xs font-medium"
+                >
+                  {skill}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSkill(skill)}
+                    className="hover:text-destructive transition-colors ml-0.5 cursor-pointer"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* ONLINE PRESENCE */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${
-              isDark ? 'bg-purple-900/30' : 'bg-purple-100'
-            }`}>
-              <Globe
-                size={20}
-                className={`transition-colors duration-300 ${
-                  isDark ? 'text-purple-400' : 'text-purple-600'
-                }`}
+        {/* Social Links Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Portfolio & Social Profiles</CardTitle>
+            <CardDescription className="text-xs">
+              Link external repositories and profiles.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="github" className="text-xs font-medium flex items-center gap-1.5">
+                <Globe className="size-3.5" />
+                GitHub Profile URL
+              </Label>
+              <Input
+                id="github"
+                type="url"
+                value={github}
+                onChange={(e) => setGithub(e.target.value)}
+                placeholder="https://github.com/username"
               />
             </div>
 
-            <h2 className={`text-[24px] font-semibold transition-colors duration-300 ${
-              isDark ? 'text-white' : 'text-[#0f172a]'
-            }`}>
-              Online Presence
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                GitHub URL
-              </label>
-
-              <input
-                value={profile.github}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    github: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
+            <div className="space-y-1.5">
+              <Label htmlFor="linkedin" className="text-xs font-medium flex items-center gap-1.5">
+                <Globe className="size-3.5" />
+                LinkedIn Profile URL
+              </Label>
+              <Input
+                id="linkedin"
+                type="url"
+                value={linkedin}
+                onChange={(e) => setLinkedin(e.target.value)}
+                placeholder="https://linkedin.com/in/username"
               />
             </div>
 
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                LinkedIn URL
-              </label>
-
-              <input
-                value={profile.linkedin}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    linkedin: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
+            <div className="space-y-1.5">
+              <Label htmlFor="website" className="text-xs font-medium flex items-center gap-1.5">
+                <Globe className="size-3.5" />
+                Personal Portfolio or Website
+              </Label>
+              <Input
+                id="website"
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://myportfolio.dev"
               />
             </div>
-
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Portfolio URL
-              </label>
-
-              <input
-                value={profile.portfolio}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    portfolio: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-lg font-medium mb-2 transition-colors duration-300 ${
-                isDark ? 'text-gray-200' : ''
-              }`}>
-                Resume URL
-              </label>
-
-              <input
-                value={profile.resume}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    resume: e.target.value,
-                  })
-                }
-                className={`w-full h-14 px-4 rounded-xl border outline-none transition-colors duration-300 ${
-                  isDark 
-                    ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                    : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-                }`}
-              />
-            </div>
-          </div>
-
-          <div className={`border-t my-8 transition-colors duration-300 ${
-            isDark ? 'border-gray-700' : 'border-gray-200'
-          }`} />
-
-          {/* BIO */}
-          <div>
-            <label className={`block text-[24px] font-medium mb-2 transition-colors duration-300 ${
-              isDark ? 'text-gray-200' : ''
-            }`}>
-              Bio
-            </label>
-
-            <textarea
-              rows={5}
-              maxLength={2000}
-              value={profile.bio}
-              onChange={(e) =>
-                setProfile({
-                  ...profile,
-                  bio: e.target.value,
-                })
-              }
-              className={`w-full rounded-2xl border p-4 resize-none outline-none transition-colors duration-300 ${
-                isDark 
-                  ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                  : 'border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-              }`}
-            />
-
-            <p className={`text-lg mt-2 transition-colors duration-300 ${
-              isDark ? 'text-gray-400' : 'text-gray-400'
-            }`}>
-              {profile.bio.length}/2000 characters
-            </p>
-          </div>
-
-          {/* BUTTONS */}
-          <div className="grid grid-cols-2 gap-6 mt-10">
-            <button
-              onClick={() => navigate(-1)}
-              className={`h-14 text-[22px] rounded-xl border font-semibold transition-colors duration-300 ${
-                isDark 
-                  ? 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white' 
-                  : 'border-gray-300 text-gray-700 hover:bg-indigo-950 hover:text-white'
-              }`}
-            >
-              Cancel
-            </button>
-
-            <button
-              onClick={handleUpdate}
-              className="h-14 text-[22px] rounded-xl text-white font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg hover:from-indigo-950 hover:to-purple-600 transition"
-            >
-              Update Profile
-            </button>
-          </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+      </form>
     </div>
   );
 }

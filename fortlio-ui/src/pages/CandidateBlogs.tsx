@@ -1,266 +1,211 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Search,
   Plus,
-  Calendar,
-  MoreVertical,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  PenSquare,
+  Clock,
+  Sparkles,
+  ChevronRight
 } from "lucide-react";
-import { useTheme } from "../contexts/ThemeContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+
+interface BlogArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  author: string;
+  fortiAnalysisScore?: number;
+}
+
+const sampleBlogs: BlogArticle[] = [
+  {
+    id: "1",
+    title: "Optimizing MongoDB Pipelines with Post-Facet Slicing & Lookups",
+    excerpt: "Deep dive into mongo.helper patterns: running $lookup stages after $match, $sort, $skip, and $limit to avoid unneeded full collection joins.",
+    date: "November 18, 2026",
+    readTime: "7 min read",
+    tags: ["Engineering", "MongoDB", "Performance", "Databases"],
+    author: "Alex Mercer",
+    fortiAnalysisScore: 96,
+  },
+  {
+    id: "2",
+    title: "Clinical Decision Support Systems: Evaluating Diagnostic Precision & Latency",
+    excerpt: "Investigating how Bayesian diagnostic frameworks reduce missed early-stage symptoms in emergency triage workflows.",
+    date: "November 04, 2026",
+    readTime: "8 min read",
+    tags: ["Healthcare", "Clinical Medicine", "Biomedical"],
+    author: "Dr. Elena Rostova",
+    fortiAnalysisScore: 94,
+  },
+  {
+    id: "3",
+    title: "Intellectual Property Strategies in Generative AI Model Training",
+    excerpt: "Legal analysis of fair use boundaries, transformative licensing precedents, and collective bargaining agreements in synthetic media.",
+    date: "October 22, 2026",
+    readTime: "11 min read",
+    tags: ["Legal", "Intellectual Property", "AI Ethics", "Regulatory"],
+    author: "Marcus Vance, JD",
+    fortiAnalysisScore: 91,
+  },
+  {
+    id: "4",
+    title: "Design Systems at Scale: Token Architecture and Usability Testing",
+    excerpt: "How semantic design tokens bridge Figma variables and React Tailwind tokens across multi-brand enterprise platforms.",
+    date: "October 12, 2026",
+    readTime: "6 min read",
+    tags: ["Design", "UI/UX", "Design Systems", "Accessibility"],
+    author: "Sophia Chen",
+    fortiAnalysisScore: 89,
+  },
+  {
+    id: "5",
+    title: "Algorithmic Risk Underwriting: Real-time Variance in Credit Portfolios",
+    excerpt: "Mathematical modeling of systemic macro risks, dynamic liquidity adjustments, and non-performing loan forecasts.",
+    date: "September 28, 2026",
+    readTime: "9 min read",
+    tags: ["Finance", "Quantitative Finance", "Risk Modeling"],
+    author: "David Sterling, CFA",
+    fortiAnalysisScore: 93,
+  },
+];
 
 export default function CandidateBlogs() {
-  const { isDark } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const blogs = [
-    {
-      id: 1,
-      title: "Understanding Cloud Architecture",
-      description:
-        "A comprehensive guide to cloud architecture principles, best practices, and modern cloud solutions.",
-      status: "Published",
-      date: "May 15, 2024",
-      tags: ["Cloud", "AWS", "DevOps", "Architecture"],
-    },
-    {
-      id: 2,
-      title: "Building Scalable React Applications",
-      description:
-        "Best practices and architecture patterns for building large-scale React applications.",
-      status: "Published",
-      date: "May 10, 2024",
-      tags: ["React", "JavaScript", "Web Development", "Frontend"],
-    },
-    {
-      id: 3,
-      title: "TypeScript Tips and Best Practices",
-      description:
-        "Essential TypeScript tips that will help you write better, more maintainable code.",
-      status: "Draft",
-      date: "May 08, 2024",
-      tags: ["TypeScript", "JavaScript", "Best Practices"],
-    },
-    {
-      id: 4,
-      title: "Getting Started with Next.js",
-      description:
-        "A beginner's guide to Next.js framework and building modern web applications.",
-      status: "Draft",
-      date: "May 05, 2024",
-      tags: ["Next.js", "React", "JavaScript", "Web Development"],
-    },
-  ];
+  const allTags = Array.from(new Set(sampleBlogs.flatMap((b) => b.tags)));
+
+  const filteredBlogs = sampleBlogs.filter((blog) => {
+    const matchesSearch =
+      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTag = selectedTag ? blog.tags.includes(selectedTag) : true;
+    return matchesSearch && matchesTag;
+  });
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 p-8 ${
-      isDark ? 'bg-gray-900' : 'bg-[#f7f8fc]'
-    }`}>
-      <div className="flex items-start justify-between mb-10">
-        <div className="flex items-center gap-4">
-          <h1 className={`text-[40px] font-semibold transition-colors duration-300 ${
-            isDark ? 'text-white' : 'text-[#0f172a]'
-          }`}>
-            My Blogs
-          </h1>
-        </div>
-
-        <button className="h-14 px-8 rounded-xl text-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold flex items-center gap-3 shadow-md hover:from-purple-700 hover:to-indigo-700 transition">
-          <Plus size={20} />
-          Create New Blog
-        </button>
-      </div>
-
-      {/* Tabs */}
-      <div className={`flex items-center gap-10 border-b mb-6 transition-colors duration-300 ${
-        isDark ? 'border-gray-700' : 'border-gray-200'
-      }`}>
-        <button className={`pb-4 border-b-2 font-semibold transition-colors duration-300 ${
-          isDark 
-            ? 'border-purple-400 text-purple-400' 
-            : 'border-purple-600 text-purple-600'
-        }`}>
-          All Blogs
-        </button>
-
-        <button className={`pb-4 font-medium transition-colors duration-300 ${
-          isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
-        }`}>
-          Published
-        </button>
-
-        <button className={`pb-4 font-medium transition-colors duration-300 ${
-          isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
-        }`}>
-          Drafts
-        </button>
-      </div>
-
-      {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search
-            size={20}
-            className={`absolute right-5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-              isDark ? 'text-gray-400' : 'text-gray-400'
-            }`}
-          />
-
-          <input
-            placeholder="Search blogs by title, content or keywords..."
-            className={`w-full h-14 rounded-xl border px-5 outline-none transition-colors duration-300 ${
-              isDark 
-                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-purple-500' 
-                : 'border-gray-200 bg-white text-gray-800 placeholder-gray-400 focus:border-purple-500'
-            }`}
-          />
-        </div>
-
-        <button className={`w-[190px] h-14 rounded-xl border flex items-center justify-between px-5 transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          <span>All Status</span>
-          <ChevronDown size={18} />
-        </button>
-
-        <button className={`w-[190px] h-14 rounded-xl border flex items-center justify-between px-5 transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          <span>Latest First</span>
-          <ChevronDown size={18} />
-        </button>
-      </div>
-
-      {/* Blog List */}
-      <div className="space-y-4">
-        {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className={`rounded-2xl border p-6 transition-colors duration-300 ${
-              isDark 
-                ? 'bg-gray-800 border-gray-700' 
-                : 'bg-white border-gray-200'
-            }`}
-          >
-            <div className="flex justify-between">
-              {/* Left */}
-              <div className="flex-1 pr-10">
-                <h2 className={`text-[28px] font-semibold mb-2 transition-colors duration-300 ${
-                  isDark ? 'text-white' : 'text-[#0f172a]'
-                }`}>
-                  {blog.title}
-                </h2>
-
-                <p className={`text-lg leading-8 mb-5 max-w-[900px] transition-colors duration-300 ${
-                  isDark ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  {blog.description}
-                </p>
-
-                <div className="flex flex-wrap gap-3">
-                  {blog.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
-                        isDark 
-                          ? 'bg-purple-900/30 text-purple-300' 
-                          : 'bg-purple-100 text-purple-700'
-                      }`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right */}
-              <div className={`w-[230px] border-l pl-6 flex flex-col gap-5 transition-colors duration-300 ${
-                isDark ? 'border-gray-700' : 'border-gray-200'
-              }`}>
-                <span
-                  className={`w-fit px-3 py-1 rounded-lg text-sm font-medium transition-colors duration-300 ${
-                    blog.status === "Published"
-                      ? isDark 
-                        ? 'bg-green-900/30 text-green-300' 
-                        : 'bg-green-100 text-green-700'
-                      : isDark
-                        ? 'bg-orange-900/30 text-orange-300'
-                        : 'bg-orange-100 text-orange-700'
-                  }`}
-                >
-                  {blog.status}
-                </span>
-                
-                <div className={`flex items-center gap-3 transition-colors duration-300 ${
-                  isDark ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  <Calendar size={18} />
-                  <span>{blog.date}</span>
-                </div>
-              </div>
-            </div>
+    <div className="space-y-8 animate-in fade-in-50 duration-300">
+      {/* Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/80 pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+              Specialty Blogs & Knowledge Showcase
+            </h1>
+            <Badge variant="outline" className="gap-1 text-xs">
+              <Sparkles className="size-3 text-purple-500" />
+              Forti Evaluated
+            </Badge>
           </div>
-        ))}
+          <p className="text-sm text-muted-foreground">
+            Publish domain insights and research demonstrating problem-solving judgment, analytical thinking, and learning velocity across any profession.
+          </p>
+        </div>
+
+        <Link to="/editor">
+          <Button className="font-semibold gap-2 shadow-md bg-purple-600 hover:bg-purple-700 text-white cursor-pointer">
+            <Plus className="size-4" />
+            Write New Blog
+          </Button>
+        </Link>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-8 gap-3">
-        <button className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          <ChevronLeft />
-        </button>
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search articles by title, keywords or concepts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-10 w-full rounded-xl"
+          />
+        </div>
 
-        <button className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold">
-          1
-        </button>
+        {/* Tag pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          <Button
+            size="sm"
+            variant={selectedTag === null ? "default" : "outline"}
+            className="text-xs h-9 rounded-lg"
+            onClick={() => setSelectedTag(null)}
+          >
+            All Topics
+          </Button>
+          {allTags.map((tag) => (
+            <Button
+              key={tag}
+              size="sm"
+              variant={selectedTag === tag ? "default" : "outline"}
+              className="text-xs h-9 rounded-lg shrink-0"
+              onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+            >
+              #{tag}
+            </Button>
+          ))}
+        </div>
+      </div>
 
-        <button className={`w-12 h-12 rounded-xl border font-semibold transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          2
-        </button>
+      {/* Articles Feed List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredBlogs.map((blog) => (
+          <Card
+            key={blog.id}
+            className="flex flex-col border-border/80 hover:border-primary/50 transition-all shadow-sm hover:shadow-md bg-card/90"
+          >
+            <CardHeader className="space-y-2 pb-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Clock className="size-3.5" />
+                  {blog.readTime}
+                </span>
+                <span>{blog.date}</span>
+              </div>
+              <CardTitle className="text-lg font-bold leading-snug line-clamp-2 hover:text-primary transition-colors cursor-pointer">
+                {blog.title}
+              </CardTitle>
+            </CardHeader>
 
-        <button className={`w-12 h-12 rounded-xl border font-semibold transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          3
-        </button>
+            <CardContent className="flex-1 space-y-4">
+              <CardDescription className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+                {blog.excerpt}
+              </CardDescription>
 
-        <button className={`w-12 h-12 rounded-xl border font-semibold transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          ...
-        </button>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {blog.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-[10px] font-medium">
+                    #{tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
 
-        <button className={`w-12 h-12 rounded-xl border font-semibold transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          5
-        </button>
+            <CardFooter className="border-t border-border/50 pt-3 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1.5 text-purple-600 dark:text-purple-400 font-semibold">
+                <SparkiIcon />
+                <span>Forti Velocity: {blog.fortiAnalysisScore}/100</span>
+              </div>
 
-        <button className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-colors duration-300 ${
-          isDark 
-            ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' 
-            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-        }`}>
-          <ChevronRight />
-        </button>
+              <span className="flex items-center gap-1 text-primary font-medium cursor-pointer hover:underline">
+                Read Article
+                <ChevronRight className="size-3.5" />
+              </span>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     </div>
   );
+}
+
+function SparkiIcon() {
+  return <Sparkles className="size-3.5" />;
 }

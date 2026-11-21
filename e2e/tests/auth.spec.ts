@@ -8,10 +8,10 @@ test.describe('Authentication & Landing Page E2E Tests', () => {
     await expect(page.getByRole('link', { name: 'Fortlio' })).toBeVisible();
 
     // Check Hero text
-    await expect(page.getByText('Where Code Speaks, Mindset Leads')).toBeVisible();
+    await expect(page.getByText('Where Expertise Speaks, Mindset Leads')).toBeVisible();
 
     // Check CTA buttons
-    const getStartedBtn = page.getByRole('link', { name: 'Create Candidate Portfolio' });
+    const getStartedBtn = page.getByRole('link', { name: 'Create Professional Portfolio' });
     await expect(getStartedBtn).toBeVisible();
 
     const recruiterBtn = page.getByRole('link', { name: 'Recruiter Sign In' });

@@ -47,6 +47,7 @@ describe('UserController Unit Tests', () => {
       createUser: mock(() => Promise.resolve({})),
       updateUser: mock(() => Promise.resolve({})),
       deleteUserById: mock(() => Promise.resolve({})),
+      addCoins: mock(() => Promise.resolve({ coins: 20 })),
     };
 
     mockRoleService = {
@@ -298,6 +299,56 @@ describe('UserController Unit Tests', () => {
       mockUserService.getUserByUserId.mockResolvedValue(null);
 
       expect(userController.deleteUserById(req, mockRes)).rejects.toThrow(new AppError(USER_MSGS.ERR.USER_NOT_FOUND));
+    });
+  });
+
+  describe('watchAd', () => {
+    it('should successfully earn coins when valid userId header is provided', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      mockUserService.addCoins.mockResolvedValue({ coins: 25 });
+
+      await userController.watchAd(req, mockRes);
+
+      expect(mockUserService.addCoins).toHaveBeenCalledWith(VALID_USER_ID, 10);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body).toEqual({
+        success: true,
+        data: {
+          coins: 25,
+          message: 'You have earned 10 coins for watching an ad.',
+        },
+      });
+    });
+
+    it('should throw 401 AppError if userId header is missing', async () => {
+      const req = {
+        headers: {},
+      } as unknown as Request;
+
+      expect(userController.watchAd(req, mockRes)).rejects.toThrow(new AppError('Unauthorized access'));
+    });
+
+    it('should throw AppError if user is not found when adding coins', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      mockUserService.addCoins.mockResolvedValue(null);
+
+      expect(userController.watchAd(req, mockRes)).rejects.toThrow(new AppError(USER_MSGS.ERR.USER_NOT_FOUND));
+    });
+
+    it('should throw AppError if userService.addCoins rejects', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      mockUserService.addCoins.mockRejectedValue(new Error('DB failure'));
+
+      expect(userController.watchAd(req, mockRes)).rejects.toThrow(new AppError('DB failure'));
     });
   });
 });

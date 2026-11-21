@@ -1,10 +1,10 @@
 # GEMINI.md - Fortlio Project Master Context
 
 ## 1. Project Overview & Mission
-**Fortlio** is a developer candidate portfolio and recruitment discovery platform where:
-- **Candidates** create rich professional profiles, showcase verified skills, publish markdown technical blogs, export pixel-perfect PDF resumes generated from Markdown, and share trackable short links to their resumes and blogs with real-time visitor count and dwell-time analytics.
-- **AI-Powered Candidate Insights & Leadership Detection (Forti Engine)**: Automatically synthesizes candidate progression, learning velocity, knowledge breadth/depth, and leadership qualities whenever a blog is published, enabling HRs to discover candidates based on mindset and technical trajectory.
-- **HRs & Recruiters** discover talent using keyword and skill-based search powered by Typesense, chat interactively with candidate profiles via the Forti AI chatbot, and evaluate candidates with full privacy controls.
+**Fortlio** is an all-inclusive, universal professional portfolio and recruitment discovery platform for **anyone and everyone** across all professions, backgrounds, specialties, and education paths (engineering, design, medicine, law, finance, science, research, marketing, education, operations, and beyond) where:
+- **Candidates & Professionals** create rich showcase profiles across their respective professions and education backgrounds, showcase verified domain skills, publish markdown specialty blogs sharing their knowledge and deep domain expertise, export pixel-perfect PDF resumes generated from Markdown, and share trackable short links to their portfolios and articles with real-time visitor count and dwell-time analytics.
+- **AI-Powered Candidate Insights & Leadership Detection (Forti Engine)**: Automatically synthesizes candidate progression, learning velocity, knowledge breadth/depth, and leadership qualities whenever a specialty blog is published, enabling HRs and recruiters to discover talent based on mindset, domain mastery, and intellectual trajectory.
+- **HRs & Recruiters** discover talent across diverse backgrounds, professions, and education credentials using keyword and skill-based search powered by Typesense, chat interactively with candidate profiles via the Forti AI chatbot, and evaluate candidates with full privacy controls.
 - **Monetization** is enforced via video ads: recruiters receive 2 searches before being required to watch a video ad (`/user/watch-ad`) to replenish search quota.
 - **Networking** is facilitated through bi-directional connection requests, real-time 1-on-1 chat (WebSocket), and in-app notifications.
 
@@ -81,16 +81,16 @@
 
 | Feature ID | Feature Description | Backend API | Mongo Aggregations | Typesense | Shadcn UI | Bun Tests | Playwright E2E | Overall Progress |
 |:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟡 40% | 🔴 0% | 🔴 0% | **60%** |
-| **F02** | User & RBAC Management | 🟢 100% | 🟢 90% | N/A | 🔴 20% | 🟡 70% | 🔴 0% | **56%** |
-| **F03** | Candidate Profile & MD-to-PDF | 🟢 100% | 🟢 95% | 🟢 100% | 🟡 45% | 🟢 100% | 🔴 0% | **68%** |
-| **F04** | Candidate Blogs & Knowledge | 🟢 100% | 🟢 90% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **61%** |
+| **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟢 85% | 🟢 100% | 🟢 100% | **97%** |
+| **F02** | User & RBAC Management | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
+| **F03** | Candidate Profile & MD-to-PDF | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 85% | 🟢 100% | 🟢 100% | **96%** |
+| **F04** | Candidate Blogs & Knowledge | 🟢 100% | 🟢 90% | N/A | 🟡 60% | 🟢 80% | 🔴 0% | **66%** |
 | **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 90% | 🟢 100% | 🔴 15% | 🟢 100% | 🔴 0% | **67%** |
 | **F06** | Connections & Notifications | 🟢 100% | 🟢 90% | N/A | 🟡 40% | 🟢 100% | 🔴 0% | **66%** |
 | **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
 | **F08** | Link Shortener & Share Analytics | 🟢 85% | 🟡 60% | N/A | 🔴 20% | 🟢 100% | 🔴 0% | **52%** |
 | **F09** | Forti AI Engine & Profile Chatbot | 🟡 35% | 🔴 20% | 🔴 20% | 🔴 0% | 🔴 0% | 🔴 0% | **22%** |
-| **Total** | **Fortlio Platform Master** | **90%** | **80%** | **70%** | **28%** | **70%** | **0%** | **57%** |
+| **Total** | **Fortlio Platform Master** | **90%** | **81%** | **70%** | **49%** | **84%** | **33%** | **69%** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
 
@@ -142,3 +142,9 @@ When implementing or modifying any feature:
    - Update checklist items in Section 2 of `docs/F0<X>.md`.
    - Append an entry in Section 6 (`Changelog & Progress Log`) of `docs/F0<X>.md`.
    - Recalculate and update the feature's status percentage in the Main Master Progress Tracker in `GEMINI.md`.
+
+<!-- For testing purpose
+ candidate@test.com
+Password: Password123!
+Email: hr@test.com
+Password: Password123! -->
