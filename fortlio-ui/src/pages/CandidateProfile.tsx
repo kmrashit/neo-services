@@ -13,9 +13,10 @@ import {
   Briefcase,
   GraduationCap,
   CheckCircle2,
-  Check
+  Check,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCandidateProfile } from "@/features/candidate";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,30 +24,30 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function CandidateProfile() {
   const { user } = useAuth();
+  const { profile } = useCandidateProfile();
   const [copied, setCopied] = useState(false);
 
-  // Candidate portfolio data (connected to active user credentials)
+  // Candidate portfolio data (connected to active user credentials & candidate profile)
   const candidate = {
-    fullName: user?.fullName || "Alex Mercer",
-    headline: "Staff Systems Engineer & Distributed Architect",
-    profession: "Engineering & Technology",
-    industry: "Technology & Software",
-    educationLevel: "Bachelor's Degree (BS in Computer Science)",
-    email: user?.email || "alex.mercer@fortlio.dev",
-    phone: "+1 (555) 382-9102",
-    location: "San Francisco, CA (Open to Remote)",
-    bio: "Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.",
-    experienceYears: 6,
-    skills: [
+    fullName: profile?.fullName || user?.fullName || "Alex Mercer",
+    headline: profile?.headline || "Staff Systems Engineer & Distributed Architect",
+    profession: profile?.profession || "Engineering & Technology",
+    industry: profile?.industry || "Technology & Software",
+    educationLevel: profile?.educationLevel || "Bachelor's Degree (BS in Computer Science)",
+    email: profile?.email || user?.email || "alex.mercer@fortlio.dev",
+    phone: profile?.mobileNumber || "+1 (555) 382-9102",
+    location: profile?.location || "San Francisco, CA (Open to Remote)",
+    bio: profile?.bio || "Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.",
+    skills: profile?.skills || [
       "TypeScript", "Go", "Distributed Systems", "Kubernetes", "Kafka",
       "MongoDB Aggregations", "Redis", "Bun", "PostgreSQL", "Docker", "Typesense"
     ],
-    social: {
-      github: "https://github.com",
-      linkedin: "https://linkedin.com",
-      website: "https://alexmercer.dev",
+    social: profile?.social || {
+      github: profile?.githubUrl || "https://github.com",
+      linkedin: profile?.linkedinUrl || "https://linkedin.com",
+      website: profile?.portfolioUrl || "https://alexmercer.dev",
     },
-    experiences: [
+    experiences: profile?.experiences || [
       {
         role: "Lead Systems Architect",
         company: "Veloce Cloud Systems",
@@ -60,14 +61,14 @@ export default function CandidateProfile() {
         description: "Scaled microservices infrastructure across Kubernetes clusters. Authored internal developer SDKs reducing deployment lead time by 40%.",
       },
     ],
-    education: [
+    education: profile?.education || [
       {
         degree: "B.S. in Computer Science",
         institution: "University of California, Berkeley",
         year: "2017 - 2021",
       },
     ],
-    blogs: [
+    blogs: profile?.blogs || [
       {
         title: "Optimizing MongoDB Pipelines with Post-Facet Slicing",
         date: "Nov 15, 2026",
@@ -87,7 +88,7 @@ export default function CandidateProfile() {
         tags: ["Search", "Typesense", "DevOps"],
       },
     ],
-    fortiAiInsights: {
+    fortiAiInsights: profile?.fortiAiInsights || {
       velocityScore: 94,
       progressionRate: "Rapid Velocity",
       depthLevel: "Expert",
@@ -124,7 +125,7 @@ export default function CandidateProfile() {
                   <h1 className="text-2xl font-bold text-foreground">
                     {candidate.fullName}
                   </h1>
-                  <Badge variant="success" className="gap-1 text-[11px]">
+                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 gap-1 text-[11px]">
                     <CheckCircle2 className="size-3" />
                     Verified Candidate
                   </Badge>
@@ -155,7 +156,7 @@ export default function CandidateProfile() {
                 className="gap-1.5 text-xs font-medium cursor-pointer"
               >
                 {copied ? <Check className="size-3.5 text-emerald-500" /> : <Share2 className="size-3.5" />}
-                {copied ? "Link Copied" : "Share Profile"}
+                <span>{copied ? "Link Copied" : "Share Profile"}</span>
               </Button>
 
               <Link to="/editor">
@@ -165,7 +166,7 @@ export default function CandidateProfile() {
                   className="gap-1.5 text-xs font-medium cursor-pointer"
                 >
                   <Download className="size-3.5" />
-                  PDF Resume
+                  <span>PDF Resume</span>
                 </Button>
               </Link>
 
@@ -175,7 +176,7 @@ export default function CandidateProfile() {
                   className="gap-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
                 >
                   <Edit3 className="size-3.5" />
-                  Edit Profile
+                  <span>Edit Profile</span>
                 </Button>
               </Link>
             </div>
@@ -196,15 +197,21 @@ export default function CandidateProfile() {
               {candidate.phone}
             </span>
             <div className="ml-auto flex items-center gap-3">
-              <a href={candidate.social.github} target="_blank" rel="noreferrer" className="hover:text-foreground text-xs font-medium">
-                GitHub
-              </a>
-              <a href={candidate.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-foreground text-xs font-medium">
-                LinkedIn
-              </a>
-              <a href={candidate.social.website} target="_blank" rel="noreferrer" className="hover:text-foreground">
-                <Globe className="size-4" />
-              </a>
+              {candidate.social?.github && (
+                <a href={candidate.social.github} target="_blank" rel="noreferrer" className="hover:text-foreground text-xs font-medium">
+                  GitHub
+                </a>
+              )}
+              {candidate.social?.linkedin && (
+                <a href={candidate.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-foreground text-xs font-medium">
+                  LinkedIn
+                </a>
+              )}
+              {candidate.social?.website && (
+                <a href={candidate.social.website} target="_blank" rel="noreferrer" className="hover:text-foreground">
+                  <Globe className="size-4" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -234,7 +241,7 @@ export default function CandidateProfile() {
         {/* Overview Tab Content */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left 2 cols: Experience Timeline */}
+            {/* Left 2 cols: Experience Timeline & Education */}
             <div className="lg:col-span-2 space-y-6">
               <Card>
                 <CardHeader>
@@ -330,7 +337,7 @@ export default function CandidateProfile() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-1.5">
-                    {blog.tags.map((tag) => (
+                    {blog.tags?.map((tag) => (
                       <Badge key={tag} variant="secondary" className="text-[10px]">
                         #{tag}
                       </Badge>
@@ -356,8 +363,10 @@ export default function CandidateProfile() {
                 </div>
               </CardHeader>
               <CardContent className="text-center text-xs text-muted-foreground">
-                <Badge variant="success" className="text-[10px] mb-2">{candidate.fortiAiInsights.progressionRate}</Badge>
-                <p>Synthesized across 3 published technical articles and continuous topic expansion.</p>
+                <Badge variant="secondary" className="text-[10px] mb-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  {candidate.fortiAiInsights.progressionRate}
+                </Badge>
+                <p>Synthesized across published technical articles and continuous topic expansion.</p>
               </CardContent>
             </Card>
 
@@ -368,7 +377,7 @@ export default function CandidateProfile() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-1.5">
-                  {candidate.fortiAiInsights.leadershipTraits.map((trait) => (
+                  {candidate.fortiAiInsights.leadershipTraits?.map((trait) => (
                     <Badge key={trait} variant="default" className="text-xs">
                       {trait}
                     </Badge>
@@ -384,7 +393,7 @@ export default function CandidateProfile() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-1.5">
-                  {candidate.fortiAiInsights.primaryDomains.map((domain) => (
+                  {candidate.fortiAiInsights.primaryDomains?.map((domain) => (
                     <Badge key={domain} variant="secondary" className="text-xs">
                       {domain}
                     </Badge>
