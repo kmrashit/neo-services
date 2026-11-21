@@ -7,11 +7,11 @@ import { HrRoutes, HrController, HrService, HistoryService } from '../modules/hr
 import { ConnectionRoutes, ConnectionController, ConnectionService } from '../modules/connection';
 import { ShortnerRoutes, ShortnerController, ShortenerService } from '../modules/link-shortener';
 import { LeetcodeRoutes, LeetcodeController, LeetcodeService } from '../modules/leetcode';
-// import { FortiLLMRoutes, FortiLLMController, FortiLLMService } from '../modules/forti';
+import { FortiRoutes, FortiController, FortiService } from '../modules/forti';
 import { ServicesRoutes } from './services.route';
 import { CachingMiddleware } from '../middleware/cache.middleware';
 import { config } from '../../config';
-import { mongoDbClient, llmClient, redisClient, secretManager, sesHelper } from '../clients';
+import { mongoDbClient, llmClient, redisClient, secretManager, sesHelper, sensiSearch } from '../clients';
 import { AuthGuard } from '../middleware/auth.middleware';
 import { RestAuthMiddleware } from '../middleware/rest-auth.middleware';
 import { ChecksumVerifyMiddleware } from '../middleware/checksum-middleware';
@@ -22,7 +22,7 @@ import { ChecksumVerifyMiddleware } from '../middleware/checksum-middleware';
 const userService = new UserService();
 const authnService = new AuthnService(secretManager, sesHelper);
 const roleService = new RoleService();
-// const fortiLLMService = new FortiLLMService();
+const fortiService = new FortiService(llmClient, sensiSearch);
 const shortenerService = new ShortenerService();
 const leetcodeService = new LeetcodeService(llmClient, secretManager);
 const candidateService = new CandidateService();
@@ -35,7 +35,7 @@ const historyService = new HistoryService();
 // ==========================================
 const userController = new UserController(userService, roleService);
 const authnController = new AuthnController(authnService);
-// const fortiLLMController = new FortiLLMController(fortiLLMService);
+const fortiController = new FortiController(fortiService);
 const roleController = new RoleController(roleService);
 const shortnerController = new ShortnerController(shortenerService);
 const leetcodeController = new LeetcodeController(leetcodeService);
@@ -57,7 +57,7 @@ const checksumVerifyMiddleware = new ChecksumVerifyMiddleware(config);
 const authnRoutes = new AuthnRoutes(authnController, authGuard);
 const userRoutes = new UserRoutes(userController, cacheMiddleware, authGuard, checksumVerifyMiddleware);
 const roleRoutes = new RoleRoutes(roleController, cacheMiddleware, authGuard);
-// const fortiLLMRoutes = new FortiLLMRoutes(fortiLLMController, cacheMiddleware);
+const fortiRoutes = new FortiRoutes(fortiController, cacheMiddleware);
 const shortnerRoutes = new ShortnerRoutes(shortnerController, cacheMiddleware, authGuard);
 const leetcodeRoutes = new LeetcodeRoutes(leetcodeController, cacheMiddleware);
 const servicesRoutes = new ServicesRoutes(cacheMiddleware, leetcodeRoutes, shortnerRoutes);
@@ -77,7 +77,7 @@ class AppRoutes {
     private candidateRoutes: CandidateRoutes,
     private hrRoutes: HrRoutes,
     private connectionRoutes: ConnectionRoutes,
-    // private fortiLLMRoutes: FortiLLMRoutes,
+    private fortiRoutes: FortiRoutes,
   ) {
     this.initializeRoutes();
   }
@@ -90,7 +90,7 @@ class AppRoutes {
     this.router.use('/candidate', this.candidateRoutes.router);
     this.router.use('/hr', this.hrRoutes.router);
     this.router.use('/connections', this.connectionRoutes.router);
-    // this.router.use('/ask', this.fortiLLMRoutes.router);
+    this.router.use('/forti', this.fortiRoutes.router);
   }
 }
 
@@ -103,7 +103,7 @@ const appRoutes = new AppRoutes(
   candidateRoutes,
   hrRoutes,
   connectionRoutes,
-  // fortiLLMRoutes,
+  fortiRoutes,
 );
 
 export default appRoutes;

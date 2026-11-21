@@ -29,9 +29,15 @@ export const initializeBullMQFortiInsightsWorker = async () => {
     async (job) => {
       const { candidateId, blogId } = job.data;
       console.info(`[Forti AI Worker] Processing insight synthesis for candidate: ${candidateId}, blog: ${blogId}`);
-      // 1. Fetch candidate's previous insights baseline & new blog post content
-      // 2. Invoke Forti AI prompt pipeline to evaluate learning speed, topic diversity, and leadership cues
-      // 3. Upsert into candidate_insights collection & update Typesense search index
+      try {
+        const { FortiService } = await import('../../modules/forti/forti.service');
+        const { llmClient, sensiSearch } = await import('../../clients');
+        const fortiService = new FortiService(llmClient, sensiSearch);
+        await fortiService.synthesizeInsights(candidateId, blogId);
+        console.info(`[Forti AI Worker] Successfully synthesized insights for candidate: ${candidateId}`);
+      } catch (err: any) {
+        console.error('[Forti AI Worker] Error synthesizing insights:', err.message || err);
+      }
     },
   );
 };

@@ -28,6 +28,11 @@ import {
   MySharedLinksTable,
 } from "@/features/shortener";
 import {
+  useCandidateInsights,
+  CandidateAiInsightsCard,
+  HrCandidateChatDrawer,
+} from "@/features/forti";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -45,9 +50,11 @@ export default function CandidateProfile() {
   const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
+  const [isChatDrawerOpen, setIsChatDrawerOpen] = useState(false);
 
   useTrackLinkDwellTime();
   const { links } = useLinkAnalytics();
+  const { insights } = useCandidateInsights(profile?.id || user?.id);
 
   // Candidate portfolio data (connected to active user credentials & candidate profile)
   const candidate = {
@@ -189,6 +196,16 @@ export default function CandidateProfile() {
               >
                 <LinkIcon className="size-3.5 text-purple-600 dark:text-purple-400" />
                 <span>Short Link</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsChatDrawerOpen(true)}
+                className="gap-1.5 text-xs font-medium cursor-pointer text-purple-600 dark:text-purple-400 border-purple-500/30 hover:bg-purple-500/10"
+              >
+                <Bot className="size-3.5 text-purple-600 dark:text-purple-400" />
+                <span>Chat with Profile</span>
               </Button>
 
               <Link to="/editor">
@@ -379,57 +396,11 @@ export default function CandidateProfile() {
 
         {/* Forti AI Insights Tab Content */}
         <TabsContent value="forti" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-purple-500/30">
-              <CardHeader className="text-center pb-2">
-                <CardDescription className="text-xs font-semibold uppercase tracking-wider">
-                  Learning Velocity Score
-                </CardDescription>
-                <div className="text-4xl font-extrabold text-purple-600 dark:text-purple-400 pt-2">
-                  {candidate.fortiAiInsights.velocityScore}
-                  <span className="text-sm font-normal text-muted-foreground">/100</span>
-                </div>
-              </CardHeader>
-              <CardContent className="text-center text-xs text-muted-foreground">
-                <Badge variant="secondary" className="text-[10px] mb-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  {candidate.fortiAiInsights.progressionRate}
-                </Badge>
-                <p>Synthesized across published technical articles and continuous topic expansion.</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-semibold">Leadership & Soft Qualities</CardTitle>
-                <CardDescription className="text-xs">Detected via article writing style</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex flex-wrap gap-1.5">
-                  {candidate.fortiAiInsights.leadershipTraits?.map((trait) => (
-                    <Badge key={trait} variant="default" className="text-xs">
-                      {trait}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-semibold">Primary Expertise Domains</CardTitle>
-                <CardDescription className="text-xs">Deepest conceptual density</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex flex-wrap gap-1.5">
-                  {candidate.fortiAiInsights.primaryDomains?.map((domain) => (
-                    <Badge key={domain} variant="secondary" className="text-xs">
-                      {domain}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <CandidateAiInsightsCard
+            insights={insights}
+            onOpenChat={() => setIsChatDrawerOpen(true)}
+            candidateName={candidate.fullName}
+          />
         </TabsContent>
 
         {/* AI Interviews Tab Content */}
@@ -521,6 +492,15 @@ export default function CandidateProfile() {
           <MySharedLinksTable links={links} />
         </DialogContent>
       </Dialog>
+
+      {/* Forti AI Recruiter Profile Chat Drawer */}
+      <HrCandidateChatDrawer
+        isOpen={isChatDrawerOpen}
+        onClose={() => setIsChatDrawerOpen(false)}
+        userId={user?.id || '123456789012345678901234'}
+        candidateName={candidate.fullName}
+        candidateHeadline={candidate.headline}
+      />
     </div>
   );
 }
