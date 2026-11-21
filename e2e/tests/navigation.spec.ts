@@ -27,11 +27,11 @@ test.describe('App Shell Navigation & Theme E2E Tests', () => {
     await expect(page).toHaveURL(/\/edit-profile/);
     await expect(page.getByText('Edit Candidate Profile')).toBeVisible();
 
-    // Click on Technical Blogs in Sidebar
-    const blogsLink = page.getByRole('link', { name: 'Technical Blogs' });
+    // Click on Specialty Blogs in Sidebar
+    const blogsLink = page.getByRole('link', { name: 'Specialty Blogs' });
     await blogsLink.click();
     await expect(page).toHaveURL(/\/candidate-blogs/);
-    await expect(page.getByText('Technical Blogs & Knowledge')).toBeVisible();
+    await expect(page.getByText('Specialty Blogs & Knowledge Showcase')).toBeVisible();
   });
 
   test('Theme toggle button switches html class between dark and light', async ({ page }) => {

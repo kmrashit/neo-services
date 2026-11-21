@@ -16,10 +16,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateCandidateProfile from "./pages/CreateCandidateProfile";
 import CandidateEditProfile from "./pages/CandidateEditProfile";
 import LandingPage from "./pages/LandingPage";
+import { BackendModeIndicator } from "./components/shared/BackendModeIndicator";
 
 function App() {
   return (
     <BrowserRouter>
+      <BackendModeIndicator />
       <Routes>
 
         <Route path="/" element={<LandingPage />}/>

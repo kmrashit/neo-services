@@ -16,6 +16,7 @@
     "start": "BUN_ENV=prod bun dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "seed:test-users": "BUN_ENV=local bun src/scripts/seed-test-users.ts",
     "test": " BUN_ENV=local jest --detectOpenHandles --forceExit"
   },
   "license": "ISC",

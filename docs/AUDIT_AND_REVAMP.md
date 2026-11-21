@@ -14,7 +14,7 @@ This document provides:
 ## 2. Backend Architecture Audit
 
 The core domain of Fortlio is:
-> *A candidate portfolio and recruitment platform where candidates create profiles, showcase skills, write learning blogs, generate PDF resumes, and share tracked resume/blog links; an integrated AI engine (Forti) evaluates learning velocity, topic diversity, and leadership from candidate posts; HRs search candidates using keyword filters backed by Typesense, chat interactively with candidate profiles via Forti AI, with monetization via video ads triggered after every 2 searches; and candidates and HRs network via connections and real-time chat.*
+> *An all-inclusive, universal professional portfolio and talent discovery platform for **anyone and everyone** across all professions, backgrounds, specialties, and education paths (engineering, design, medicine, law, finance, science, research, marketing, education, operations, and more) where candidates create showcase profiles, verify domain skills, write specialty learning blogs, generate pixel-perfect PDF resumes, and share tracked resume/blog links; an integrated AI engine (Forti) evaluates learning velocity, domain depth, topic diversity, and leadership qualities from candidate writings; HRs search candidates across all professions using keyword filters backed by Typesense, chat interactively with candidate profiles via Forti AI, with video-ad monetization after every 2 searches; and candidates and HRs network via connections and real-time chat.*
 
 ### 2.1. Non-Core Modules & Retention Policy
 

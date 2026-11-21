@@ -1,132 +1,139 @@
 import { NavLink } from "react-router-dom";
 import {
-  Home,
   User,
-  Search,
+  FileText,
+  FileCode,
+  BookOpen,
   Users,
-  Newspaper,
+  MessageSquare,
   Bell,
-  Settings,
-  HelpCircle
+  Sparkles,
+  LogOut,
+  FolderGit2
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const menu = [
-  { name: "Dashboard", path: "/", icon: Home },
-  { name: "HR Profile", path: "/profile", icon: User },
-  { name: "Candidate Profile", path: "/candidate-profile", icon: Search },
-  { name: "Create Candidate Profile", path: "/create-profile", icon: Search },
-  { name: "Candidate Edit Profile", path: "/edit-profile", icon: Search },
-  { name: "Candidate Blogs", path: "/candidate-blogs", icon: Newspaper },
-  { name: "Markdown Editor", path: "/editor", icon: Newspaper },
-  { name: "Connections", path: "/connections", icon: Users },
+const navSections = [
+  {
+    title: "Portfolio",
+    items: [
+      { name: "My Profile", path: "/candidate-profile", icon: User },
+      { name: "Edit Profile", path: "/edit-profile", icon: FileText },
+      { name: "Markdown Resume", path: "/editor", icon: FileCode },
+    ],
+  },
+  {
+    title: "Knowledge",
+    items: [
+      { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
+    ],
+  },
+  {
+    title: "Networking",
+    items: [
+      { name: "Connections", path: "/connections", icon: Users },
+      { name: "Direct Chat", path: "/chat", icon: MessageSquare },
+      { name: "Notifications", path: "/notifications", icon: Bell },
+    ],
+  },
 ];
 
 export default function Sidebar() {
-  const [user, setUser] = useState<any>(null);
-  const { isDark } = useTheme();
+  const { user, logout } = useAuth();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-
-    if (stored) {
-      setUser(JSON.parse(stored));
-    }
-  }, []);
+  const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
 
   return (
-    <div className={`w-[240px] h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 flex flex-col fixed left-0 top-0 transition-colors duration-300 ${
-      isDark 
-        ? 'bg-gray-900 text-white' 
-        : 'bg-[#07142f] text-white'
-    }`}>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-          Neo Services
-        </h1>
+    <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-border bg-card text-card-foreground shadow-sm">
+      {/* Brand Header */}
+      <div className="flex h-16 items-center gap-3 border-b border-border px-6">
+        <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20">
+          <FolderGit2 className="size-5" />
+        </div>
+        <div className="flex flex-col">
+          <span className="font-bold text-base tracking-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-indigo-300">
+            Fortlio
+          </span>
+          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+            Portfolio & Talent Platform
+          </span>
+        </div>
+        <Badge variant="outline" className="ml-auto text-[10px] py-0 px-1.5 font-mono">
+          v2.0
+        </Badge>
       </div>
 
-      <div className="flex-1 px-4 space-y-2">
-        {menu.map((item) => {
-          const Icon = item.icon;
+      {/* Navigation Links */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+        {navSections.map((section) => (
+          <div key={section.title} className="space-y-1.5">
+            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {section.title}
+            </p>
+            <div className="space-y-0.5">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-sm font-semibold"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      }`
+                    }
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    <span>{item.name}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        ))}
 
-          return (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) => 
-                `flex items-center gap-4 px-4 py-3 rounded-xl transition ${
-                  isActive 
-                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white" 
-                    : isDark
-                      ? "hover:bg-white/10 text-gray-300 hover:text-white"
-                      : "hover:bg-white/10 text-gray-300 hover:text-white"
-                }`
-              }
-            >
-              <Icon size={22} />
-              <span>{item.name}</span>
-            </NavLink>
-          );
-        })}
-
-        <div className="mt-5 space-y-2">
-          <hr className={isDark ? 'border-gray-700' : 'border-white/20'} />
-
-          <NavLink
-            to="/settings"
-            className={({ isActive }) => 
-              `flex items-center gap-4 px-4 py-3 rounded-xl ${
-                isActive 
-                  ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white" 
-                  : isDark
-                    ? "hover:bg-white/10 text-gray-300 hover:text-white"
-                    : "hover:bg-white/10 text-gray-300 hover:text-white"
-              }`
-            }
-          >
-            <Settings size={22} />
-            <span>Settings</span>
-          </NavLink>
-
-          <NavLink
-            to="/help"
-            className={({ isActive }) => 
-              `flex items-center gap-4 px-4 py-3 rounded-xl ${
-                isActive 
-                  ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white" 
-                  : isDark
-                    ? "hover:bg-white/10 text-gray-300 hover:text-white"
-                    : "hover:bg-white/10 text-gray-300 hover:text-white"
-              }`
-            }
-          >
-            <HelpCircle size={22} />
-            <span>Help & Support</span>
-          </NavLink>
+        {/* Forti AI Feature Banner */}
+        <div className="rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 via-transparent to-indigo-500/10 p-3.5 space-y-1.5">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400">
+            <Sparkles className="size-3.5" />
+            Forti AI Engine
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            Auto-synthesizes candidate learning velocity and leadership traits.
+          </p>
         </div>
       </div>
 
-      <div className="mx-6 mb-5 pt-12">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold">
-            {(user?.fullName || user?.email || "U")
-              .charAt(0)
-              .toUpperCase()}
+      {/* User Footer Snippet */}
+      <div className="border-t border-border p-4">
+        <div className="flex items-center gap-3 rounded-xl p-1.5 hover:bg-accent/50 transition-colors">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-sm font-bold text-white shadow-sm">
+            {userInitial}
           </div>
-
-          <div className="overflow-hidden">
-            <p className="font-semibold truncate">
-              {user?.fullName}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-foreground truncate">
+              {user?.fullName || "Candidate"}
             </p>
-
-            <p className="text-sm text-gray-400 truncate">
-              {user?.email}
+            <p className="text-[11px] text-muted-foreground truncate">
+              {user?.email || "user@fortlio.dev"}
             </p>
           </div>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={logout}
+            className="size-8 text-muted-foreground hover:text-destructive shrink-0 cursor-pointer"
+            title="Sign Out"
+            aria-label="Sign Out"
+          >
+            <LogOut className="size-4" />
+          </Button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

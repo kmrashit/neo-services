@@ -27,6 +27,6 @@ export class UserRoutes {
     this.router.post('/createUser', this.userController.createUser);
     this.router.put('/updateUserById', this.authGuard.checkAccess('updateUserById'), this.userController.updateUserById);
     this.router.delete('/deleteUserById/:userId', this.authGuard.checkAccess('deleteUserById'), this.userController.deleteUserById);
-    this.router.post('/watch-ad', this.checksumVerifyMiddleware.verifyGeneralChecksum, this.userController.watchAd);
+    this.router.post('/watch-ad', this.authGuard.authenticate, this.checksumVerifyMiddleware.verifyGeneralChecksum, this.userController.watchAd);
   }
 }

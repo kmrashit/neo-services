@@ -1,273 +1,227 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
   Sun,
   Moon,
   Bell,
   Search,
-  Settings,
   LogOut,
-  ChevronDown,
+  Sparkles,
+  Settings,
+  Coins,
+  Tv,
+  User as UserIcon,
 } from "lucide-react";
-
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../api/api";
-import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  UserRoleBadge,
+  UserProfileSettings,
+  AdRewardModal,
+} from "@/features/user";
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (value: boolean) => void;
 }
 
-export default function Header({
-  sidebarOpen,
-  setSidebarOpen,
-}: HeaderProps) {
+export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
   const navigate = useNavigate();
-  const { isDark, theme, setTheme } = useTheme();
+  const { user, logout, updateUser } = useAuth();
+  const { isDark, setTheme } = useTheme();
 
-  const [search, setSearch] = useState("");
-  const [searchActive, setSearchActive] = useState(false);
-
-  const [user, setUser] = useState<any>(null);
-  const [openMenu, setOpenMenu] = useState(false);
-
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        setUser(null);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node)
-      ) {
-        setOpenMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClick);
-    return () =>
-      document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-
-      if (token) {
-        await api.get("/auth/logout", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-    } catch (err) {
-      console.log("Logout error:", err);
-    }
-
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-
-    setUser(null);
-    navigate("/login");
-  };
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [adModalOpen, setAdModalOpen] = useState(false);
 
   const toggleTheme = () => {
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('system');
-    } else {
-      setTheme('light');
-    }
+    setTheme(isDark ? "light" : "dark");
   };
 
-  const getThemeIcon = () => {
-    if (theme === 'dark') return Moon;
-    if (theme === 'system') {
-      // Show sun or moon based on actual system theme
-      return isDark ? Moon : Sun;
-    }
-    return Sun;
-  };
-
-  const ThemeIcon = getThemeIcon();
-
-  const initial =
-    (user?.fullName || user?.email || "U")
-      .charAt(0)
-      .toUpperCase();
+  const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
+  const coinsBalance = (user as any)?.coins ?? 10;
 
   return (
-    <div
-      className={`h-[70px] fixed top-0 ${
-        sidebarOpen ? "left-[240px]" : "left-0"
-      } right-0 transition-colors duration-300 ${
-        isDark ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
-      } border-b flex items-center justify-between px-8 z-20`}
-    >
-      {/* LEFT SIDE */}
-      <div className="flex items-center gap-5">
-        <button 
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className={`transition-colors ${
-            isDark ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'
-          }`}
-        >
-          <Menu size={25} />
-        </button>
+    <>
+      <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-border bg-card/80 px-6 backdrop-blur-md">
+        {/* Left: Sidebar Toggle & Search */}
+        <div className="flex items-center gap-4">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="size-9 text-muted-foreground hover:text-foreground md:hidden cursor-pointer"
+            aria-label="Toggle Sidebar"
+          >
+            <Menu className="size-5" />
+          </Button>
 
-        {/* SEARCH */}
-        <div className="relative">
-          <div className={`w-[370px] h-12 border rounded-xl flex items-center gap-3 px-4 transition-colors ${
-            isDark 
-              ? 'border-gray-600 bg-gray-700' 
-              : 'border-gray-200 bg-white'
-          }`}>
-            <Search size={20} className={isDark ? 'text-gray-400' : 'text-gray-400'} />
-
-            <input
-              value={search}
-              onFocus={() => setSearchActive(true)}
-              onBlur={() => setTimeout(() => setSearchActive(false), 200)}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search people, skills..."
-              className={`w-full outline-none transition-colors ${
-                isDark 
-                  ? 'bg-gray-700 text-white placeholder-gray-400' 
-                  : 'bg-white text-gray-800 placeholder-gray-400'
-              }`}
+          <div className="relative hidden sm:block w-72 md:w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search candidates, skills, blogs..."
+              className="h-9 w-full pl-9 pr-4 text-xs rounded-xl bg-muted/60 border-input/60 focus-visible:bg-background"
             />
           </div>
-
-          {searchActive && (
-            <div className={`absolute top-14 left-0 w-[370px] border rounded-xl shadow-lg p-4 transition-colors ${
-              isDark 
-                ? 'bg-gray-800 border-gray-700 text-gray-200' 
-                : 'bg-white border-gray-200 text-gray-800'
-            }`}>
-              {search ? (
-                <p>Searching: {search}</p>
-              ) : (
-                <p className={isDark ? 'text-gray-400' : 'text-gray-400'}>Start typing...</p>
-              )}
-            </div>
-          )}
         </div>
-      </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex items-center gap-6">
-        <button 
-          onClick={toggleTheme}
-          className={`transition-colors p-2 rounded-xl ${
-            isDark 
-              ? 'hover:bg-gray-700 text-gray-300 hover:text-white' 
-              : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          <ThemeIcon size={21} />
-        </button>
-
-        <button className={`relative transition-colors p-2 rounded-xl ${
-          isDark 
-            ? 'hover:bg-gray-700 text-gray-300 hover:text-white' 
-            : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-        }`}>
-          <Bell size={21} />
-          <span className="absolute -top-1 -right-1 bg-purple-600 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center">
-            4
-          </span>
-        </button>
-
-        <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setOpenMenu(!openMenu)}
-            className={`flex items-center gap-2 px-2 py-1 rounded-xl transition-colors ${
-              isDark 
-                ? 'hover:bg-gray-700 text-gray-300' 
-                : 'hover:bg-gray-100 text-gray-700'
-            }`}
+        {/* Right: Actions, Theme Toggle, Notifications, User */}
+        <div className="flex items-center gap-2.5">
+          {/* Watch Ad Quick Trigger for Recruiters & Candidates */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setAdModalOpen(true)}
+            className="hidden md:flex items-center gap-1.5 h-8 text-xs rounded-lg border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 cursor-pointer"
+            title="Watch video ad to earn 10 search credits"
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold">
-              {initial}
-            </div>
+            <Coins className="size-3.5 text-amber-500" />
+            <span>{coinsBalance} Coins</span>
+            <span className="text-[10px] bg-amber-500/20 px-1 rounded font-bold">+10</span>
+          </Button>
 
-            <ChevronDown
-              size={18}
-              className={`transition ${
-                openMenu ? "rotate-180" : ""
-              }`}
-            />
-          </button>
+          {/* Quick Link to AI chat */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => navigate("/candidate-blogs")}
+            className="hidden lg:flex items-center gap-1.5 h-8 text-xs rounded-lg border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10"
+          >
+            <Sparkles className="size-3.5" />
+            <span>Forti AI</span>
+          </Button>
 
-          {openMenu && (
-            <div className={`absolute right-0 mt-3 w-80 border rounded-2xl shadow-2xl overflow-hidden z-50 transition-colors ${
-              isDark 
-                ? 'bg-gray-800 border-gray-700' 
-                : 'bg-white border-gray-200'
-            }`}>
-              <div className={`px-5 py-4 flex gap-3 items-center ${
-                isDark ? 'bg-gray-700/50' : ''
-              }`}>
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center text-white text-lg font-bold">
-                  {initial}
-                </div>
+          {/* Theme Toggle Button */}
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={toggleTheme}
+            className="size-9 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
+            title={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4" />}
+          </Button>
 
-                <div>
-                  <p className={`font-semibold ${
-                    isDark ? 'text-white' : 'text-gray-800'
-                  }`}>
-                    {user?.fullName || "User"}
-                  </p>
-                  <p className={`text-sm ${
-                    isDark ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    {user?.email || ""}
-                  </p>
-                </div>
-              </div>
+          {/* Notifications Icon Button */}
+          <Link to="/notifications">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-9 rounded-xl text-muted-foreground hover:text-foreground relative cursor-pointer"
+              aria-label="Notifications"
+            >
+              <Bell className="size-4" />
+              <span className="absolute top-2 right-2 size-2 rounded-full bg-purple-600" />
+            </Button>
+          </Link>
 
-              <hr className={isDark ? 'border-gray-700' : 'border-gray-200'} />
+          {/* User Profile Dropdown Menu */}
+          <div className="flex items-center pl-2 border-l border-border/80">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-2.5 rounded-xl p-1.5 hover:bg-accent/80 transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="Open User Menu"
+                >
+                  <Avatar className="size-8 rounded-full shadow-sm bg-gradient-to-tr from-purple-600 to-indigo-600 text-white">
+                    <AvatarFallback className="bg-transparent text-white text-xs font-bold">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:flex flex-col text-left">
+                    <span className="text-xs font-semibold text-foreground truncate max-w-[120px]">
+                      {user?.fullName || "Candidate"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground capitalize">
+                      {user?.role || "Candidate"}
+                    </span>
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
 
-              <button
-                onClick={() => navigate("/settings")}
-                className={`w-full flex items-center gap-3 px-5 py-3 transition-colors ${
-                  isDark 
-                    ? 'hover:bg-gray-700 text-gray-300 hover:text-white' 
-                    : 'hover:bg-gray-100 text-gray-700'
-                }`}
-              >
-                <Settings size={18} />
-                Settings
-              </button>
+              <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl">
+                <DropdownMenuLabel className="font-normal px-2 py-1.5">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-xs font-semibold text-foreground truncate">
+                      {user?.fullName || "Candidate"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {user?.email || "candidate@test.com"}
+                    </p>
+                    <div className="pt-1">
+                      <UserRoleBadge role={user?.role || "candidate"} />
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
 
-              <button
-                onClick={handleLogout}
-                className={`w-full flex items-center gap-3 px-5 py-3 transition-colors ${
-                  isDark 
-                    ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300' 
-                    : 'hover:bg-red-50 text-red-600 hover:text-red-700'
-                }`}
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
-            </div>
-          )}
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => navigate("/candidate-profile")}
+                  className="cursor-pointer gap-2"
+                >
+                  <UserIcon className="size-4 text-muted-foreground" />
+                  <span>Candidate Profile</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => setSettingsOpen(true)}
+                  className="cursor-pointer gap-2"
+                >
+                  <Settings className="size-4 text-muted-foreground" />
+                  <span>Account & RBAC Settings</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => setAdModalOpen(true)}
+                  className="cursor-pointer gap-2 text-amber-600 dark:text-amber-400"
+                >
+                  <Tv className="size-4" />
+                  <span>Watch Ad (+10 Coins)</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
+                >
+                  <LogOut className="size-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
-    </div>
+      </header>
+
+      {/* Account Settings Dialog */}
+      <UserProfileSettings
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+      />
+
+      {/* Video Ad Modal */}
+      <AdRewardModal
+        open={adModalOpen}
+        onOpenChange={setAdModalOpen}
+        onRewardClaimed={(newCoins) => {
+          updateUser({ coins: newCoins } as any);
+        }}
+      />
+    </>
   );
 }
