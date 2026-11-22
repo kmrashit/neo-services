@@ -14,6 +14,7 @@ import {
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ConnectButton } from '@/features/connections';
 import type { ICandidateSearchResult } from '../types';
 
 interface CandidateResultCardProps {
@@ -160,7 +161,7 @@ export const CandidateResultCard: React.FC<CandidateResultCardProps> = ({
           </Button>
         )}
 
-        {onConnect && (
+        {onConnect ? (
           <Button
             size="sm"
             onClick={() => onConnect(candidate)}
@@ -169,6 +170,11 @@ export const CandidateResultCard: React.FC<CandidateResultCardProps> = ({
             <UserPlus className="size-3.5 mr-1" />
             Connect
           </Button>
+        ) : (
+          <ConnectButton
+            receiverId={candidate.userId || candidate.id}
+            receiverName={candidate.fullName}
+          />
         )}
       </CardFooter>
     </Card>

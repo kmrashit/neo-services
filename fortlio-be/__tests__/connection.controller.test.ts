@@ -119,4 +119,48 @@ describe('ConnectionController Unit Tests', () => {
       expect(mockRes.body.data.message).toBe('Chat messaging!');
     });
   });
+
+  describe('listConnections', () => {
+    it('should successfully list connections for authenticated user', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        query: { status: 'accepted' },
+      } as unknown as Request;
+
+      await connectionController.listConnections(req, mockRes);
+
+      expect(mockConnectionService.listConnections).toHaveBeenCalledWith(VALID_USER_ID, 'accepted');
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.success).toBe(true);
+    });
+  });
+
+  describe('listNotifications', () => {
+    it('should successfully list notifications for authenticated user', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      await connectionController.listNotifications(req, mockRes);
+
+      expect(mockConnectionService.listNotifications).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.success).toBe(true);
+    });
+  });
+
+  describe('markNotificationAsRead', () => {
+    it('should successfully mark notification as read', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        params: { notificationId: 'notif12345678901234567890' },
+      } as unknown as Request;
+
+      await connectionController.markNotificationAsRead(req, mockRes);
+
+      expect(mockConnectionService.markNotificationAsRead).toHaveBeenCalledWith('notif12345678901234567890', VALID_USER_ID);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.isRead).toBe(true);
+    });
+  });
 });

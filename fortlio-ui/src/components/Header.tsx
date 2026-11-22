@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Menu,
   Sun,
   Moon,
-  Bell,
   Search,
   LogOut,
   Sparkles,
@@ -31,6 +30,7 @@ import {
   UserProfileSettings,
   AdRewardModal,
 } from "@/features/user";
+import { NotificationBell } from "@/features/connections";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -51,6 +51,8 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
 
   const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
   const coinsBalance = (user as any)?.coins ?? 10;
+  const roleStr = (user?.role || '').toLowerCase();
+  const isHr = roleStr === 'hr' || (user?.email || '').toLowerCase().includes('hr');
 
   return (
     <>
@@ -115,18 +117,8 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
             {isDark ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4" />}
           </Button>
 
-          {/* Notifications Icon Button */}
-          <Link to="/notifications">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="size-9 rounded-xl text-muted-foreground hover:text-foreground relative cursor-pointer"
-              aria-label="Notifications"
-            >
-              <Bell className="size-4" />
-              <span className="absolute top-2 right-2 size-2 rounded-full bg-purple-600" />
-            </Button>
-          </Link>
+          {/* Notifications Dropdown Bell */}
+          <NotificationBell />
 
           {/* User Profile Dropdown Menu */}
           <div className="flex items-center pl-2 border-l border-border/80">
@@ -143,10 +135,10 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                   </Avatar>
                   <div className="hidden md:flex flex-col text-left">
                     <span className="text-xs font-semibold text-foreground truncate max-w-[120px]">
-                      {user?.fullName || "Candidate"}
+                      {user?.fullName || (isHr ? "HR Recruiter" : "Candidate")}
                     </span>
                     <span className="text-[10px] text-muted-foreground capitalize">
-                      {user?.role || "Candidate"}
+                      {user?.role || (isHr ? "hr" : "candidate")}
                     </span>
                   </div>
                 </button>
@@ -156,13 +148,13 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                 <DropdownMenuLabel className="font-normal px-2 py-1.5">
                   <div className="flex flex-col space-y-1">
                     <p className="text-xs font-semibold text-foreground truncate">
-                      {user?.fullName || "Candidate"}
+                      {user?.fullName || (isHr ? "HR Recruiter" : "Candidate")}
                     </p>
                     <p className="text-[11px] text-muted-foreground truncate">
                       {user?.email || "candidate@test.com"}
                     </p>
                     <div className="pt-1">
-                      <UserRoleBadge role={user?.role || "candidate"} />
+                      <UserRoleBadge role={isHr ? "hr" : (user?.role || "candidate")} />
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -170,7 +162,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  onClick={() => navigate("/candidate-profile")}
+                  onClick={() => navigate(isHr ? "/candidates" : "/candidate-profile")}
                   className="cursor-pointer gap-2"
                 >
                   <UserIcon className="size-4 text-muted-foreground" />

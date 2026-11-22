@@ -22,12 +22,21 @@ export function useLogin() {
         throw new Error('Authentication failed: Missing access token');
       }
 
+      const email = payload.email.toLowerCase();
+      const role = data.user?.role
+        ? data.user.role.toLowerCase()
+        : email.includes('hr')
+        ? 'hr'
+        : 'candidate';
+
       const user = {
         id: data.user?._id || data.user?.id || '',
         email: data.user?.email || payload.email,
         fullName: data.user?.fullName || '',
         roleId: data.user?.roleId,
+        role: role as 'candidate' | 'hr',
         isOnboarded: data.user?.isOnboarded ?? false,
+        coins: data.user?.coins ?? (role === 'hr' ? 10 : 0),
       };
 
       login(
@@ -38,7 +47,11 @@ export function useLogin() {
         user
       );
 
-      navigate('/candidate-profile', { replace: true });
+      if (user.role === 'hr') {
+        navigate('/candidates', { replace: true });
+      } else {
+        navigate('/candidate-profile', { replace: true });
+      }
       return true;
     } catch (err: any) {
       const errorMsg =

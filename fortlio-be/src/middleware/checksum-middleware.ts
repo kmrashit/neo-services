@@ -26,7 +26,7 @@ export class ChecksumVerifyMiddleware {
 
     const receivedChecksum = Array.isArray(raw) ? raw[0] : raw;
 
-    if (process.env.NODE_ENV !== 'production' && receivedChecksum === 'dev-checksum') {
+    if ((process.env.BUN_ENV !== 'prod' || process.env.NODE_ENV !== 'production') && receivedChecksum === 'dev-checksum') {
       return next();
     }
 
@@ -55,7 +55,7 @@ export class ChecksumVerifyMiddleware {
       }
       const receivedChecksum = Array.isArray(raw) ? raw[0] : raw;
 
-      if (process.env.NODE_ENV !== 'production' && receivedChecksum === 'dev-checksum') {
+      if ((process.env.BUN_ENV !== 'prod' || process.env.NODE_ENV !== 'production') && receivedChecksum === 'dev-checksum') {
         return next();
       }
 

@@ -122,12 +122,58 @@ const accessConnection = [
   },
 ];
 
+const accessJob = [
+  {
+    code: 'createJob',
+    name: 'Create Job Posting',
+    description: 'Allows HR to create a job posting',
+    tag: ['job'],
+  },
+  {
+    code: 'getMyJobs',
+    name: 'Get Recruiter Job Postings',
+    description: 'Allows HR to view their own posted jobs',
+    tag: ['job'],
+  },
+  {
+    code: 'updateJob',
+    name: 'Update Job Posting',
+    description: 'Allows HR to update status or details of a job posting',
+    tag: ['job'],
+  },
+  {
+    code: 'getJobApplicants',
+    name: 'Get Job Applicants',
+    description: 'Allows HR to view candidates who applied to a job posting',
+    tag: ['job'],
+  },
+  {
+    code: 'searchJobs',
+    name: 'Search Jobs',
+    description: 'Allows candidate/user to search active job postings',
+    tag: ['job'],
+  },
+  {
+    code: 'getJobSuggestions',
+    name: 'Get AI Job Suggestions',
+    description: 'Allows candidate to receive personalized AI job suggestions',
+    tag: ['job'],
+  },
+  {
+    code: 'applyJob',
+    name: 'Apply to Job',
+    description: 'Allows candidate to apply for a job posting',
+    tag: ['job'],
+  },
+];
+
 const privilegesAnalytics = [
   ...accessUserAnalytics,
   ...accessShortener,
   ...accessCandidate,
   ...accessHr,
   ...accessConnection,
+  ...accessJob,
 ];
 
 export const privilegesAllDefault = [
@@ -148,6 +194,9 @@ export const candidateDefaultAccess = [
   'getChatHistory',
   'listNotifications',
   'markNotificationAsRead',
+  'searchJobs',
+  'getJobSuggestions',
+  'applyJob',
 ];
 
 export const hrDefaultAccess = [
@@ -166,5 +215,10 @@ export const hrDefaultAccess = [
   'getChatHistory',
   'listNotifications',
   'markNotificationAsRead',
+  'createJob',
+  'getMyJobs',
+  'updateJob',
+  'getJobApplicants',
+  'searchJobs',
 ];
 

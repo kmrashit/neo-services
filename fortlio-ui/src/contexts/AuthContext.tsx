@@ -26,7 +26,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (storedToken && storedUser) {
         setAccessToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        if (!parsed.role) {
+          const email = (parsed.email || '').toLowerCase();
+          parsed.role = email.includes('hr') ? 'hr' : 'candidate';
+          localStorage.setItem('user', JSON.stringify(parsed));
+        }
+        setUser(parsed);
       }
     } catch (e) {
       console.error('Failed to restore auth state from localStorage:', e);

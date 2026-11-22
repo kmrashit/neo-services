@@ -1,367 +1,135 @@
-import { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom';
 import {
-  getConnections,
-  respondConnection
-} from "../services/connection.service";
-
-import ConnectionsChat from "./ConnectionsChat";
-import ConnectionsNotification from "./ConnectionsNotifications";
-
+  Users,
+  UserCheck,
+  Inbox,
+  UserPlus,
+  Sparkles,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  ConnectionTabsList,
+  useConnections,
+  useConnectionActions,
+} from '@/features/connections';
 
 export default function ConnectionsList() {
+  const { user } = useAuth();
+  const currentUserId = user?.id || (user as any)?._id || (user as any)?.userId;
 
-  const [connections, setConnections] = useState<any[]>([]);
-  const [active, setActive] = useState<any>(null);
+  const {
+    connections,
+    activeConnections,
+    pendingReceived,
+    pendingSent,
+    refresh,
+  } = useConnections(currentUserId);
 
+  const { respondToRequest, actionLoading } = useConnectionActions(refresh);
 
-  const user =
-    JSON.parse(localStorage.getItem("user") || "{}");
-
-
-
-  const loadConnections = async () => {
-
-    try {
-
-      const res: any = await getConnections();
-
-      setConnections(
-        res?.data?.data || []
-      );
-
-
-    } catch (err) {
-
-      console.log(err);
-
-    }
-
+  const handleAccept = async (id: string) => {
+    await respondToRequest(id, 'accept');
   };
 
-
-
-  useEffect(() => {
-
-    loadConnections();
-
-  }, []);
-
-
-
-
-
-  const handleAction = async (
-    id: string,
-    action: "accept" | "reject"
-  ) => {
-
-    try {
-
-      await respondConnection(
-        id,
-        action
-      );
-
-      loadConnections();
-
-
-    } catch (err) {
-
-      console.log(err);
-
-    }
-
+  const handleReject = async (id: string) => {
+    await respondToRequest(id, 'reject');
   };
-
-
-
-
-
-  const getOtherUser = (item: any) => {
-
-    const senderId =
-      String(item.senderId?._id || item.senderId);
-
-
-    if (senderId === String(user?._id)) {
-
-      return item.receiverId;
-
-    }
-
-
-    return item.senderId;
-
-  };
-
-
-
-
 
   return (
-
-    <div
-
-      className="
-h-[calc(100vh-70px)]
-grid
-grid-cols-[350px_1fr_360px]
-gap-5
-p-4
-bg-[#f6f7fb]
-overflow-hidden
-"
-
-    >
-
-
-
-      {/* LEFT CONNECTION */}
-
-
-      <div className="bg-white rounded-2xl border border-gray-400 overflow-hidden flex flex-col">
-
-        <div className="h-[65px] px-4 flex items-center justify-between border-b border-gray-400">
-
-          <h1 className="font-semibold text-[22px] text-gray-800">
-            Connections
-          </h1>
-
-          <button className="bg-violet-900 text-white px-4 py-2 rounded-xl text-[16px]">
-            + Send Connection
-          </button>
-        </div>
-
-        <div className="p-4 overflow-y-auto">
-
-          <h3 className="font-semibold mb-4">
-            Connection Requests
-            <span
-              className="ml-2 bg-violet-900 text-white px-1 rounded-full">
-              {connections.filter(x => x.status === "pending").length}
-            </span>
-          </h3>
-
-          {connections.filter(x => x.status === "pending").map(item => (
-            <div key={item._id}
-              className="border rounded-xl p-3 mb-3">
-
-              <div className="flex gap-3">
-                <img src={item.senderId?.profileImage || "/default.png"}
-                  className="w-10 h-10 rounded-full object-cover" />
-                <div>
-
-                  <p className="font-semibold">
-                    {item.senderId?.fullName}
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Software Engineer
-                  </p>
-
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-4">
-
-                <button
-                  onClick={() => handleAction(item._id, "accept")}
-                  className="bg-violet-600 text-white px-5 py-2 rounded-lg">
-                  Accept
-                </button>
-
-                <button onClick={() => handleAction(item._id, "reject")}
-                  className="border px-5 py-2 rounded-lg">
-                  Reject
-                </button>
-              </div>
+    <div className="space-y-6 pb-12 max-w-6xl mx-auto">
+      {/* Top Banner */}
+      <div className="relative overflow-hidden rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/20 via-indigo-900/10 to-background p-6 lg:p-8 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-purple-600/20 text-purple-600 dark:text-purple-300 border-purple-500/30 text-xs px-2.5 py-0.5">
+                <Users className="size-3 mr-1" />
+                Universal Professional Network
+              </Badge>
+              <Badge variant="outline" className="text-xs px-2.5 py-0.5 font-mono">
+                Direct Networking
+              </Badge>
             </div>
-
-
-          ))
-
-          }
-
-
-
-
-
-
-
-
-          <h3 className="
-font-semibold
-mt-6
-mb-3
-">
-
-            My Connections
-
-          </h3>
-
-
-
-
-
-
-          {
-
-            connections
-              .filter(
-                x => x.status === "accepted"
-              )
-              .map(item => {
-
-
-                const other =
-                  getOtherUser(item);
-
-
-
-                return (
-
-                  <div
-
-                    key={item._id}
-
-                    onClick={() =>
-                      setActive(item)
-                    }
-
-                    className="
-flex
-items-center
-justify-between
-p-3
-rounded-xl
-hover:bg-gray-50
-cursor-pointer
-mb-2
-"
-
-                  >
-
-
-
-                    <div className="
-flex
-gap-3
-items-center
-">
-
-
-                      <img
-
-                        src={
-                          other?.profileImage ||
-                          "/default.png"
-                        }
-
-                        className="
-w-11
-h-11
-rounded-full
-object-cover
-"
-
-                      />
-
-
-
-                      <div>
-
-
-                        <p className="
-font-semibold
-text-sm
-">
-
-                          {
-                            other?.fullName
-                          }
-
-                        </p>
-
-
-
-                        <p className="
-text-xs
-text-gray-500
-">
-
-                          Software Engineer
-
-                        </p>
-
-
-
-                        <p className="
-text-xs
-text-green-500
-mt-1
-">
-
-                          ● Online
-
-                        </p>
-
-
-
-                      </div>
-
-
-                    </div>
-
-
-
-
-
-                    <div className="
-text-violet-600
-text-xl
-">
-
-                      💬
-
-                    </div>
-
-
-
-                  </div>
-
-
-                )
-
-
-              })
-
-          }
-
-
-
+            <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
+              Connections & Network
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Connect and collaborate with verified professionals across engineering, medicine, law, design, science, and leadership disciplines.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Link to="/candidates">
+              <Button
+                size="sm"
+                className="h-10 px-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold cursor-pointer shadow-md"
+              >
+                <UserPlus className="size-4 mr-1.5" />
+                <span>Find Professionals</span>
+              </Button>
+            </Link>
+          </div>
         </div>
-
-
       </div>
 
-      {/* CHAT */}
+      {/* Metrics Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="p-4 bg-card/80 border-border/80">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase">
+              Connected Peers
+            </span>
+            <UserCheck className="size-4 text-emerald-500" />
+          </div>
+          <div className="text-2xl font-extrabold text-foreground mt-2">
+            {activeConnections.length}
+          </div>
+        </Card>
 
-      <div className="bg-white rounded-2xl border border-gray-400 overflow-hidden">
+        <Card className="p-4 bg-card/80 border-border/80">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase">
+              Pending Invitations
+            </span>
+            <Inbox className="size-4 text-purple-600" />
+          </div>
+          <div className="text-2xl font-extrabold text-foreground mt-2 flex items-center gap-2">
+            <span>{pendingReceived.length}</span>
+            {pendingReceived.length > 0 && (
+              <Badge className="bg-purple-600 text-white text-[10px] py-0 px-1.5">
+                Action Required
+              </Badge>
+            )}
+          </div>
+        </Card>
 
-        <ConnectionsChat active={active} />
-
+        <Card className="p-4 bg-card/80 border-border/80">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase">
+              Outgoing Requests
+            </span>
+            <Sparkles className="size-4 text-amber-500" />
+          </div>
+          <div className="text-2xl font-extrabold text-foreground mt-2">
+            {pendingSent.length}
+          </div>
+        </Card>
       </div>
 
-      {/* NOTIFICATION */}
-
-      <div className="rounded-2xl border border-gray-400 overflow-hidden">
-        <ConnectionsNotification />
-      </div>
-
+      {/* Main Tabs List */}
+      <ConnectionTabsList
+        connections={connections}
+        activeConnections={activeConnections}
+        pendingReceived={pendingReceived}
+        pendingSent={pendingSent}
+        currentUserId={currentUserId}
+        onAccept={handleAccept}
+        onReject={handleReject}
+        actionLoading={actionLoading}
+      />
     </div>
-
-
-  )
-
+  );
 }

@@ -113,13 +113,13 @@
 | **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟢 90% | 🟢 90% | 🟢 100% | 🟢 90% | 🟢 100% | 🟢 100% | **95%** |
 | **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
 | **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
-| **F06** | Connections & Notifications | 🟢 100% | 🟢 90% | N/A | 🟡 40% | 🟢 100% | 🔴 0% | **66%** |
+| **F06** | Connections & Notifications | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
 | **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
 | **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** |
 | **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
 | **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
 | **F11** | Job Board & Recruitment Engine | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
-| **Total** | **Fortlio Platform Master** | **80%** | **77%** | **75%** | **66%** | **80%** | **64%** | **74%** |
+| **Total** | **Fortlio Platform Master** | **80%** | **78%** | **75%** | **72%** | **80%** | **73%** | **77%** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
 
@@ -173,6 +173,19 @@ When implementing or modifying any feature:
    - Update checklist items in Section 2 of `docs/F0<X>.md`.
    - Append an entry in Section 6 (`Changelog & Progress Log`) of `docs/F0<X>.md`.
    - Recalculate and update the feature's status percentage in the Main Master Progress Tracker in `GEMINI.md`.
+
+---
+
+## 9. Git Commit & Version Control Rules
+1. **ALWAYS ASK BEFORE COMMITTING**:
+   - The agent MUST NEVER run `git commit` or create git commits autonomously or automatically without explicit prior user approval and confirmation.
+   - When code is ready to commit:
+     1. Stage files or inspect `git status` / `git diff`.
+     2. Ensure relevant tests pass.
+     3. Present the proposed commit message, summary of changes, and list of modified/added files to the USER.
+     4. Explicitly ask for user confirmation before running `git commit`.
+2. **Never Push Without Instruction**:
+   - The agent MUST NEVER execute `git push` unless specifically and explicitly requested by the user.
 
 <!-- For testing purpose
  candidate@test.com

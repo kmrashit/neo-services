@@ -26,42 +26,83 @@ import {
 } from '@/components/ui/dialog';
 import { useResumePdfExport } from '../hooks/useResumePdfExport';
 
-const DEFAULT_RESUME_MARKDOWN = `# Alex Mercer
-**Staff Systems Engineer & Distributed Architect**
-San Francisco, CA | alex.mercer@fortlio.dev | https://alexmercer.dev
+const DEFAULT_RESUME_MARKDOWN = `# [Your Full Name]
+**[Target Role / Professional Specialty Headline]**
+[City, State / Open to Remote] • [email@example.com] • [portfolio-link.com] • [linkedin.com/in/username] • [github.com/username]
 
 ---
 
 ## Executive Summary
-Staff Distributed Systems Engineer with 6+ years of experience designing event-driven distributed architectures, high-throughput database aggregations, and resilient microservices. Proven track record leading system reliability initiatives and authoring high-impact open-source developer tooling.
+
+A results-driven **[Specialty / Profession Title]** with **[X+] years of proven experience** in *[Core Domain 1]*, *[Core Domain 2]*, and *[Core Domain 3]*. Recognized for translating complex problem spaces into scalable, high-impact outcomes through structured methodology and cross-disciplinary leadership.
+
+> **Professional Value Proposition**: Combines strategic domain vision with execution rigor to deliver measurable organizational impact and sustainable growth.
 
 ---
 
-## Core Competencies
-- **Languages**: TypeScript, Go, SQL, Bash
-- **Distributed Systems**: Apache Kafka, Redis Streams, RabbitMQ, Docker, Kubernetes
-- **Databases**: MongoDB (Aggregation Pipelines, Post-Facet Slicing), PostgreSQL, Redis, Typesense
-- **Frameworks & Runtimes**: Bun, Node.js, Express, React, Vite, Tailwind CSS
+## Core Competencies & Skills
+
+| Competency Area | Core Methodologies & Technologies | Experience / Mastery |
+|:----------------|:----------------------------------|---------------------:|
+| **Primary Domain** | [Specialty A, Methodology B, Industry Standard C] | Expert (5+ yrs) |
+| **Tools & Platforms** | [Platform 1, System 2, Framework 3, Database 4] | Advanced (4+ yrs) |
+| **Practices & Quality** | [STAR Method, Architecture Review, Compliance] | Advanced (4+ yrs) |
+| **Leadership** | [Cross-functional Alignment, Mentorship, Strategy] | Proficient (3+ yrs) |
+
+### Functional Skill Breakdown
+
+- **Domain Disciplines**: [Core Discipline 1], [Core Discipline 2], [Core Discipline 3], [Core Discipline 4]
+- **Tooling & Environments**: [Tool A], [Platform B], [Environment C], [System D]
+- **Professional Practices**: Agile delivery, quantifiable impact reporting, technical writing, stakeholder communication
 
 ---
 
 ## Professional Experience
 
-### Lead Systems Architect | Veloce Cloud Systems
-*2023 - Present | San Francisco, CA*
-- Designed distributed telemetry ingestion pipeline processing **45,000 events/sec** with sub-50ms latency using Bun, Redis streams, and MongoDB.
-- Reduced replica query loads by **65%** by standardizing MongoDB pipeline execution with post-facet sliced projections.
-- Mentored 12 software engineers across backend and systems architecture pods.
+### [Job Title / Position] | [Company / Organization Name]
+*[Start Month, Year] – [End Month, Year / Present] | [Location / Remote]*
 
-### Senior Backend Engineer | Stratos Core Inc.
-*2021 - 2023 | San Francisco, CA*
-- Architected microservices infrastructure on AWS EKS serving 2M daily active requests.
-- Authored internal developer CLI reducing new service deployment lead time from 3 days to under 30 minutes.
+- **[Key Initiative 1]**: Spearheaded [project/system initiative], achieving an **[X%] efficiency gain** and saving **$[Y]k annually** using [primary methodology/tool].
+- **[Key Initiative 2]**: Architected and deployed [core deliverable], supporting over **[Z]k active users/transactions** with **99.9% reliability**.
+- **[Leadership & Process]**: Mentored a cross-functional team of **[N] professionals**, establishing best practices and reducing turnaround time by **[X%]**.
+  - Standardized peer review workflows across [department/unit].
+  - Authored standard operating procedures and technical documentation.
+
+### [Previous Job Title] | [Previous Organization Name]
+*[Start Month, Year] – [End Month, Year] | [Location / Remote]*
+
+- Delivered [milestone deliverable] on schedule, directly improving [critical metric] by **[X%]**.
+- Collaborated with cross-disciplinary stakeholders to implement [feature/solution], reducing operational overhead by **[Y%]**.
+- Resolved [complex bottleneck/challenge] using [structured analysis], resulting in [tangible business benefit].
 
 ---
 
-## Education
-**B.S. in Computer Science** — University of California, Berkeley (2017 - 2021)
+## Education & Credentials
+
+### [Degree / Professional Qualification]
+*[University / Academic Institution / Issuing Board] • [Graduation Year]*
+- **Honors / Concentration**: [Summa Cum Laude / Dean's List / Major Field Concentration]
+- **Capstone / Thesis**: [Title or focus of research / capstone project]
+
+### Verified Certifications & Credentials
+
+- [x] **[Certification Name 1]** — *[Issuing Organization]* (Credential ID: [ABC-12345])
+- [x] **[Certification Name 2]** — *[Issuing Organization]* (Credential ID: [XYZ-67890])
+- [ ] **[In-Progress Credential]** — *Expected [Month, Year]*
+
+---
+
+## Key Projects & Case Studies
+
+1. **[Flagship Project / Domain Case Study]** ([Link](https://fortlio.com))
+   - Designed and executed [deliverable] addressing [domain challenge].
+   - Leveraged [key methodology] to achieve [quantifiable outcome].
+2. **[Specialty Blog / Whitepaper Publication]**
+   - Authored deep dive on [topic], demonstrating problem-solving judgment and domain analysis.
+
+---
+
+*Tip: In Resume Builder Mode, use standard markdown headings (\`#\`, \`##\`, \`###\`), tables, and bullet points. Fortlio compiles your layout into a pixel-perfect, print-ready A4 PDF with watermark.*
 `;
 
 export const ResumeEditor: React.FC = () => {
@@ -97,7 +138,7 @@ export const ResumeEditor: React.FC = () => {
   };
 
   const handleExportPdf = async () => {
-    await exportPdf(markdown, 'Alex_Mercer_Resume.pdf');
+    await exportPdf(markdown, 'Resume.pdf');
   };
 
   return (

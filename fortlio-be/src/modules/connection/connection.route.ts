@@ -24,6 +24,7 @@ export class ConnectionRoutes {
 
     // Notifications
     this.router.get('/notifications', this.authGuard.checkAccess('listNotifications'), this.connectionController.listNotifications);
+    this.router.post('/notifications/read-all', this.authGuard.checkAccess('markNotificationAsRead'), this.connectionController.markAllNotificationsAsRead);
     this.router.post('/notifications/read/:notificationId', this.authGuard.checkAccess('markNotificationAsRead'), this.connectionController.markNotificationAsRead);
   }
 }

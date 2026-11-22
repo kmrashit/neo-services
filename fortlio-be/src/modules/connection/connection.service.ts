@@ -5,7 +5,7 @@ import Notification from './models/notification.model';
 import User from '../user/models/user.model';
 import { AppError } from '../../core/core-utils/err-util';
 import * as CONNECTION_MSGS from './connection.constants';
-import { getChatHistoryPipeline } from './connection.queries';
+import { getChatHistoryPipeline, getListConnectionsPipeline, getListNotificationsPipeline } from './connection.queries';
 import { wsHandler } from '../../clients';
 
 export class ConnectionService {
@@ -113,19 +113,11 @@ export class ConnectionService {
     }
   }
 
-  async listConnections(userId: string) {
+  async listConnections(userId: string, status?: string) {
     try {
       const userObjectId = new mongoose.Types.ObjectId(userId);
-      const connections = await Connection.find({
-        $or: [
-          { senderId: userObjectId },
-          { receiverId: userObjectId },
-        ],
-      })
-        .populate('senderId', 'fullName email')
-        .populate('receiverId', 'fullName email')
-        .exec();
-
+      const pipeline = getListConnectionsPipeline(userObjectId, status);
+      const connections = await Connection.aggregate(pipeline).exec();
       return connections;
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_LIST_CONNECTIONS, apiName: 'listConnections' });
@@ -254,7 +246,8 @@ export class ConnectionService {
   async listNotifications(userId: string) {
     try {
       const userObjectId = new mongoose.Types.ObjectId(userId);
-      return await Notification.find({ userId: userObjectId }).sort({ createdAt: -1 }).exec();
+      const pipeline = getListNotificationsPipeline(userObjectId);
+      return await Notification.aggregate(pipeline).exec();
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_FETCH_NOTIFICATIONS, apiName: 'listNotifications' });
     }
@@ -279,6 +272,16 @@ export class ConnectionService {
         throw error;
       }
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_MARK_NOTIFICATION, apiName: 'markNotificationAsRead' });
+    }
+  }
+
+  async markAllNotificationsAsRead(userId: string) {
+    try {
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+      await Notification.updateMany({ userId: userObjectId, isRead: false }, { $set: { isRead: true } });
+      return { success: true };
+    } catch (error: any) {
+      throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_MARK_NOTIFICATION, apiName: 'markAllNotificationsAsRead' });
     }
   }
 }

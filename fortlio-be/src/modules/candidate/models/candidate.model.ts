@@ -12,6 +12,12 @@ const candidateSchema = new mongoose.Schema(
     resumeUrl: { type: String, default: '' },
     experience: { type: Number, default: 0 },
     bio: { type: String, default: '' },
+    headline: { type: String, default: '' },
+    profession: { type: String, default: 'Engineering & Technology' },
+    location: { type: String, default: 'Remote' },
+    learningVelocityScore: { type: Number, default: 85 },
+    leadershipTags: { type: [String], default: [] },
+    topics: { type: [String], default: [] },
   },
   { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
 );

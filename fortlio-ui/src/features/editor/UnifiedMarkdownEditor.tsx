@@ -30,86 +30,221 @@ import {
 } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+import { DrawYourImaginationModal } from './DrawYourImaginationModal';
 
 export interface UnifiedMarkdownEditorProps {
   initialMode?: 'resume' | 'blog';
   initialMarkdown?: string;
+  initialOpenDraw?: boolean;
   onSave?: (markdown: string) => void;
   onPublishBlog?: (data: { title: string; content: string; tags: string[] }) => Promise<void>;
   onExportPdf?: (markdown: string) => Promise<void>;
   candidateName?: string;
 }
 
-const DEFAULT_RESUME_MARKDOWN = `# Alex Mercer
-**Staff Systems Engineer & Distributed Architect**
-San Francisco, CA | alex.mercer@fortlio.dev | https://alexmercer.dev
+const DEFAULT_RESUME_MARKDOWN = `# [Your Full Name]
+**[Target Role / Professional Specialty Headline]**
+[City, State / Open to Remote] • [email@example.com] • [portfolio-link.com] • [linkedin.com/in/username] • [github.com/username]
 
 ---
 
 ## Executive Summary
-Staff Distributed Systems Engineer with 6+ years of experience designing event-driven distributed architectures, high-throughput database aggregations, and resilient microservices. Proven track record leading system reliability initiatives and authoring high-impact open-source developer tooling.
+
+A results-driven **[Specialty / Profession Title]** with **[X+] years of proven experience** in *[Core Domain 1]*, *[Core Domain 2]*, and *[Core Domain 3]*. Recognized for translating complex problem spaces into scalable, high-impact outcomes through structured methodology and cross-disciplinary leadership.
+
+> **Professional Value Proposition**: Combines strategic domain vision with execution rigor to deliver measurable organizational impact and sustainable growth.
 
 ---
 
-## Core Competencies
-- **Languages**: TypeScript, Go, SQL, Bash
-- **Distributed Systems**: Apache Kafka, Redis Streams, RabbitMQ, Docker, Kubernetes
-- **Databases**: MongoDB (Aggregation Pipelines, Post-Facet Slicing), PostgreSQL, Redis, Typesense
-- **Frameworks & Runtimes**: Bun, Node.js, Express, React, Vite, Tailwind CSS
+## Core Competencies & Skills
+
+| Competency Area | Core Methodologies & Technologies | Experience / Mastery |
+|:----------------|:----------------------------------|---------------------:|
+| **Primary Domain** | [Specialty A, Methodology B, Industry Standard C] | Expert (5+ yrs) |
+| **Tools & Platforms** | [Platform 1, System 2, Framework 3, Database 4] | Advanced (4+ yrs) |
+| **Practices & Quality** | [STAR Method, Architecture Review, Compliance] | Advanced (4+ yrs) |
+| **Leadership** | [Cross-functional Alignment, Mentorship, Strategy] | Proficient (3+ yrs) |
+
+### Functional Skill Breakdown
+
+- **Domain Disciplines**: [Core Discipline 1], [Core Discipline 2], [Core Discipline 3], [Core Discipline 4]
+- **Tooling & Environments**: [Tool A], [Platform B], [Environment C], [System D]
+- **Professional Practices**: Agile delivery, quantifiable impact reporting, technical writing, stakeholder communication
 
 ---
 
 ## Professional Experience
 
-### Lead Systems Architect | Veloce Cloud Systems
-*2023 - Present | San Francisco, CA*
-- Designed distributed telemetry ingestion pipeline processing **45,000 events/sec** with sub-50ms latency using Bun, Redis streams, and MongoDB.
-- Reduced replica query loads by **65%** by standardizing MongoDB pipeline execution with post-facet sliced projections.
-- Mentored 12 software engineers across backend and systems architecture pods.
+### [Job Title / Position] | [Company / Organization Name]
+*[Start Month, Year] – [End Month, Year / Present] | [Location / Remote]*
 
-### Senior Backend Engineer | Stratos Core Inc.
-*2021 - 2023 | San Francisco, CA*
-- Architected microservices infrastructure on AWS EKS serving 2M daily active requests.
-- Authored internal developer CLI reducing new service deployment lead time from 3 days to under 30 minutes.
+- **[Key Initiative 1]**: Spearheaded [project/system initiative], achieving an **[X%] efficiency gain** and saving **$[Y]k annually** using [primary methodology/tool].
+- **[Key Initiative 2]**: Architected and deployed [core deliverable], supporting over **[Z]k active users/transactions** with **99.9% reliability**.
+- **[Leadership & Process]**: Mentored a cross-functional team of **[N] professionals**, establishing best practices and reducing turnaround time by **[X%]**.
+  - Standardized peer review workflows across [department/unit].
+  - Authored standard operating procedures and technical documentation.
+
+### [Previous Job Title] | [Previous Organization Name]
+*[Start Month, Year] – [End Month, Year] | [Location / Remote]*
+
+- Delivered [milestone deliverable] on schedule, directly improving [critical metric] by **[X%]**.
+- Collaborated with cross-disciplinary stakeholders to implement [feature/solution], reducing operational overhead by **[Y%]**.
+- Resolved [complex bottleneck/challenge] using [structured analysis], resulting in [tangible business benefit].
 
 ---
 
-## Education
-**B.S. in Computer Science** — University of California, Berkeley (2017 - 2021)
+## Education & Credentials
+
+### [Degree / Professional Qualification]
+*[University / Academic Institution / Issuing Board] • [Graduation Year]*
+- **Honors / Concentration**: [Summa Cum Laude / Dean's List / Major Field Concentration]
+- **Capstone / Thesis**: [Title or focus of research / capstone project]
+
+### Verified Certifications & Credentials
+
+- [x] **[Certification Name 1]** — *[Issuing Organization]* (Credential ID: [ABC-12345])
+- [x] **[Certification Name 2]** — *[Issuing Organization]* (Credential ID: [XYZ-67890])
+- [ ] **[In-Progress Credential]** — *Expected [Month, Year]*
+
+---
+
+## Key Projects & Case Studies
+
+1. **[Flagship Project / Domain Case Study]** ([Link](https://fortlio.com))
+   - Designed and executed [deliverable] addressing [domain challenge].
+   - Leveraged [key methodology] to achieve [quantifiable outcome].
+2. **[Specialty Blog / Whitepaper Publication]**
+   - Authored deep dive on [topic], demonstrating problem-solving judgment and domain analysis.
+
+---
+
+*Tip: In Resume Builder Mode, use standard markdown headings (\`#\`, \`##\`, \`###\`), tables, and bullet points. Fortlio compiles your layout into a pixel-perfect, print-ready A4 PDF with watermark.*
 `;
 
-const DEFAULT_BLOG_MARKDOWN = `# Architecting Resilient Event-Driven Pipelines with Post-Facet Slicing
+const DEFAULT_BLOG_MARKDOWN = `# Welcome to Fortlio
 
-*Published in Engineering & Distributed Systems • 5 min read*
-
-Distributed data systems frequently encounter performance degradation when relational lookups run against raw collections prior to pagination slicing. In this deep dive, we explore why post-facet slicing in aggregation pipelines minimizes I/O pressure and unlocks sub-10ms response times.
+A clean, distraction-free markdown editor. Type on the left, see the rendered output on the right.
 
 ---
 
-## The Core Challenge: Pre-Facet vs Post-Facet Joins
+## Text Formatting
 
-Traditional database query builders often join related collections on the entire filtered dataset before applying limit and skip offsets. When dealing with millions of records:
+Markdown makes it easy to format text. You can write in **bold**, *italic*, or ~~strikethrough~~. Combine them for ***bold italic*** text. Use \`inline code\` for technical terms.
 
-1. **Unbounded Memory Spikes**: Documents accumulate in working RAM during stage evaluation.
-2. **Excessive Network Serialization**: Thousands of unviewed relational documents serialize needlessly.
+## Lists
 
-\`\`\`mermaid
-graph LR
-  A[Raw Filtered Collection] --> B[Slicing Stage: Skip & Limit]
-  B --> C[Targeted Lookups on Page Records Only]
-  C --> D[Projection & Result]
+Unordered lists use dashes, asterisks, or plus signs:
+
+- Import files from GitHub, Dropbox, or Google Drive
+- Export to Markdown, HTML, or PDF
+- Drag and drop files directly into the editor
+
+Ordered lists are numbered automatically:
+
+1. Write your markdown
+2. Preview the rendered output
+3. Export or save to the cloud
+
+Nested lists work too:
+
+- Cloud integrations
+  - GitHub repositories
+  - Dropbox folders
+  - Google Drive files
+  - OneDrive and Bitbucket
+- Local features
+  - Auto-save to browser storage
+  - Image paste from clipboard
+
+## Task Lists
+
+- [x] Set up the editor
+- [x] Write some markdown
+- [ ] Connect a cloud service
+- [ ] Export the finished document
+
+## Links and Images
+
+Link to any page with [inline links](https://fortlio.com) or use [reference-style links][fortlio].
+
+Images use a similar syntax:
+
+![Placeholder](https://placehold.co/600x200/2B2F36/35D7BB?text=Your+Image+Here)
+
+[fortlio]: https://fortlio.com
+
+## Blockquotes
+
+> The art of writing is the art of discovering what you believe.
+>
+> — Gustave Flaubert
+
+Blockquotes can contain other markdown elements:
+
+> **Tip:** Use \`Cmd+Shift+Z\` to enter zen mode for distraction-free writing.
+
+## Code
+
+Fenced code blocks support syntax highlighting:
+
+\`\`\`javascript
+function greet(name) {
+  return \`Hello, \${name}.\`;
+}
+
+console.log(greet("world"));
 \`\`\`
 
-## Practical Implementation & Benchmark Findings
+\`\`\`python
+def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+\`\`\`
 
-By deferring relational \`$lookup\` stages to execute **after** \`$skip\` and \`$limit\` inside a \`$facet\`, we observed a **68% drop in CPU utilization** on secondary replica nodes.
+## Tables
 
-> **Authentic Insight**: High-throughput distributed design isn't about throwing hardware at inefficient queries; it's about pruning document streams at the earliest possible stage in the execution plan.
+| Shortcut | Action |
+|----------|--------|
+| \`⌘ ⇧ Z\` | Toggle zen mode |
+| \`Escape\` | Exit zen mode |
+| \`?\` | Keyboard shortcuts |
+
+Tables support alignment:
+
+| Feature | Status | Notes |
+|:--------|:------:|------:|
+| Markdown editing | Active | Monaco-powered |
+| Live preview | Active | Scroll-synced |
+| Cloud sync | Available | 5 providers |
+| PDF export | Available | Server-rendered |
+
+## Footnotes
+
+Fortlio supports extended markdown syntax including footnotes[^1] and definition lists.
+
+[^1]: Footnotes appear at the bottom of the rendered preview.
+
+## Math
+
+Inline math: $E = mc^2$
+
+Block equations:
+
+$$
+\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}
+$$
+
+---
+
+*Your documents save automatically. Start writing.*
 `;
 
 export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   initialMode = 'resume',
   initialMarkdown,
+  initialOpenDraw = false,
   onSave,
   onPublishBlog,
   onExportPdf,
@@ -130,7 +265,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   const [isExporting, setIsExporting] = useState(false);
 
   // Dialog states
-  const [isDrawOpen, setIsDrawOpen] = useState(false);
+  const [isDrawOpen, setIsDrawOpen] = useState(initialOpenDraw || false);
   const [isAiResumeOpen, setIsAiResumeOpen] = useState(false);
   const [isAiBlogOpen, setIsAiBlogOpen] = useState(false);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
@@ -182,22 +317,6 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
     }
   };
 
-  // Draw Imagination Diagram Insertion
-  const handleInsertDiagram = (type: string) => {
-    let diagram = '';
-    if (type === 'system') {
-      diagram = `\n\n### System Architecture\n\`\`\`mermaid\ngraph TD\n  Client[Web & Mobile Clients] --> Gateway[API Gateway / AuthGuard]\n  Gateway --> Service[Core Backend Service]\n  Service --> Cache[(Redis Cache)]\n  Service --> DB[(MongoDB Storage)]\n\`\`\`\n`;
-    } else if (type === 'process') {
-      diagram = `\n\n### Execution Process Flow\n\`\`\`mermaid\ngraph LR\n  Start[Input / Hypothesis] --> Analyze[Domain Evaluation]\n  Analyze --> Execute[Execution & Tests]\n  Execute --> Impact[Verified Impact]\n\`\`\`\n`;
-    } else {
-      diagram = `\n\n### Domain Interaction Model\n\`\`\`mermaid\nsequenceDiagram\n  autonumber\n  Candidate->>Fortlio: Publish Authentic Knowledge\n  Fortlio->>Forti AI: Synthesize Learning Velocity\n  Recruiter->>Candidate: Discover & Connect\n\`\`\`\n`;
-    }
-    setMarkdown((prev) => prev + diagram);
-    setIsDrawOpen(false);
-    setAiNotice('Visual diagram inserted into Markdown!');
-    setTimeout(() => setAiNotice(null), 3000);
-  };
-
   // Help Me Write Resume AI Action
   const handleApplyResumeAi = (action: string) => {
     if (action === 'action-verbs') {
@@ -227,7 +346,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
     setTimeout(() => setAiNotice(null), 5000);
   };
 
-  const authorName = candidateName || user?.fullName || 'Alex Mercer';
+  const authorName = candidateName || user?.fullName || 'Your Name';
   const authorInitial = authorName.charAt(0).toUpperCase();
   const wordCount = markdown.split(/\s+/).filter(Boolean).length;
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
@@ -488,52 +607,17 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
         )}
       </div>
 
-      {/* DIALOG: Draw Your Imagination (Interactive Diagram Ingestion) */}
-      <Dialog open={isDrawOpen} onOpenChange={setIsDrawOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              <Palette className="size-5 text-purple-600" />
-              <DialogTitle className="text-base font-bold">Draw Your Imagination</DialogTitle>
-            </div>
-            <DialogDescription className="text-xs">
-              Illustrate complex architectures, clinical pathways, legal frameworks, or workflows. Select a diagram type to insert into your {mode === 'resume' ? 'resume' : 'blog'}:
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid grid-cols-1 gap-2.5 py-3">
-            <button
-              onClick={() => handleInsertDiagram('system')}
-              className="text-left p-3.5 rounded-xl border border-border/80 hover:border-purple-500/60 bg-muted/40 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 transition-all cursor-pointer"
-            >
-              <div className="font-semibold text-xs text-foreground">System Architecture Blueprint</div>
-              <p className="text-[11px] text-muted-foreground">
-                Client → Gateway → Services → Storage diagram to showcase technical and systems maturity.
-              </p>
-            </button>
-
-            <button
-              onClick={() => handleInsertDiagram('process')}
-              className="text-left p-3.5 rounded-xl border border-border/80 hover:border-purple-500/60 bg-muted/40 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 transition-all cursor-pointer"
-            >
-              <div className="font-semibold text-xs text-foreground">Execution / Process Flowchart</div>
-              <p className="text-[11px] text-muted-foreground">
-                Step-by-step methodology flowchart (problem hypothesis → execution → outcome).
-              </p>
-            </button>
-
-            <button
-              onClick={() => handleInsertDiagram('sequence')}
-              className="text-left p-3.5 rounded-xl border border-border/80 hover:border-purple-500/60 bg-muted/40 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 transition-all cursor-pointer"
-            >
-              <div className="font-semibold text-xs text-foreground">Sequence & Interaction Model</div>
-              <p className="text-[11px] text-muted-foreground">
-                Multi-actor sequence diagram illustrating service contracts and behavioral flow.
-              </p>
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* MODAL: Draw Your Imagination (Interactive Canvas & Diagram Ingestion) */}
+      <DrawYourImaginationModal
+        open={isDrawOpen}
+        onOpenChange={setIsDrawOpen}
+        mode={mode}
+        onInsertMarkdown={(content, notice) => {
+          setMarkdown((prev) => prev + content);
+          setAiNotice(notice);
+          setTimeout(() => setAiNotice(null), 4000);
+        }}
+      />
 
       {/* DIALOG: Help Me Write Resume */}
       <Dialog open={isAiResumeOpen} onOpenChange={setIsAiResumeOpen}>
