@@ -97,6 +97,38 @@ A results-driven **[Specialty / Profession Title]** with **[X+] years of proven 
 *Tip: In Resume Builder Mode, use standard markdown headings (\`#\`, \`##\`, \`###\`), tables, and bullet points. Fortlio compiles your layout into a pixel-perfect, print-ready A4 PDF with watermark.*
 `;
 
+const splitMarkdownIntoA4Pages = (md: string): string[] => {
+  if (md.includes('<!-- pagebreak -->')) {
+    return md.split('<!-- pagebreak -->').map((p) => p.trim()).filter(Boolean);
+  }
+  if (md.includes('---page---')) {
+    return md.split('---page---').map((p) => p.trim()).filter(Boolean);
+  }
+
+  const sections = md.split(/(?=\n##\s+)/);
+  if (sections.length <= 1 || md.length < 1800) {
+    return [md];
+  }
+
+  const pages: string[] = [];
+  let currentPage = '';
+
+  for (const section of sections) {
+    if ((currentPage.length + section.length > 2200) && currentPage.length > 800) {
+      pages.push(currentPage.trim());
+      currentPage = section;
+    } else {
+      currentPage += (currentPage ? '\n\n' : '') + section;
+    }
+  }
+
+  if (currentPage.trim()) {
+    pages.push(currentPage.trim());
+  }
+
+  return pages.length > 0 ? pages : [md];
+};
+
 export const ResumeEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState(() => localStorage.getItem('fortlio_resume_markdown') || DEFAULT_RESUME_MARKDOWN);
   const [activeTab, setActiveTab] = useState<'split' | 'edit' | 'preview'>('split');
@@ -242,7 +274,7 @@ export const ResumeEditor: React.FC = () => {
                 onChange={(e) => setMarkdown(e.target.value)}
                 placeholder="Type your markdown resume content here..."
                 aria-label="Markdown Source Editor"
-                className="w-full flex-1 p-4 font-mono text-xs text-foreground bg-transparent resize-none focus:outline-none focus:ring-0 leading-relaxed"
+                className="w-full flex-1 py-3 px-1.5 sm:px-2 font-mono text-xs text-foreground bg-transparent resize-none focus:outline-none focus:ring-0 leading-relaxed"
                 spellCheck={false}
               />
             </CardContent>
@@ -256,15 +288,52 @@ export const ResumeEditor: React.FC = () => {
               <CardTitle className="text-xs font-semibold flex items-center justify-between text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Eye className="size-3.5 text-emerald-500" />
-                  Print Preview (Pixel-Perfect A4)
+                  Print Preview (Pixel-Perfect A4 Pages)
                 </span>
                 <span className="text-[10px] text-muted-foreground">Live Render</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 overflow-y-auto flex-1 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
-              <article className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-xl prose-h2:text-sm prose-h2:border-b prose-h2:border-neutral-200 dark:prose-h2:border-neutral-800 prose-h2:pb-1 prose-h3:text-xs prose-p:text-xs prose-p:leading-relaxed prose-li:text-xs prose-ul:my-2">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-              </article>
+            <CardContent className="p-2 sm:p-4 overflow-y-auto flex-1 bg-muted/20 text-foreground">
+              <div className="w-full flex flex-col items-center space-y-4">
+                {splitMarkdownIntoA4Pages(markdown).map((pageContent, pageIdx, allPages) => {
+                  const pageNum = pageIdx + 1;
+                  const totalPages = allPages.length;
+                  return (
+                    <React.Fragment key={pageIdx}>
+                      <div className="w-full max-w-[750px] min-h-[1050px] bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 shadow-md rounded-sm p-6 sm:p-12 border border-border/80 relative flex flex-col justify-between my-2">
+                        {pageNum > 1 && (
+                          <div className="pb-2 mb-4 border-b border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
+                            <span className="font-semibold text-foreground/80">Professional Resume</span>
+                            <span className="font-mono text-[10px]">Page {pageNum} of {totalPages}</span>
+                          </div>
+                        )}
+                        <article className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-xl prose-h2:text-sm prose-h2:border-b prose-h2:border-neutral-200 dark:prose-h2:border-neutral-800 prose-h2:pb-1 prose-h3:text-xs prose-p:text-xs prose-p:leading-relaxed prose-li:text-xs prose-ul:my-2 flex-1">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{pageContent}</ReactMarkdown>
+                        </article>
+                        <div className="pt-4 mt-6 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
+                          <span className="font-mono font-medium">Page {pageNum} of {totalPages}</span>
+                          <div className="flex items-center gap-1.5 font-semibold text-muted-foreground/80">
+                            <span>By :</span>
+                            <span className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold">
+                              <Sparkles className="size-3" />
+                              Fortlio
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {pageNum < totalPages && (
+                        <div className="w-full max-w-[750px] my-1 flex items-center justify-center gap-2 text-muted-foreground select-none">
+                          <div className="h-px flex-1 border-t-2 border-dashed border-border/50" />
+                          <span className="bg-muted px-2 py-0.5 rounded-full font-mono text-[10px]">
+                            Page Break • Page {pageNum} of {totalPages}
+                          </span>
+                          <div className="h-px flex-1 border-t-2 border-dashed border-border/50" />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         )}

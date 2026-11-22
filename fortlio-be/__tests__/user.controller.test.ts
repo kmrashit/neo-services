@@ -48,6 +48,10 @@ describe('UserController Unit Tests', () => {
       updateUser: mock(() => Promise.resolve({})),
       deleteUserById: mock(() => Promise.resolve({})),
       addCoins: mock(() => Promise.resolve({ coins: 20 })),
+      purchaseCoins: mock(() => Promise.resolve({ coins: 70, coinsAdded: 50, message: 'Success' })),
+      upgradeToPro: mock(() => Promise.resolve({ isPro: true, isAiOptedIn: true, coins: 520, message: 'Upgraded' })),
+      toggleAiOptIn: mock(() => Promise.resolve({ isAiOptedIn: true, message: 'Updated' })),
+      getTokenUsage: mock(() => Promise.resolve({ userId: VALID_USER_ID, tokensUsed: 1200, coins: 50, isPro: true, isAiOptedIn: true })),
     };
 
     mockRoleService = {
@@ -349,6 +353,88 @@ describe('UserController Unit Tests', () => {
       mockUserService.addCoins.mockRejectedValue(new Error('DB failure'));
 
       expect(userController.watchAd(req, mockRes)).rejects.toThrow(new AppError('DB failure'));
+    });
+  });
+
+  describe('purchaseCoins', () => {
+    it('should successfully process credit card coin purchase', async () => {
+      const payload = {
+        cardNumber: '4242424242424242',
+        expMonth: 12,
+        expYear: 2028,
+        cvc: '123',
+        cardholderName: 'John Doe',
+        coins: 50,
+        amountPaid: 5.0,
+      };
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: payload,
+      } as unknown as Request;
+
+      await userController.purchaseCoins(req, mockRes);
+
+      expect(mockUserService.purchaseCoins).toHaveBeenCalledWith(VALID_USER_ID, payload);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.coins).toBe(70);
+    });
+
+    it('should throw 401 if userId is missing', async () => {
+      const req = { headers: {}, body: {} } as unknown as Request;
+      expect(userController.purchaseCoins(req, mockRes)).rejects.toThrow();
+    });
+  });
+
+  describe('upgradeToPro', () => {
+    it('should successfully upgrade user to Forti AI Pro via credit card', async () => {
+      const payload = {
+        cardNumber: '4242424242424242',
+        expMonth: 11,
+        expYear: 2029,
+        cvc: '999',
+        cardholderName: 'Jane Recruiter',
+        plan: 'pro_monthly',
+        amountPaid: 29.0,
+      };
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: payload,
+      } as unknown as Request;
+
+      await userController.upgradeToPro(req, mockRes);
+
+      expect(mockUserService.upgradeToPro).toHaveBeenCalledWith(VALID_USER_ID, payload);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.isPro).toBe(true);
+    });
+  });
+
+  describe('toggleAiOptIn', () => {
+    it('should successfully toggle AI engine opt-in status', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: { isAiOptedIn: true },
+      } as unknown as Request;
+
+      await userController.toggleAiOptIn(req, mockRes);
+
+      expect(mockUserService.toggleAiOptIn).toHaveBeenCalledWith(VALID_USER_ID, true);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.isAiOptedIn).toBe(true);
+    });
+  });
+
+  describe('getTokenUsage', () => {
+    it('should successfully fetch user token usage metrics', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+      } as unknown as Request;
+
+      await userController.getTokenUsage(req, mockRes);
+
+      expect(mockUserService.getTokenUsage).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.tokensUsed).toBe(1200);
     });
   });
 });

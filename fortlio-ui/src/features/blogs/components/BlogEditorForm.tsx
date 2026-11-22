@@ -293,7 +293,7 @@ export function BlogEditorForm({ isOpen, onClose, onPublished }: BlogEditorFormP
                 placeholder="Write your article in Markdown... (headings, code blocks, lists, quotes supported)"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="min-h-[240px] font-mono text-xs leading-relaxed"
+                className="min-h-[240px] font-mono text-xs leading-relaxed py-3 px-1.5 sm:px-2"
                 required
               />
             </TabsContent>

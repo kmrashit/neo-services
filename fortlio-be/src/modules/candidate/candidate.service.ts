@@ -120,6 +120,12 @@ ${rawText.slice(0, 4000)}
           const rawResponse = typeof response === 'string' ? response : (response?.text || '');
           const cleanJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
           parsedData = JSON.parse(cleanJson);
+
+          const tokensEst = Math.max(20, Math.ceil((prompt.length + rawResponse.length) / 4));
+          const coinsToDeduct = Math.max(1, Math.ceil(tokensEst / 100));
+          await User.findByIdAndUpdate(userId, {
+            $inc: { tokensUsed: tokensEst, coins: -coinsToDeduct },
+          }).exec().catch((err: any) => { console.warn('Token update skipped:', err?.message || err); });
         } catch (llmErr: any) {
           console.warn('LLM resume OCR parse fallback to heuristic:', llmErr.message || llmErr);
         }
@@ -215,6 +221,12 @@ ${data.content.slice(0, 4000)}
             improvedContent = parsed.improvedContent;
             suggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
           }
+
+          const tokensEst = Math.max(20, Math.ceil((prompt.length + rawResponse.length) / 4));
+          const coinsToDeduct = Math.max(1, Math.ceil(tokensEst / 100));
+          await User.findByIdAndUpdate(userId, {
+            $inc: { tokensUsed: tokensEst, coins: -coinsToDeduct },
+          }).exec().catch((err: any) => { console.warn('Token update skipped:', err?.message || err); });
         } catch (llmErr: any) {
           console.warn('LLM blog improver fallback to deterministic polish:', llmErr.message || llmErr);
         }

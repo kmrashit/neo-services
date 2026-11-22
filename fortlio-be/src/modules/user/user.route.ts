@@ -28,5 +28,9 @@ export class UserRoutes {
     this.router.put('/updateUserById', this.authGuard.checkAccess('updateUserById'), this.userController.updateUserById);
     this.router.delete('/deleteUserById/:userId', this.authGuard.checkAccess('deleteUserById'), this.userController.deleteUserById);
     this.router.post('/watch-ad', this.authGuard.authenticate, this.checksumVerifyMiddleware.verifyGeneralChecksum, this.userController.watchAd);
+    this.router.post('/purchase-coins', this.authGuard.authenticate, this.userController.purchaseCoins);
+    this.router.post('/upgrade-pro', this.authGuard.authenticate, this.userController.upgradeToPro);
+    this.router.post('/toggle-ai-optin', this.authGuard.authenticate, this.userController.toggleAiOptIn);
+    this.router.get('/token-usage', this.authGuard.authenticate, this.userController.getTokenUsage);
   }
 }

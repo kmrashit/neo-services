@@ -48,6 +48,7 @@ function App() {
           <Route path="/create-profile" element={<CreateCandidateProfile />}/>
           <Route path="/edit-profile" element={<CandidateEditProfile />}/>
           <Route path="/candidate-blogs" element={<CandidateBlogs />}/>
+          <Route path="/blogs" element={<CandidateBlogs />}/>
           <Route path="/interview" element={<InterviewPage />}/>
 
           <Route path="/connections" element={<ConnectionsList />}/>

@@ -3,6 +3,10 @@ import type {
   UserProfile,
   UpdateUserPayload,
   WatchAdResponse,
+  CreditCardPaymentPayload,
+  UpgradeProResponse,
+  PurchaseCoinsResponse,
+  TokenUsageResponse,
   Role,
   Privilege,
   UserApiResponse,
@@ -57,6 +61,35 @@ export const userApi = {
     const response = await api.get<UserApiResponse<{ data: Privilege[]; total: number }>>(
       '/role/getPrivileges?page=1&pageSize=100',
     );
+    return response.data;
+  },
+
+  purchaseCoins: async (payload: CreditCardPaymentPayload) => {
+    const response = await api.post<UserApiResponse<PurchaseCoinsResponse>>(
+      '/user/purchase-coins',
+      payload,
+    );
+    return response.data;
+  },
+
+  upgradeToPro: async (payload: CreditCardPaymentPayload) => {
+    const response = await api.post<UserApiResponse<UpgradeProResponse>>(
+      '/user/upgrade-pro',
+      payload,
+    );
+    return response.data;
+  },
+
+  toggleAiOptIn: async (isAiOptedIn: boolean) => {
+    const response = await api.post<UserApiResponse<{ isAiOptedIn: boolean; message: string }>>(
+      '/user/toggle-ai-optin',
+      { isAiOptedIn },
+    );
+    return response.data;
+  },
+
+  getTokenUsage: async () => {
+    const response = await api.get<UserApiResponse<TokenUsageResponse>>('/user/token-usage');
     return response.data;
   },
 };

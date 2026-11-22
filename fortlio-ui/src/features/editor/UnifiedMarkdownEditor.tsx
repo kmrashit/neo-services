@@ -241,6 +241,38 @@ $$
 *Your documents save automatically. Start writing.*
 `;
 
+const splitMarkdownIntoA4Pages = (md: string): string[] => {
+  if (md.includes('<!-- pagebreak -->')) {
+    return md.split('<!-- pagebreak -->').map((p) => p.trim()).filter(Boolean);
+  }
+  if (md.includes('---page---')) {
+    return md.split('---page---').map((p) => p.trim()).filter(Boolean);
+  }
+
+  const sections = md.split(/(?=\n##\s+)/);
+  if (sections.length <= 1 || md.length < 1800) {
+    return [md];
+  }
+
+  const pages: string[] = [];
+  let currentPage = '';
+
+  for (const section of sections) {
+    if ((currentPage.length + section.length > 2200) && currentPage.length > 800) {
+      pages.push(currentPage.trim());
+      currentPage = section;
+    } else {
+      currentPage += (currentPage ? '\n\n' : '') + section;
+    }
+  }
+
+  if (currentPage.trim()) {
+    pages.push(currentPage.trim());
+  }
+
+  return pages.length > 0 ? pages : [md];
+};
+
 export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   initialMode = 'resume',
   initialMarkdown,
@@ -535,7 +567,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
               onChange={(e) => setMarkdown(e.target.value)}
               placeholder="Write your markdown here..."
               aria-label="Markdown Source Editor"
-              className="flex-1 w-full p-4 font-mono text-xs md:text-sm bg-transparent border-0 rounded-none focus-visible:ring-0 resize-none overflow-y-auto"
+              className="flex-1 w-full py-3 px-1.5 md:px-2 font-mono text-xs md:text-sm bg-transparent border-0 rounded-none focus-visible:ring-0 resize-none overflow-y-auto"
             />
           </div>
         )}
@@ -550,27 +582,57 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
             </div>
 
             {/* PREVIEW CONTAINER BASED ON MODE */}
-            <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            <div className="flex-1 p-2 sm:p-4 overflow-y-auto">
               {mode === 'resume' ? (
-                /* RESUME MODE: Paginated A4 Sheet with Watermark */
-                <div className="w-full flex justify-center py-4">
-                  <div className="w-full max-w-[800px] min-h-[1050px] bg-card text-card-foreground shadow-2xl rounded-sm p-8 sm:p-14 border border-border/80 relative flex flex-col justify-between">
-                    <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-                    </div>
+                /* RESUME MODE: Multi-Page Paginated A4 Sheets with Page Numbers & Watermark */
+                <div className="w-full flex flex-col items-center py-2 space-y-6">
+                  {splitMarkdownIntoA4Pages(markdown).map((pageContent, pageIdx, allPages) => {
+                    const pageNum = pageIdx + 1;
+                    const totalPages = allPages.length;
+                    return (
+                      <React.Fragment key={pageIdx}>
+                        <div className="w-full max-w-[794px] min-h-[1123px] bg-card text-card-foreground shadow-2xl rounded-sm p-8 sm:p-14 border border-border/80 relative flex flex-col justify-between my-2">
+                          {/* Top Header for Page 2+ */}
+                          {pageNum > 1 && (
+                            <div className="pb-3 mb-4 border-b border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
+                              <span className="font-semibold text-foreground/80">{authorName} • Professional Resume</span>
+                              <span className="font-mono text-[10px]">Page {pageNum} of {totalPages}</span>
+                            </div>
+                          )}
 
-                    {/* Backend Mirror Watermark Pill in Bottom-Right Corner */}
-                    <div className="pt-8 mt-12 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
-                      <span className="font-mono text-[10px]">Print Format • A4 Standard</span>
-                      <div className="flex items-center gap-1.5 font-semibold text-muted-foreground/80">
-                        <span>By :</span>
-                        <span className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold">
-                          <Sparkles className="size-3" />
-                          Fortlio
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                          {/* Markdown Content */}
+                          <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed flex-1">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{pageContent}</ReactMarkdown>
+                          </div>
+
+                          {/* Page Footer: Page Number on bottom-left, Watermark on bottom-right */}
+                          <div className="pt-6 mt-8 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
+                            <span className="font-mono text-[11px] font-semibold text-muted-foreground">
+                              Page {pageNum} of {totalPages}
+                            </span>
+                            <div className="flex items-center gap-1.5 font-semibold text-muted-foreground/80">
+                              <span>By :</span>
+                              <span className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold">
+                                <Sparkles className="size-3" />
+                                Fortlio
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Visual Page Break Separator */}
+                        {pageNum < totalPages && (
+                          <div className="w-full max-w-[794px] my-2 flex items-center justify-center gap-3 text-muted-foreground select-none">
+                            <div className="h-px flex-1 border-t-2 border-dashed border-border/60" />
+                            <span className="bg-muted px-2.5 py-0.5 rounded-full font-mono text-[10px] font-medium text-muted-foreground">
+                              Page Break • Page {pageNum} of {totalPages}
+                            </span>
+                            <div className="h-px flex-1 border-t-2 border-dashed border-border/60" />
+                          </div>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
               ) : (
                 /* BLOG MODE: Medium-Like Fluid Reading/Writing View */

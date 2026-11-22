@@ -10,7 +10,6 @@ import {
   Sparkles,
   LogOut,
   FolderGit2,
-  Palette,
   Bot,
   Search,
   Briefcase,
@@ -45,7 +44,6 @@ export default function Sidebar() {
       items: [
         { name: 'Specialty Blogs', path: '/candidate-blogs', icon: BookOpen },
         { name: 'Create Blog (Medium)', path: '/editor?mode=blog', icon: FileText },
-        { name: 'Draw Imagination', path: '/editor?mode=draw', icon: Palette },
       ],
     },
     {
@@ -71,6 +69,12 @@ export default function Sidebar() {
         { name: 'Candidate Search', path: '/candidates', icon: Search },
         { name: 'Job Postings', path: '/hr/jobs', icon: Briefcase },
         { name: 'Applicants Review', path: '/hr/applicants', icon: Briefcase },
+      ],
+    },
+    {
+      title: 'Knowledge & Blogs',
+      items: [
+        { name: 'Specialty Blogs', path: '/candidate-blogs', icon: BookOpen },
       ],
     },
     {
