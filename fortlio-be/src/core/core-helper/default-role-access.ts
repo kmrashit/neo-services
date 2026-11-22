@@ -167,6 +167,33 @@ const accessJob = [
   },
 ];
 
+const accessInterview = [
+  {
+    code: 'startInterviewSession',
+    name: 'Start Interview Session',
+    description: 'Allows candidate to initiate an AI interactive interview session',
+    tag: ['interview'],
+  },
+  {
+    code: 'respondInterviewSession',
+    name: 'Respond to Interview Session',
+    description: 'Allows candidate to submit answers to interview questions',
+    tag: ['interview'],
+  },
+  {
+    code: 'concludeInterviewSession',
+    name: 'Conclude Interview Session',
+    description: 'Allows candidate to conclude interview session and generate scorecard',
+    tag: ['interview'],
+  },
+  {
+    code: 'listMyInterviews',
+    name: 'List Interview History',
+    description: 'Allows candidate to list their interview sessions',
+    tag: ['interview'],
+  },
+];
+
 const privilegesAnalytics = [
   ...accessUserAnalytics,
   ...accessShortener,
@@ -174,6 +201,7 @@ const privilegesAnalytics = [
   ...accessHr,
   ...accessConnection,
   ...accessJob,
+  ...accessInterview,
 ];
 
 export const privilegesAllDefault = [
@@ -197,6 +225,10 @@ export const candidateDefaultAccess = [
   'searchJobs',
   'getJobSuggestions',
   'applyJob',
+  'startInterviewSession',
+  'respondInterviewSession',
+  'concludeInterviewSession',
+  'listMyInterviews',
 ];
 
 export const hrDefaultAccess = [

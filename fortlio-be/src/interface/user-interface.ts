@@ -59,6 +59,9 @@ export interface IUserDoc extends Document {
   userPrivileges: string[];
   isOnboarded: boolean;
   coins?: number;
+  isAiOptedIn?: boolean;
+  isPro?: boolean;
+  tokensUsed?: number;
   createdAt: Date;
   modifiedAt: Date;
 }

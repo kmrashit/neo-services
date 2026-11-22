@@ -25,9 +25,45 @@ export interface UserProfile {
   roleId?: string | Role;
   role?: UserRole;
   coins?: number;
+  isAiOptedIn?: boolean;
+  isPro?: boolean;
+  tokensUsed?: number;
   status?: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface CreditCardPaymentPayload {
+  cardNumber: string;
+  expMonth: number;
+  expYear: number;
+  cvc: string;
+  cardholderName: string;
+  plan?: string;
+  coinPackageId?: string;
+  coins?: number;
+  amountPaid: number;
+}
+
+export interface UpgradeProResponse {
+  isPro: boolean;
+  isAiOptedIn: boolean;
+  coins: number;
+  message: string;
+}
+
+export interface PurchaseCoinsResponse {
+  coins: number;
+  coinsAdded: number;
+  message: string;
+}
+
+export interface TokenUsageResponse {
+  userId: string;
+  tokensUsed: number;
+  coins: number;
+  isPro: boolean;
+  isAiOptedIn: boolean;
 }
 
 export interface UpdateUserPayload {

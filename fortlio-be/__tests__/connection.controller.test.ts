@@ -118,6 +118,45 @@ describe('ConnectionController Unit Tests', () => {
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body.data.message).toBe('Chat messaging!');
     });
+
+    it('should reject sending message if message body is empty', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: { connectionId: VALID_CONN_ID, message: '' },
+      } as unknown as Request;
+
+      expect(connectionController.sendMessage(req, mockRes)).rejects.toThrow(AppError);
+    });
+  });
+
+  describe('getChatHistory', () => {
+    it('should successfully fetch chat history with pagination', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        params: { connectionId: VALID_CONN_ID },
+        query: { page: '1', pageSize: '30' },
+      } as unknown as Request;
+
+      await connectionController.getChatHistory(req, mockRes);
+
+      expect(mockConnectionService.getChatHistory).toHaveBeenCalledWith(
+        VALID_CONN_ID,
+        VALID_USER_ID,
+        1,
+        30,
+      );
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.success).toBe(true);
+    });
+
+    it('should throw AppError if connection ID is invalid format', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        params: { connectionId: 'short' },
+      } as unknown as Request;
+
+      expect(connectionController.getChatHistory(req, mockRes)).rejects.toThrow(AppError);
+    });
   });
 
   describe('listConnections', () => {

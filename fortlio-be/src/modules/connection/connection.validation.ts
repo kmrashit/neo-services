@@ -14,3 +14,7 @@ export const SendMessageValidation = z.object({
   connectionId: IdValidation('connectionId'),
   message: z.string().trim().min(1, 'Message cannot be empty').max(2000),
 });
+
+export const ConnectionIdParamValidation = z.object({
+  connectionId: IdValidation('connectionId'),
+});

@@ -123,7 +123,7 @@ function renderDashboardHtml(runs: RunMeta[], selectedRunId?: string): string {
     <aside class="w-80 border-r border-slate-800 bg-slate-900/40 overflow-y-auto p-4 space-y-2 shrink-0">
       <div class="flex items-center justify-between pb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
         <span>Test Executions</span>
-        <span>${runs.length} / 50</span>
+        <span>${runs.length} / 35</span>
       </div>
 
       ${runs.length === 0 ? `
@@ -131,18 +131,16 @@ function renderDashboardHtml(runs: RunMeta[], selectedRunId?: string): string {
           No test runs recorded yet.<br>Run <code>bun run test:record</code> to capture a run.
         </div>
       ` : runs.map((run) => {
-        const isSelected = selectedRun && selectedRun.id === run.id;
-        const isPassed = run.status === 'passed';
-        return `
-          <a href="/?run=${run.id}" class="block p-3 rounded-xl border transition-all ${
-            isSelected
-              ? 'bg-purple-950/40 border-purple-500/50 shadow-md ring-1 ring-purple-500/30'
-              : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
-          }">
+    const isSelected = selectedRun && selectedRun.id === run.id;
+    const isPassed = run.status === 'passed';
+    return `
+          <a href="/?run=${run.id}" class="block p-3 rounded-xl border transition-all ${isSelected
+        ? 'bg-purple-950/40 border-purple-500/50 shadow-md ring-1 ring-purple-500/30'
+        : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
+      }">
             <div class="flex items-center justify-between gap-2 mb-1.5">
-              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                isPassed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isPassed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+      }">
                 <span class="size-1.5 rounded-full ${isPassed ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
                 ${run.status}
               </span>
@@ -156,7 +154,7 @@ function renderDashboardHtml(runs: RunMeta[], selectedRunId?: string): string {
             </div>
           </a>
         `;
-      }).join('')}
+  }).join('')}
     </aside>
 
     <!-- Right Panel: Run Details & Screenshots -->
@@ -171,9 +169,8 @@ function renderDashboardHtml(runs: RunMeta[], selectedRunId?: string): string {
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
             <div>
               <div class="flex items-center gap-2.5 mb-1">
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
-                  selectedRun.status === 'passed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                }">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${selectedRun.status === 'passed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+    }">
                   ● ${selectedRun.status.toUpperCase()}
                 </span>
                 <h2 class="text-xl font-bold text-white font-mono">${selectedRun.id}</h2>

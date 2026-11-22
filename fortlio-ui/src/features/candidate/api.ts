@@ -3,6 +3,7 @@ import type {
   ICandidateProfile,
   CandidateProfileUpsertPayload,
   MdToPdfPayload,
+  IResumeOcrResult,
   CandidateApiResponse,
 } from './types';
 
@@ -27,5 +28,13 @@ export const candidateApi = {
       responseType: 'blob',
     });
     return response.data as Blob;
+  },
+
+  resumeOcr: async (payload: { resumeText?: string; fileBase64?: string; fileName?: string }) => {
+    const response = await api.post<CandidateApiResponse<IResumeOcrResult>>(
+      '/candidate/resume/ocr',
+      payload,
+    );
+    return response.data;
   },
 };

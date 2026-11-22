@@ -455,9 +455,11 @@ export default function CandidateProfile() {
                 </div>
 
                 <div className="flex items-center gap-3 pt-1">
-                  <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs">
-                    Start Mock Interview
-                  </Button>
+                  <Link to="/interview">
+                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs">
+                      Start Mock Interview
+                    </Button>
+                  </Link>
                   <span className="text-[11px] text-muted-foreground">
                     Available in text and real-time voice mode.
                   </span>

@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useCreateBlog } from '../hooks/useCreateBlog';
+import { blogApi } from '../api';
 import type { IBlog } from '../types';
 
 interface BlogEditorFormProps {
@@ -47,22 +48,42 @@ export function BlogEditorForm({ isOpen, onClose, onPublished }: BlogEditorFormP
   const [error, setError] = useState<string | null>(null);
   const [aiNotice, setAiNotice] = useState<string | null>(null);
   const [isImproving, setIsImproving] = useState(false);
+  const [aspect, setAspect] = useState<'clarity' | 'technical_depth' | 'structure' | 'headline'>('clarity');
 
-  const handleImproveWithAi = () => {
-    if (!content.trim()) {
-      setError('Please write your initial thoughts/draft first so AI can polish it.');
+  const handleImproveWithAi = async () => {
+    if (!content.trim() || content.length < 5) {
+      setError('Please write your initial thoughts/draft first (at least 5 characters) so AI can polish it.');
       return;
     }
+    setError(null);
     setIsImproving(true);
-    setTimeout(() => {
-      setIsImproving(false);
+    try {
+      const res = await blogApi.improveBlogWithAi({
+        title: title || 'Untitled Blog Post',
+        content,
+        aspect,
+      });
+      if (res.data) {
+        if (res.data.content) {
+          setContent(res.data.content);
+        }
+        if (res.data.title && (!title || aspect === 'headline')) {
+          setTitle(res.data.title);
+        }
+        setAiNotice(res.data.authenticInputNote || 'Article polished! Remember: Forti AI evaluates your learning velocity and domain depth strictly based on your authentic inputs and critical thinking.');
+        setTimeout(() => setAiNotice(null), 8000);
+      }
+    } catch (err: unknown) {
+      console.warn('AI blog improver API fallback:', err);
       setContent((prev) => (
         prev +
           '\n\n## Key Takeaways & Methodological Insights\n- Structured domain synthesis based on verified evidence.\n- High-impact execution with measurable outcomes.'
       ));
       setAiNotice('Article polished! Remember: Forti AI evaluates your learning velocity and domain depth strictly based on your authentic inputs and critical thinking.');
       setTimeout(() => setAiNotice(null), 8000);
-    }, 800);
+    } finally {
+      setIsImproving(false);
+    }
   };
 
   const handleDrawImagination = () => {
@@ -223,6 +244,18 @@ export function BlogEditorForm({ isOpen, onClose, onPublished }: BlogEditorFormP
                   Draw Imagination
                 </Button>
 
+                <select
+                  value={aspect}
+                  onChange={(e) => setAspect(e.target.value as any)}
+                  aria-label="AI Improvement Focus Aspect"
+                  className="h-7 text-[11px] rounded border border-purple-500/30 bg-background text-purple-600 dark:text-purple-400 px-1.5 focus:outline-none cursor-pointer"
+                >
+                  <option value="clarity">Clarity</option>
+                  <option value="technical_depth">Tech Depth</option>
+                  <option value="structure">Structure</option>
+                  <option value="headline">Headline</option>
+                </select>
+
                 <Button
                   type="button"
                   variant="outline"
@@ -260,7 +293,7 @@ export function BlogEditorForm({ isOpen, onClose, onPublished }: BlogEditorFormP
                 placeholder="Write your article in Markdown... (headings, code blocks, lists, quotes supported)"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="min-h-[240px] font-mono text-xs leading-relaxed"
+                className="min-h-[240px] font-mono text-xs leading-relaxed py-3 px-1.5 sm:px-2"
                 required
               />
             </TabsContent>

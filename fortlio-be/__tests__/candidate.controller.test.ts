@@ -98,6 +98,20 @@ describe('CandidateController Unit Tests', () => {
         data: [],
         totalCount: 0,
       })),
+      parseResumeOcr: mock(() => Promise.resolve({
+        fullName: 'Test Candidate',
+        email: VALID_EMAIL,
+        skills: ['TypeScript', 'Node.js'],
+        experience: 3,
+        authenticInputNote: 'OCR extraction completed. Original resume input preserved for authentic verification.',
+      })),
+      improveBlogWithAi: mock(() => Promise.resolve({
+        title: 'Improved Title',
+        content: 'Improved content with deep insights',
+        suggestions: ['Quantify outcomes'],
+        aspect: 'clarity',
+        authenticInputNote: 'Forti AI evaluates your learning velocity and domain depth strictly based on your authentic inputs and critical thinking.',
+      })),
     };
 
     mockAuthnService = {
@@ -132,6 +146,7 @@ describe('CandidateController Unit Tests', () => {
         lean: mock(() => Promise.resolve(null)),
       })),
     }) as any);
+    User.aggregate = mock(() => Promise.resolve([])) as any;
 
     // Reset Typesense search mock
     (sensiSearch.search as any) = mock(() => Promise.resolve({
@@ -199,14 +214,12 @@ describe('CandidateController Unit Tests', () => {
         userId: VALID_USER_ID,
       });
 
-      User.findById = mock(() => ({
-        populate: mock(() => ({
-          lean: mock(() => Promise.resolve({
-            _id: VALID_USER_ID,
-            roleId: { roleName: 'Candidate' },
-          })),
-        })),
-      }) as any);
+      User.aggregate = mock(() => Promise.resolve([
+        {
+          _id: VALID_USER_ID,
+          roleId: { roleName: 'Candidate' },
+        },
+      ])) as any;
 
       await candidateController.getProfile(req, mockRes);
 
@@ -216,23 +229,22 @@ describe('CandidateController Unit Tests', () => {
     });
 
     it('should return complete details for HR users', async () => {
+      const validHrId = '507f191e810c19729de860ea';
       const req = {
         params: { userId: VALID_USER_ID },
         headers: { authorization: 'Bearer hr-token' },
       } as unknown as Request;
 
       mockAuthnService.verifyToken.mockResolvedValue({
-        userId: 'some-hr-id',
+        userId: validHrId,
       });
 
-      User.findById = mock(() => ({
-        populate: mock(() => ({
-          lean: mock(() => Promise.resolve({
-            _id: 'some-hr-id',
-            roleId: { roleName: 'HR' },
-          })),
-        })),
-      }) as any);
+      User.aggregate = mock(() => Promise.resolve([
+        {
+          _id: validHrId,
+          roleId: { roleName: 'HR' },
+        },
+      ])) as any;
 
       await candidateController.getProfile(req, mockRes);
 
@@ -300,6 +312,78 @@ describe('CandidateController Unit Tests', () => {
       } as unknown as Request;
 
       expect(candidateController.listBlogs(req, mockRes)).rejects.toThrow();
+    });
+  });
+
+  describe('resumeOcr', () => {
+    it('should successfully parse resume text and return extracted profile', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: { resumeText: 'Jane Doe\njane@example.com\nExperienced Software Engineer with skills in TypeScript and Node.js' },
+      } as unknown as Request;
+
+      await candidateController.resumeOcr(req, mockRes);
+
+      expect(mockCandidateService.parseResumeOcr).toHaveBeenCalled();
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.fullName).toBe('Test Candidate');
+      expect(mockRes.body.data.authenticInputNote).toBeDefined();
+    });
+
+    it('should throw AppError if userId header is missing', async () => {
+      const req = {
+        headers: {},
+        body: { resumeText: 'Sample resume' },
+      } as unknown as Request;
+
+      expect(candidateController.resumeOcr(req, mockRes)).rejects.toThrow();
+    });
+
+    it('should throw validation error if both resumeText and fileBase64 are missing', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: {},
+      } as unknown as Request;
+
+      expect(candidateController.resumeOcr(req, mockRes)).rejects.toThrow();
+    });
+  });
+
+  describe('improveBlog', () => {
+    it('should successfully improve blog content using AI', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: {
+          title: 'Scaling Distributed Systems',
+          content: 'Here is an in-depth look at event sourcing architecture and fault tolerance.',
+          aspect: 'technical_depth',
+        },
+      } as unknown as Request;
+
+      await candidateController.improveBlog(req, mockRes);
+
+      expect(mockCandidateService.improveBlogWithAi).toHaveBeenCalled();
+      expect(mockRes.statusCode).toBe(200);
+      expect(mockRes.body.data.title).toBe('Improved Title');
+      expect(mockRes.body.data.authenticInputNote).toBeDefined();
+    });
+
+    it('should throw AppError if userId header is missing', async () => {
+      const req = {
+        headers: {},
+        body: { title: 'Test', content: 'Test content here' },
+      } as unknown as Request;
+
+      expect(candidateController.improveBlog(req, mockRes)).rejects.toThrow();
+    });
+
+    it('should throw validation error if title or content is empty', async () => {
+      const req = {
+        headers: { userId: VALID_USER_ID },
+        body: { title: '', content: '' },
+      } as unknown as Request;
+
+      expect(candidateController.improveBlog(req, mockRes)).rejects.toThrow();
     });
   });
 

@@ -10,7 +10,6 @@ import {
   Sparkles,
   LogOut,
   FolderGit2,
-  Palette,
   Bot,
   Search,
   Briefcase,
@@ -45,13 +44,12 @@ export default function Sidebar() {
       items: [
         { name: 'Specialty Blogs', path: '/candidate-blogs', icon: BookOpen },
         { name: 'Create Blog (Medium)', path: '/editor?mode=blog', icon: FileText },
-        { name: 'Draw Imagination', path: '/editor?mode=draw', icon: Palette },
       ],
     },
     {
       title: 'AI Career Suite',
       items: [
-        { name: 'AI Interviews', path: '/candidate-profile?tab=interviews', icon: Bot },
+        { name: 'AI Interviews', path: '/interview', icon: Bot },
       ],
     },
     {
@@ -71,6 +69,12 @@ export default function Sidebar() {
         { name: 'Candidate Search', path: '/candidates', icon: Search },
         { name: 'Job Postings', path: '/hr/jobs', icon: Briefcase },
         { name: 'Applicants Review', path: '/hr/applicants', icon: Briefcase },
+      ],
+    },
+    {
+      title: 'Knowledge & Blogs',
+      items: [
+        { name: 'Specialty Blogs', path: '/candidate-blogs', icon: BookOpen },
       ],
     },
     {

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ConnectionService } from './connection.service';
 import { fmtRes } from '../../core/core-utils/res-util';
 import { AppError } from '../../core/core-utils/err-util';
-import { CreateConnectionValidation, RespondConnectionValidation, SendMessageValidation } from './connection.validation';
+import { CreateConnectionValidation, RespondConnectionValidation, SendMessageValidation, ConnectionIdParamValidation } from './connection.validation';
 import * as CONNECTION_MSGS from './connection.constants';
 
 export class ConnectionController {
@@ -82,9 +82,11 @@ export class ConnectionController {
         throw new AppError(CONNECTION_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'getChatHistory' }, 401);
       }
 
+      ConnectionIdParamValidation.parse(req.params);
       const { connectionId } = req.params;
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const pageSize = req.query.pageSize ? parseInt(req.query.pageSize as string, 10) : 20;
+      const query = (req.query || {}) as any;
+      const page = query.page ? parseInt(query.page as string, 10) : 1;
+      const pageSize = query.pageSize ? parseInt(query.pageSize as string, 10) : 20;
 
       const chatHistory = await this.connectionService.getChatHistory(connectionId, loggedInUserId, page, pageSize);
       return fmtRes(res, chatHistory);

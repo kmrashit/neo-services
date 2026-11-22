@@ -2,7 +2,7 @@ export const BACKEND_TARGETS = {
   local: {
     name: 'Local Backend',
     httpUrl: 'http://localhost:4020',
-    wsUrl: 'ws://localhost:4020',
+    wsUrl: 'ws://localhost:4021',
   },
   prod: {
     name: 'Production (DuckDNS)',

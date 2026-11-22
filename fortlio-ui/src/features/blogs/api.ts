@@ -2,6 +2,8 @@ import api from '@/api/api';
 import type {
   IBlog,
   CreateBlogPayload,
+  ImproveBlogPayload,
+  ImproveBlogResult,
   BlogFilterQuery,
   BlogApiResponse,
   BlogListResult,
@@ -23,6 +25,14 @@ export const blogApi = {
   createBlog: async (payload: CreateBlogPayload) => {
     const response = await api.post<BlogApiResponse<IBlog>>(
       '/candidate/blog',
+      payload,
+    );
+    return response.data;
+  },
+
+  improveBlogWithAi: async (payload: ImproveBlogPayload) => {
+    const response = await api.post<BlogApiResponse<ImproveBlogResult>>(
+      '/candidate/blog/improve-ai',
       payload,
     );
     return response.data;

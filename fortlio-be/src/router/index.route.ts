@@ -9,6 +9,7 @@ import { ShortnerRoutes, ShortnerController, ShortenerService } from '../modules
 import { LeetcodeRoutes, LeetcodeController, LeetcodeService } from '../modules/leetcode';
 import { FortiRoutes, FortiController, FortiService } from '../modules/forti';
 import { JobRoutes, JobController, JobService } from '../modules/job';
+import { InterviewRoutes, InterviewController, InterviewService } from '../modules/interview';
 import { ServicesRoutes } from './services.route';
 import { CachingMiddleware } from '../middleware/cache.middleware';
 import { config } from '../../config';
@@ -26,11 +27,12 @@ const roleService = new RoleService();
 const fortiService = new FortiService(llmClient, sensiSearch);
 const shortenerService = new ShortenerService();
 const leetcodeService = new LeetcodeService(llmClient, secretManager);
-const candidateService = new CandidateService();
+const candidateService = new CandidateService(llmClient);
 const hrService = new HrService();
 const connectionService = new ConnectionService();
 const historyService = new HistoryService();
 const jobService = new JobService();
+const interviewService = new InterviewService(llmClient);
 
 // ==========================================
 // 3. CONTROLLERS (ORCHESTRATION LAYER)
@@ -45,6 +47,7 @@ const candidateController = new CandidateController(candidateService, authnServi
 const hrController = new HrController(hrService, historyService, userService, authnService);
 const connectionController = new ConnectionController(connectionService);
 const jobController = new JobController(jobService);
+const interviewController = new InterviewController(interviewService);
 
 // ==========================================
 // 1. INFRASTRUCTURE & MIDDLEWARE
@@ -68,6 +71,7 @@ const candidateRoutes = new CandidateRoutes(candidateController, authGuard);
 const hrRoutes = new HrRoutes(hrController, authGuard, checksumVerifyMiddleware);
 const connectionRoutes = new ConnectionRoutes(connectionController, authGuard);
 const jobRoutes = new JobRoutes(jobController, authGuard);
+const interviewRoutes = new InterviewRoutes(interviewController, authGuard);
 
 class AppRoutes {
   router: Router = Router();
@@ -83,6 +87,7 @@ class AppRoutes {
     private connectionRoutes: ConnectionRoutes,
     private fortiRoutes: FortiRoutes,
     private jobRoutes: JobRoutes,
+    private interviewRoutes: InterviewRoutes,
   ) {
     this.initializeRoutes();
   }
@@ -97,6 +102,7 @@ class AppRoutes {
     this.router.use('/connections', this.connectionRoutes.router);
     this.router.use('/forti', this.fortiRoutes.router);
     this.router.use('/job', this.jobRoutes.router);
+    this.router.use('/interview', this.interviewRoutes.router);
   }
 }
 
@@ -111,6 +117,7 @@ const appRoutes = new AppRoutes(
   connectionRoutes,
   fortiRoutes,
   jobRoutes,
+  interviewRoutes,
 );
 
 export default appRoutes;

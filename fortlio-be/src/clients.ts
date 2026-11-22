@@ -48,7 +48,7 @@ export const wsHandler = new WebSocketHandler<any>({
         ws.send(JSON.stringify({ status: 'error', message: 'Token required' }));
         return;
       }
-      const { AuthnService } = require('./services/authn.services');
+      const { AuthnService } = require('./modules/auth/auth.service');
       const authnService = new AuthnService(secretManager, sesHelper);
       const userDetails = await authnService.verifyToken(token);
 
@@ -77,7 +77,7 @@ export const wsHandler = new WebSocketHandler<any>({
         return;
       }
 
-      const { ConnectionService } = require('./services/connection.service');
+      const { ConnectionService } = require('./modules/connection/connection.service');
       const connectionService = new ConnectionService();
 
       const chatMessage = await connectionService.sendMessage(userId, connectionId, message);

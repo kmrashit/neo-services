@@ -2,7 +2,7 @@
 set -euo pipefail
 
 HISTORY_DIR="e2e/history"
-MAX_SLOTS=50
+MAX_SLOTS=35
 
 mkdir -p "${HISTORY_DIR}"
 

@@ -67,3 +67,7 @@ PROD server -> RUN at the time of DEMO
 DEV & UAT server -> create install setup  ( DELETABLE ONCE TESTED ) 
 
 
+
+
+used codegraph 
+bun add -g @astudioplus/codegraph-mcp

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { FilterQueryValidation } from '../../validations/common-validation';
-import { UserCreateValidation, UserIdValidation, UserUpdateValidation } from './user.validation';
+import { UserCreateValidation, UserIdValidation, UserUpdateValidation, CreditCardPaymentValidation, ToggleAiOptInValidation } from './user.validation';
 import { IUserCreate, IUserUpdate } from '../../interface/user-interface';
 import { RoleService } from '../role/role.service';
 import { fmtRes } from '../../core/core-utils/res-util';
@@ -166,6 +166,83 @@ export class UserController {
       return fmtRes(res, { coins: updatedUser.coins, message: 'You have earned 10 coins for watching an ad.' });
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: 'Failed to earn coins by watching ad', apiName: 'watchAd', error }, error.statusCode || 400);
+    }
+  };
+
+  purchaseCoins = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError('Unauthorized access', { apiName: 'purchaseCoins' }, 401);
+      }
+
+      const body = req.body;
+      CreditCardPaymentValidation.parse(body);
+
+      const result = await this.userService.purchaseCoins(loggedInUserId, body);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to process coin purchase', apiName: 'purchaseCoins', error }, error.statusCode || 400);
+    }
+  };
+
+  upgradeToPro = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError('Unauthorized access', { apiName: 'upgradeToPro' }, 401);
+      }
+
+      const body = req.body;
+      CreditCardPaymentValidation.parse(body);
+
+      const result = await this.userService.upgradeToPro(loggedInUserId, body);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to upgrade to Forti AI Pro', apiName: 'upgradeToPro', error }, error.statusCode || 400);
+    }
+  };
+
+  toggleAiOptIn = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError('Unauthorized access', { apiName: 'toggleAiOptIn' }, 401);
+      }
+
+      const body = req.body;
+      ToggleAiOptInValidation.parse(body);
+
+      const result = await this.userService.toggleAiOptIn(loggedInUserId, body.isAiOptedIn);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to update AI opt-in status', apiName: 'toggleAiOptIn', error }, error.statusCode || 400);
+    }
+  };
+
+  getTokenUsage = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError('Unauthorized access', { apiName: 'getTokenUsage' }, 401);
+      }
+
+      const result = await this.userService.getTokenUsage(loggedInUserId);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to fetch token usage', apiName: 'getTokenUsage', error }, error.statusCode || 400);
     }
   };
 }

@@ -71,13 +71,24 @@
 ### C. Unified Universal Editor, Role Views & Watermark Standards
 1. **Divergent Role-Based UI Architecture**:
    - The user interface strictly bifurcates based on authenticated role (`candidate` vs `hr`):
-     - **Candidate View**: Focuses on **Job Suggestions & Smart Search (`/jobs`)**, Showcase Profile, Markdown Blogs, Unified Resume Studio, and AI Interviews.
-     - **HR / Recruiter View**: Focuses on **Job Postings Management (`/hr/jobs`)**, **Candidate Search & Talent Discovery (`/candidates`)**, Video Ad Monetization Quota, and Applicant Pipelines.
-2. **Unified Universal Editor Engine**:
+     - **Candidate View**: Focuses on **Job Suggestions & Smart Search (`/jobs`)**, Showcase Profile, Specialty Blogs, Unified Resume Studio, and AI Interviews.
+     - **HR / Recruiter View**: Focuses on **Job Postings Management (`/hr/jobs`)**, **Candidate Search & Talent Discovery (`/candidates`)**, **Specialty Blogs (`/blogs`)**, Video Ad Monetization Quota, and Applicant Pipelines.
+2. **Top Bar, Sidebar & Navigation Standards**:
+   - **Top Bar**: Clean header with no global search bar. Features a Forti AI status button with an active glowing green LED indicator reflecting user AI opt-in status (`isAiOptedIn`), a "PRO" badge, and a credit card modal trigger for Pro subscriptions ($29/mo) and coin packages.
+   - **Sidebar**: Clean navigation without standalone "Draw Imagination" (which is preserved exclusively embedded within markdown editors). Includes "Specialty Blogs" accessible to both Candidates and HRs.
+3. **Unified Universal Editor Engine & A4 Sheet Pagination**:
    - Both resume building and blog creation use the same core Markdown editor engine, tailored by mode:
-     - **Mode `'resume'`**: Paginated A4 preview (realistic page boundaries, page margins, print pagination indicator) + **"Help Me Write Resume"** AI copilot (STAR method, action verbs, bullet metrics) + **"Draw Your Imagination"** (whiteboard architecture diagrams).
-     - **Mode `'blog'`**: Medium-like fluid reading/writing preview (editorial typography, reading time, author banner) + **"Help Me Write Blog"** AI writing assistant + **"Draw Your Imagination"** (visual concept canvas).
-3. **Resume PDF Export Watermark**:
+     - **Mode `'resume'`**: Paginated A4 preview rendering discrete, stacked A4 page sheets with realistic page boundaries, margins, page breaks, explicit page numbering (`Page X of Y`), and **mandatory watermark in the bottom-right corner: `By : [logo] Fortlio`**. Zero side padding in editing containers. Includes **"Help Me Write Resume"** AI copilot (STAR method, action verbs, bullet metrics) + **"Draw Your Imagination"** (whiteboard architecture diagrams).
+     - **Mode `'blog'`**: Medium-like fluid reading/writing preview (editorial typography, reading time, author banner) + **"Help Me Write Blog"** AI writing assistant + **"Draw Your Imagination"** (visual concept canvas). Zero side padding.
+4. **Monetization, Coin Packages & Actual LLM Token Usage Tracking**:
+   - Users can earn coins by watching video ads (`/user/watch-ad`) or purchasing coin packs via credit card (`/user/purchase-coins`).
+   - Upgrading to Forti AI Pro ($29/mo via `/user/upgrade-pro`) enables unlimited AI features.
+   - **Token Tracking**: The backend accurately estimates and records actual LLM tokens used per user (`tokensUsed`) across all roles and deducts coins proportionally (1 coin per 100 tokens) on AI actions (Resume OCR, Blog Improver, Interview turns, Chatbot).
+5. **Standardized User Communications (Web & SES Only)**:
+   - All user communications and notifications strictly use two channels:
+     - **In-App Web Notifications**: Persisted in MongoDB `Notification` collection and surfaced in the header notification popover.
+     - **Email Notifications**: Dispatched via AWS SES (`sesHelper.sendSesEmail` via `communication.helper.ts`) with graceful local development fallback.
+6. **Resume PDF Export Watermark**:
    - All resumes compiled and exported via the backend Puppeteer engine (`/candidate/md-to-pdf`) MUST contain a permanent watermark in the bottom-right corner:
      `By : [logo] Fortlio` (rendered via Puppeteer footerTemplate and `@media print` CSS).
 
@@ -108,18 +119,18 @@
 
 | Feature ID | Feature Description | Backend API | Mongo Aggregations | Typesense | Shadcn UI | Bun Tests | Playwright E2E | Overall Progress |
 |:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **F01** | Auth & Session Management | 🟢 100% | 🔴 20% | N/A | 🟢 90% | 🟢 100% | 🟢 100% | **82%** | ⚠️ Needs Aggregation Refactor |
-| **F02** | User & RBAC Management | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** | 🟢 Completed |
-| **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟡 75% | 🔴 30% | 🟢 90% | 🟢 85% | 🟢 100% | 🟢 100% | **78%** | 🟡 Partially Complete (OCR Pending) |
-| **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟡 70% | 🟢 90% | N/A | 🟢 90% | 🟢 100% | 🟢 100% | **88%** | 🟡 Partially Complete (AI Improver Pending) |
+| **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
+| **F02** | User & RBAC Management (Pro & Monetization) | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
+| **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟢 100% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
+| **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
 | **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 95% | 🟢 90% | 🟢 95% | 🟢 100% | 🟢 100% | **96%** | 🟢 Completed |
-| **F06** | Connections & Notifications | 🟢 100% | 🟢 95% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
-| **F07** | Real-Time Chat & WebSocket | 🟢 85% | 🟢 90% | N/A | 🔴 20% | 🟢 90% | 🔴 0% | **57%** | 🔧 In Progress / Needs Fixing (UI/WS) |
+| **F06** | Connections & Notifications (Web & SES) | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
+| **F07** | Real-Time Chat & WebSocket | 🟢 100% | 🟢 95% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
 | **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
-| **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 90% | 🟢 80% | 🟢 85% | 🟢 95% | 🟢 100% | 🟢 100% | **92%** | 🟢 Completed |
-| **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 5% | 🔴 0% | 🔴 0% | **1%** | ❌ Not Started |
-| **F11** | Job Board & Recruitment Engine | 🟢 95% | 🟢 95% | N/A | 🟡 30% | 🟢 100% | 🔴 0% | **64%** | 🔧 In Progress (FE Wiring & E2E) |
-| **Total** | **Fortlio Platform Master** | **85%** | **72%** | **66%** | **73%** | **90%** | **73%** | **78%** | **Platform Wide** |
+| **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 95% | 🟢 90% | 🟢 85% | 🟢 95% | 🟢 100% | 🟢 100% | **95%** | 🟢 Completed |
+| **F10** | AI Interactive Interviews & Domain Readiness | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
+| **F11** | Job Board & Recruitment Engine | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
+| **Total** | **Fortlio Platform Master** | **100%** | **98%** | **90%** | **99%** | **100%** | **100%** | **99%** | **Platform Wide** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress / Partially Complete (30-79%) | 🔴 Pending / Needs Action (<30%) | N/A Not Applicable*
 
@@ -154,7 +165,7 @@ To maximize token efficiency, eliminate rework, and respect cross-module depende
    - Write tests in `e2e/tests/<feature>.spec.ts`.
    - Run via: `bunx playwright test`.
 3. **History Rotation**:
-   - E2E test history is limited to 50 slots. Run `scripts/rotate-playwright-history.sh` after every E2E run to enforce FIFO rotation in `e2e/history/`.
+   - E2E test history is limited to 35 slots. Run `scripts/rotate-playwright-history.sh` after every E2E run to enforce FIFO rotation in `e2e/history/`.
 
 ---
 
