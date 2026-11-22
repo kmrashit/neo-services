@@ -103,7 +103,7 @@ test.describe('F07 Real-Time & Stored Chat Messaging E2E Tests', () => {
               data: MOCK_MESSAGES_CONN_1,
               totalCount: 2,
               page: 1,
-              pageSize: 50,
+              pageSize: 35,
               totalPages: 1,
             },
           }),

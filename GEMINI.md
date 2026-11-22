@@ -117,9 +117,9 @@
 | **F07** | Real-Time Chat & WebSocket | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** | 🟢 Completed |
 | **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
 | **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 90% | 🟢 80% | 🟢 85% | 🟢 95% | 🟢 100% | 🟢 100% | **92%** | 🟢 Completed |
-| **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 5% | 🔴 0% | 🔴 0% | **1%** | ❌ Not Started |
+| **F10** | AI Interactive Interviews & Domain Readiness | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** | 🟢 Completed |
 | **F11** | Job Board & Recruitment Engine | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** | 🟢 Completed |
-| **Total** | **Fortlio Platform Master** | **88%** | **73%** | **66%** | **85%** | **91%** | **91%** | **86%** | **Platform Wide** |
+| **Total** | **Fortlio Platform Master** | **95%** | **83%** | **75%** | **94%** | **100%** | **100%** | **95%** | **Platform Wide** |
 
 *Legend: 🟢 Completed (>=80%) | 🟡 In Progress / Partially Complete (30-79%) | 🔴 Pending / Needs Action (<30%) | N/A Not Applicable*
 
@@ -154,7 +154,7 @@ To maximize token efficiency, eliminate rework, and respect cross-module depende
    - Write tests in `e2e/tests/<feature>.spec.ts`.
    - Run via: `bunx playwright test`.
 3. **History Rotation**:
-   - E2E test history is limited to 50 slots. Run `scripts/rotate-playwright-history.sh` after every E2E run to enforce FIFO rotation in `e2e/history/`.
+   - E2E test history is limited to 35 slots. Run `scripts/rotate-playwright-history.sh` after every E2E run to enforce FIFO rotation in `e2e/history/`.
 
 ---
 

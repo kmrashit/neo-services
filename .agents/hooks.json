@@ -38,5 +38,40 @@
         "timeout": 10
       }
     ]
+  },
+  "notifier": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/home/ashit/.nvm/versions/node/v22.17.1/bin/node\" \"/home/ashit/.antigravity-ide-server/extensions/kamalpulaparthi.notifier-0.3.1-universal/bin/notifier.js\" dispatch antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/home/ashit/.nvm/versions/node/v22.17.1/bin/node\" \"/home/ashit/.antigravity-ide-server/extensions/kamalpulaparthi.notifier-0.3.1-universal/bin/notifier.js\" dispatch antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/home/ashit/.nvm/versions/node/v22.17.1/bin/node\" \"/home/ashit/.antigravity-ide-server/extensions/kamalpulaparthi.notifier-0.3.1-universal/bin/notifier.js\" dispatch antigravity",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }

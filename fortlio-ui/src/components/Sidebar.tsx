@@ -51,7 +51,7 @@ export default function Sidebar() {
     {
       title: 'AI Career Suite',
       items: [
-        { name: 'AI Interviews', path: '/candidate-profile?tab=interviews', icon: Bot },
+        { name: 'AI Interviews', path: '/interview', icon: Bot },
       ],
     },
     {

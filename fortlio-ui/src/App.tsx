@@ -9,6 +9,7 @@ import JobsPage from './pages/JobsPage';
 import HrJobsPage from './pages/HrJobsPage';
 import EditorPage from './pages/EditorPage';
 import CandidateBlogs from './pages/CandidateBlogs';
+import InterviewPage from './pages/InterviewPage';
 
 import ConnectionsList from './pages/ConnectionsList';
 import ConnectionsChat from './pages/ConnectionsChat';
@@ -47,6 +48,7 @@ function App() {
           <Route path="/create-profile" element={<CreateCandidateProfile />}/>
           <Route path="/edit-profile" element={<CandidateEditProfile />}/>
           <Route path="/candidate-blogs" element={<CandidateBlogs />}/>
+          <Route path="/interview" element={<InterviewPage />}/>
 
           <Route path="/connections" element={<ConnectionsList />}/>
           <Route path="/chat" element={<ConnectionsChat />}/>
