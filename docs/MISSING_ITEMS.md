@@ -1,0 +1,4 @@
+F11 (Job Board): The backend is already built with 7 mounted endpoints and 11 passing Bun unit tests, but the frontend views (JobsPage.tsx and HrJobsPage.tsx) are currently running on hardcoded in-memory state.
+F07 (Real-Time Chat): The backend runs a Bun WebSocket broadcast server on port 4021, but the frontend has zero WebSocket client hooks and still relies on a legacy un-modularized page.
+MongoDB Aggregations First Standard: Despite the project standard prioritizing getDataWithLookupsAfterFilter from mongo.helper.ts, services in auth and candidate frequently fall back to Mongoose .findOne().populate().
+Missing Marketed Sub-Features: F03 AI Resume OCR (POST /candidate/resume/ocr) and F04 AI Blog Improver (POST /candidate/blog/improve-ai) are currently absent from backend routes.

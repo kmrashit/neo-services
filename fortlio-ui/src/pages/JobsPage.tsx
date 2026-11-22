@@ -1,355 +1,233 @@
 import { useState } from 'react';
 import {
   Briefcase,
-  Search,
   Sparkles,
-  MapPin,
-  Building,
-  DollarSign,
-  CheckCircle2,
-  Send,
+  Search,
+  Loader2,
 } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PROFESSIONS_TAXONOMY } from '@/constants/taxonomy';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
-
-interface JobPosting {
-  id: string;
-  title: string;
-  companyName: string;
-  profession: string;
-  department: string;
-  location: string;
-  workplaceType: 'Remote' | 'Hybrid' | 'Onsite';
-  experienceYears: number;
-  salaryRange: string;
-  skills: string[];
-  matchScore: number;
-  description: string;
-  postedAt: string;
-}
-
-const DEMO_JOBS: JobPosting[] = [
-  {
-    id: 'job-1',
-    title: 'Staff Distributed Systems Engineer',
-    companyName: 'Veloce Cloud Systems',
-    profession: 'Engineering & Technology',
-    department: 'Core Infrastructure',
-    location: 'San Francisco, CA (Remote)',
-    workplaceType: 'Remote',
-    experienceYears: 6,
-    salaryRange: '$185,000 - $230,000',
-    skills: ['TypeScript', 'Distributed Systems', 'MongoDB', 'Redis', 'Kafka'],
-    matchScore: 98,
-    description: 'Looking for a Staff Systems Engineer to lead the design and optimization of our high-throughput aggregation and telemetry pipelines.',
-    postedAt: '2 days ago',
-  },
-  {
-    id: 'job-2',
-    title: 'Senior Clinical Bioinformatician',
-    companyName: 'Genomics Health Institute',
-    profession: 'Medicine & Healthcare',
-    department: 'Translational Genetics',
-    location: 'Boston, MA (Hybrid)',
-    workplaceType: 'Hybrid',
-    experienceYears: 5,
-    salaryRange: '$160,000 - $195,000',
-    skills: ['Genomics', 'Bioinformatics', 'Python', 'Statistical Genetics'],
-    matchScore: 92,
-    description: 'Analyze next-generation sequencing pipelines and translate variant discovery algorithms into clinical therapeutics.',
-    postedAt: '3 days ago',
-  },
-  {
-    id: 'job-3',
-    title: 'Lead Design Systems Architect',
-    companyName: 'Lumina Digital Media',
-    profession: 'Design & Creative Arts',
-    department: 'Product Design',
-    location: 'New York, NY (Remote)',
-    workplaceType: 'Remote',
-    experienceYears: 6,
-    salaryRange: '$150,000 - $185,000',
-    skills: ['Design Systems', 'Figma', 'Accessibility', 'Design Ops', 'React'],
-    matchScore: 89,
-    description: 'Spearhead enterprise-wide multi-brand design systems, token architecture, and accessible cross-platform component libraries.',
-    postedAt: '1 week ago',
-  },
-  {
-    id: 'job-4',
-    title: 'Senior AI Governance & Regulatory Counsel',
-    companyName: 'Nova Juris Technologies',
-    profession: 'Law & Legal Services',
-    department: 'Legal & Compliance',
-    location: 'Washington, DC (Hybrid)',
-    workplaceType: 'Hybrid',
-    experienceYears: 7,
-    salaryRange: '$190,000 - $240,000',
-    skills: ['Tech Governance', 'AI Ethics', 'IP Law', 'GDPR', 'Compliance'],
-    matchScore: 88,
-    description: 'Advise product and AI research pods on global regulatory frameworks, responsible AI governance, and IP portfolio protection.',
-    postedAt: '4 days ago',
-  },
-];
+  JobCard,
+  JobFilterPanel,
+  JobDetailModal,
+  useJobSearch,
+  useJobSuggestions,
+  useJobApply,
+  type IJobPost,
+} from '@/features/jobs';
 
 export default function JobsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'suggestions' | 'all' | 'applied'>('suggestions');
-  const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
-  const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
-  const [applySuccess, setApplySuccess] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'suggestions' | 'search'>('suggestions');
+  const [activeJob, setActiveJob] = useState<IJobPost | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
-  const filteredJobs = DEMO_JOBS.filter((job) => {
-    if (!searchQuery) {return true;}
-    const q = searchQuery.toLowerCase();
-    return (
-      job.title.toLowerCase().includes(q) ||
-      job.companyName.toLowerCase().includes(q) ||
-      job.profession.toLowerCase().includes(q) ||
-      job.skills.some((s) => s.toLowerCase().includes(q))
-    );
-  });
+  // Professions list for filter dropdown
+  const professionNames = PROFESSIONS_TAXONOMY.map((p) => p.name);
 
-  const displayedJobs = activeTab === 'applied'
-    ? DEMO_JOBS.filter((j) => appliedJobs.includes(j.id))
-    : filteredJobs;
+  // Hooks
+  const {
+    jobs,
+    totalCount,
+    loading: searchLoading,
+    filters,
+    updateFilters,
+  } = useJobSearch();
 
-  const handleApply = (job: JobPosting) => {
-    if (!appliedJobs.includes(job.id)) {
-      setAppliedJobs([...appliedJobs, job.id]);
-    }
-    setApplySuccess(true);
-    setTimeout(() => {
-      setApplySuccess(false);
-      setSelectedJob(null);
-    }, 1500);
+  const {
+    suggestions,
+    loading: suggestionsLoading,
+  } = useJobSuggestions();
+
+  const { apply, hasApplied } = useJobApply();
+
+  const handleViewDetails = (job: IJobPost) => {
+    setActiveJob(job);
+    setIsDetailOpen(true);
+  };
+
+  const handleApply = async (jobId: string, coverNote?: string) => {
+    await apply(jobId, coverNote);
   };
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Header Banner */}
+    <div className="space-y-6 pb-12 max-w-6xl mx-auto px-4 sm:px-6">
+      {/* Top Banner */}
       <div className="relative overflow-hidden rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/20 via-indigo-900/10 to-background p-6 lg:p-8 shadow-sm">
-        <div className="space-y-2 max-w-2xl">
-          <div className="flex items-center gap-2">
-            <Badge className="bg-purple-600/20 text-purple-600 dark:text-purple-300 border-purple-500/30 text-xs px-2.5 py-0.5">
-              <Sparkles className="size-3 mr-1" />
-              AI Job Suggestions & Career Engine
-            </Badge>
-            <Badge variant="outline" className="text-xs px-2.5 py-0.5 font-mono">
-              Role-Matched
-            </Badge>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-purple-600/20 text-purple-600 dark:text-purple-300 border-purple-500/30 text-xs px-2.5 py-0.5">
+                <Sparkles className="size-3 mr-1" />
+                AI Job Suggestions & Smart Match
+              </Badge>
+              <Badge variant="outline" className="text-xs px-2.5 py-0.5 font-mono">
+                Universal Career Board
+              </Badge>
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
+              Career & Opportunity Engine
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Discover opportunities matched against your verified domain skills, multi-disciplinary experience, and Forti learning velocity score.
+            </p>
           </div>
-          <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
-            Job Suggestions & Career Opportunities
-          </h1>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Personalized job recommendations dynamically matched against your verified domain skills, portfolio showcase, and Forti learning velocity.
-          </p>
         </div>
       </div>
 
-      {/* Search Bar & Tabs */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <Input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search jobs by title, skill, or domain..."
-            className="pl-10 text-xs h-10"
-          />
-        </div>
-
-        <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)}>
-          <TabsList className="bg-muted/60 p-1">
-            <TabsTrigger value="suggestions" className="text-xs font-semibold flex items-center gap-1.5">
-              <Sparkles className="size-3.5 text-purple-600" />
+      {/* Tabs Navigation */}
+      <Tabs
+        value={selectedTab}
+        onValueChange={(val) => setSelectedTab(val as 'suggestions' | 'search')}
+        className="w-full space-y-6"
+      >
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <TabsList className="bg-muted/60 p-1 rounded-xl">
+            <TabsTrigger
+              value="suggestions"
+              className="gap-2 text-xs font-semibold rounded-lg data-[state=active]:bg-purple-600 data-[state=active]:text-white cursor-pointer"
+            >
+              <Sparkles className="size-3.5" />
               <span>AI Suggestions</span>
+              {suggestions.length > 0 && (
+                <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full font-mono">
+                  {suggestions.length}
+                </span>
+              )}
             </TabsTrigger>
-            <TabsTrigger value="all" className="text-xs font-semibold flex items-center gap-1.5">
-              <Briefcase className="size-3.5" />
-              <span>All Jobs ({DEMO_JOBS.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="applied" className="text-xs font-semibold flex items-center gap-1.5">
-              <CheckCircle2 className="size-3.5 text-emerald-500" />
-              <span>Applied ({appliedJobs.length})</span>
+
+            <TabsTrigger
+              value="search"
+              className="gap-2 text-xs font-semibold rounded-lg data-[state=active]:bg-purple-600 data-[state=active]:text-white cursor-pointer"
+            >
+              <Search className="size-3.5" />
+              <span>Browse All Openings</span>
+              {totalCount > 0 && (
+                <span className="text-[10px] bg-muted-foreground/20 px-1.5 py-0.2 rounded-full font-mono">
+                  {totalCount}
+                </span>
+              )}
             </TabsTrigger>
           </TabsList>
-        </Tabs>
-      </div>
+        </div>
 
-      {/* Jobs Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {displayedJobs.map((job) => {
-          const isApplied = appliedJobs.includes(job.id);
-          return (
-            <Card
-              key={job.id}
-              className="flex flex-col justify-between hover:border-purple-500/50 hover:shadow-lg transition-all duration-200 bg-card/80 backdrop-blur-sm border-border/80 group"
-            >
-              <CardHeader className="p-5 pb-3 space-y-2">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="font-bold text-base text-foreground group-hover:text-purple-600 transition-colors">
-                      {job.title}
-                    </h3>
-                    <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 pt-0.5">
-                      <Building className="size-3.5 text-purple-500" />
-                      <span>{job.companyName}</span>
-                      <span>•</span>
-                      <span>{job.department}</span>
-                    </p>
-                  </div>
+        {/* AI Suggestions Tab */}
+        <TabsContent value="suggestions" className="space-y-6 mt-0">
+          {suggestionsLoading ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <Loader2 className="size-8 animate-spin text-purple-600 mb-2" />
+              <p className="text-sm">Synthesizing personalized job matches with Forti AI...</p>
+            </div>
+          ) : suggestions.length === 0 ? (
+            <div className="p-12 text-center text-muted-foreground border border-dashed rounded-3xl bg-card/40">
+              <Sparkles className="size-10 mx-auto text-purple-500/50 mb-3" />
+              <h3 className="text-base font-bold text-foreground mb-1">No AI suggestions found yet</h3>
+              <p className="text-xs max-w-md mx-auto leading-relaxed">
+                Add your verified skills and publish specialty blogs to strengthen your learning velocity score and unlock high-match opportunities!
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedTab('search')}
+                className="mt-4 text-xs rounded-xl cursor-pointer"
+              >
+                Browse All Openings
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {suggestions.map((job) => (
+                <JobCard
+                  key={job._id || job.id}
+                  job={job}
+                  hasApplied={hasApplied(job._id || job.id || '')}
+                  onViewDetails={handleViewDetails}
+                  onQuickApply={handleViewDetails}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
 
-                  {/* AI Match Badge */}
-                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs font-bold shrink-0">
-                    <Sparkles className="size-3 mr-1" />
-                    {job.matchScore}% Match
-                  </Badge>
-                </div>
+        {/* Browse All Jobs Tab */}
+        <TabsContent value="search" className="space-y-6 mt-0">
+          <JobFilterPanel
+            filters={filters}
+            onUpdateFilters={updateFilters}
+            professions={professionNames}
+          />
 
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground pt-1">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="size-3 text-indigo-500" />
-                    {job.location}
+          {searchLoading ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <Loader2 className="size-8 animate-spin text-purple-600 mb-2" />
+              <p className="text-sm">Fetching job postings...</p>
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="p-12 text-center text-muted-foreground border border-dashed rounded-3xl bg-card/40">
+              <Briefcase className="size-10 mx-auto text-muted-foreground/50 mb-3" />
+              <h3 className="text-base font-bold text-foreground mb-1">No jobs match your filter</h3>
+              <p className="text-xs max-w-sm mx-auto">
+                Try clearing keyword filters or selecting a different profession category.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {jobs.map((job) => (
+                  <JobCard
+                    key={job._id || job.id}
+                    job={job}
+                    hasApplied={hasApplied(job._id || job.id || '')}
+                    onViewDetails={handleViewDetails}
+                    onQuickApply={handleViewDetails}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination Info */}
+              {totalCount > 12 && (
+                <div className="flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground">
+                  <span>
+                    Showing {jobs.length} of {totalCount} open positions
                   </span>
-                  <span className="flex items-center gap-1">
-                    <DollarSign className="size-3 text-emerald-500" />
-                    {job.salaryRange}
-                  </span>
-                  <span>{job.experienceYears}+ yrs exp</span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="p-5 pt-0 space-y-3">
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                  {job.description}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {job.skills.map((skill) => (
-                    <Badge
-                      key={skill}
+                  <div className="flex items-center gap-2">
+                    <Button
                       variant="outline"
-                      className="text-[11px] font-medium py-0.5 px-2 bg-muted/40"
+                      size="sm"
+                      disabled={(filters.page || 1) <= 1}
+                      onClick={() => updateFilters({ page: (filters.page || 1) - 1 })}
+                      className="text-xs h-8 rounded-lg cursor-pointer"
                     >
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-
-              <CardFooter className="p-5 pt-0 flex items-center justify-between gap-3 border-t border-border/40 mt-2">
-                <span className="text-[11px] text-muted-foreground font-mono">
-                  Posted {job.postedAt}
-                </span>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedJob(job)}
-                    className="text-xs font-semibold cursor-pointer"
-                  >
-                    View Details
-                  </Button>
-
-                  <Button
-                    size="sm"
-                    disabled={isApplied}
-                    onClick={() => handleApply(job)}
-                    className={`text-xs font-semibold cursor-pointer ${
-                      isApplied
-                        ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
-                        : 'bg-purple-600 hover:bg-purple-700 text-white'
-                    }`}
-                  >
-                    {isApplied ? (
-                      <>
-                        <CheckCircle2 className="size-3.5 mr-1 text-white" />
-                        Applied
-                      </>
-                    ) : (
-                      <>
-                        <Send className="size-3.5 mr-1" />
-                        Quick Apply
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Job Details Modal */}
-      {selectedJob && (
-        <Dialog open={!!selectedJob} onOpenChange={(open) => !open && setSelectedJob(null)}>
-          <DialogContent className="sm:max-w-[550px]">
-            <DialogHeader>
-              <div className="flex items-center justify-between gap-2">
-                <DialogTitle className="text-lg font-bold">{selectedJob.title}</DialogTitle>
-                <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-xs">
-                  {selectedJob.matchScore}% Match
-                </Badge>
-              </div>
-              <DialogDescription className="text-xs font-medium">
-                {selectedJob.companyName} • {selectedJob.location} • {selectedJob.salaryRange}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-4 py-2">
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Role Overview</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{selectedJob.description}</p>
-              </div>
-
-              <div className="space-y-1.5">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Required Domain Competencies</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedJob.skills.map((s) => (
-                    <Badge key={s} variant="secondary" className="text-xs py-0.5 px-2">
-                      {s}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {applySuccess && (
-                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
-                  <span>Application submitted successfully with your verified portfolio!</span>
+                      Previous
+                    </Button>
+                    <span className="font-mono px-2">Page {filters.page || 1}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={jobs.length < (filters.pageSize || 12)}
+                      onClick={() => updateFilters({ page: (filters.page || 1) + 1 })}
+                      className="text-xs h-8 rounded-lg cursor-pointer"
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
               )}
-            </div>
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
 
-            <DialogFooter>
-              <Button variant="ghost" size="sm" onClick={() => setSelectedJob(null)}>
-                Close
-              </Button>
-              <Button
-                size="sm"
-                disabled={appliedJobs.includes(selectedJob.id) || applySuccess}
-                onClick={() => handleApply(selectedJob)}
-                className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold"
-              >
-                {appliedJobs.includes(selectedJob.id) ? 'Application Submitted' : 'Submit Application'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Detail & Application Modal */}
+      <JobDetailModal
+        job={activeJob}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        onApply={handleApply}
+        hasApplied={activeJob ? hasApplied(activeJob._id || activeJob.id || '') : false}
+      />
     </div>
   );
 }
