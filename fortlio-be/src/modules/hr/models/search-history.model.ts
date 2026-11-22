@@ -7,7 +7,7 @@ const searchHistorySchema = new mongoose.Schema(
     filters: { type: mongoose.Schema.Types.Mixed, default: {} },
     searchedAt: { type: Date, default: Date.now },
   },
-  { timestamps: { createdAt: 'searchedAt', updatedAt: false } }
+  { timestamps: { createdAt: 'searchedAt', updatedAt: false } },
 );
 
 searchHistorySchema.index({ userId: 1, query: 1 }, { unique: true });

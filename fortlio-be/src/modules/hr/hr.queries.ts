@@ -4,13 +4,13 @@ export const findHrProfileByUserIdQuery = (userId: string | mongoose.Types.Objec
   userId: new mongoose.Types.ObjectId(userId),
 });
 
-export const getViewedProfilesPipeline = (
+export const getViewedProfilesBasePipeline = (
   userId: mongoose.Types.ObjectId,
-  limit = 10,
 ): PipelineStage[] => [
   { $match: { userId } },
-  { $sort: { viewedAt: -1 } },
-  { $limit: limit },
+];
+
+export const viewedProfilesLookupPipeline: PipelineStage[] = [
   {
     $lookup: {
       from: 'candidate_profiles',
@@ -83,13 +83,23 @@ export const getViewedProfilesPipeline = (
   },
 ];
 
-export const getSearchHistoryPipeline = (
+export const getViewedProfilesPipeline = (
   userId: mongoose.Types.ObjectId,
   limit = 10,
 ): PipelineStage[] => [
-  { $match: { userId } },
-  { $sort: { searchedAt: -1 } },
+  ...getViewedProfilesBasePipeline(userId),
+  { $sort: { viewedAt: -1 } },
   { $limit: limit },
+  ...viewedProfilesLookupPipeline,
+];
+
+export const getSearchHistoryBasePipeline = (
+  userId: mongoose.Types.ObjectId,
+): PipelineStage[] => [
+  { $match: { userId } },
+];
+
+export const searchHistoryLookupPipeline: PipelineStage[] = [
   {
     $project: {
       _id: { $toString: '$_id' },
@@ -99,6 +109,16 @@ export const getSearchHistoryPipeline = (
       searchedAt: 1,
     },
   },
+];
+
+export const getSearchHistoryPipeline = (
+  userId: mongoose.Types.ObjectId,
+  limit = 10,
+): PipelineStage[] => [
+  ...getSearchHistoryBasePipeline(userId),
+  { $sort: { searchedAt: -1 } },
+  { $limit: limit },
+  ...searchHistoryLookupPipeline,
 ];
 
 export const searchCandidatesMongoPipeline = (

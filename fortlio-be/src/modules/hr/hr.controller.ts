@@ -130,7 +130,8 @@ export class HrController {
         throw new AppError(HR_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'getViewedProfiles' }, 401);
       }
 
-      const history = await this.historyService.getViewedProfiles(loggedInUserId);
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const history = await this.historyService.getViewedProfiles(loggedInUserId, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, history);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: HR_MSGS.ERR.FAILED_TO_FETCH_VIEWED_PROFILES, apiName: 'getViewedProfiles' }, 400);
@@ -144,7 +145,8 @@ export class HrController {
         throw new AppError(HR_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'getSearches' }, 401);
       }
 
-      const searches = await this.historyService.getSearches(loggedInUserId);
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const searches = await this.historyService.getSearches(loggedInUserId, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, searches);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: HR_MSGS.ERR.FAILED_TO_FETCH_SEARCH_HISTORY, apiName: 'getSearches' }, 400);

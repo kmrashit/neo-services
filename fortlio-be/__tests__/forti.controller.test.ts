@@ -31,7 +31,7 @@ describe('FortiController Unit Tests', () => {
       res.headers[key] = value;
       return res;
     });
-    res.flushHeaders = mock(() => {});
+    res.flushHeaders = mock(() => undefined);
     res.write = mock((data: string) => {
       res.writtenData.push(data);
       return true;

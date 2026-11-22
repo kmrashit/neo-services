@@ -40,9 +40,11 @@ export const getLinkAnalyticsPipeline = (shortCode: string) => [
   },
 ];
 
-export const getMyLinksPipeline = (userId: mongoose.Types.ObjectId) => [
+export const getMyLinksBasePipeline = (userId: mongoose.Types.ObjectId) => [
   { $match: { createdBy: userId } },
-  { $sort: { createdAt: -1 as const } },
+];
+
+export const myLinksLookupPipeline = [
   {
     $project: {
       shortCode: 1,
@@ -74,4 +76,10 @@ export const getMyLinksPipeline = (userId: mongoose.Types.ObjectId) => [
       updatedAt: 1,
     },
   },
+];
+
+export const getMyLinksPipeline = (userId: mongoose.Types.ObjectId) => [
+  ...getMyLinksBasePipeline(userId),
+  { $sort: { createdAt: -1 as const } },
+  ...myLinksLookupPipeline,
 ];

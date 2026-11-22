@@ -40,7 +40,7 @@ export function ConnectButton({
       setStatus('pending');
       setDialogOpen(false);
       setMessage('');
-      if (onConnected) onConnected();
+      if (onConnected) {onConnected();}
     } catch {
       // Error handled by hook
     }

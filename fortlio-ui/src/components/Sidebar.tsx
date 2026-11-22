@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 import {
   User,
   FileText,
@@ -14,10 +14,10 @@ import {
   Bot,
   Search,
   Briefcase,
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
@@ -27,64 +27,64 @@ export default function Sidebar() {
 
   const candidateSections = [
     {
-      title: "Career & Opportunities",
+      title: 'Career & Opportunities',
       items: [
-        { name: "Job Suggestions", path: "/jobs", icon: Briefcase },
+        { name: 'Job Suggestions', path: '/jobs', icon: Briefcase },
       ],
     },
     {
-      title: "Portfolio Showcase",
+      title: 'Portfolio Showcase',
       items: [
-        { name: "My Showcase Profile", path: "/candidate-profile", icon: User },
-        { name: "Edit Profile", path: "/edit-profile", icon: FileText },
-        { name: "Resume Builder (A4)", path: "/editor?mode=resume", icon: FileCode },
+        { name: 'My Showcase Profile', path: '/candidate-profile', icon: User },
+        { name: 'Edit Profile', path: '/edit-profile', icon: FileText },
+        { name: 'Resume Builder (A4)', path: '/editor?mode=resume', icon: FileCode },
       ],
     },
     {
-      title: "Knowledge & Creation",
+      title: 'Knowledge & Creation',
       items: [
-        { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
-        { name: "Create Blog (Medium)", path: "/editor?mode=blog", icon: FileText },
-        { name: "Draw Imagination", path: "/editor?mode=draw", icon: Palette },
+        { name: 'Specialty Blogs', path: '/candidate-blogs', icon: BookOpen },
+        { name: 'Create Blog (Medium)', path: '/editor?mode=blog', icon: FileText },
+        { name: 'Draw Imagination', path: '/editor?mode=draw', icon: Palette },
       ],
     },
     {
-      title: "AI Career Suite",
+      title: 'AI Career Suite',
       items: [
-        { name: "AI Interviews", path: "/candidate-profile?tab=interviews", icon: Bot },
+        { name: 'AI Interviews', path: '/candidate-profile?tab=interviews', icon: Bot },
       ],
     },
     {
-      title: "Networking",
+      title: 'Networking',
       items: [
-        { name: "Connections", path: "/connections", icon: Users },
-        { name: "Direct Chat", path: "/chat", icon: MessageSquare },
-        { name: "Notifications", path: "/notifications", icon: Bell },
+        { name: 'Connections', path: '/connections', icon: Users },
+        { name: 'Direct Chat', path: '/chat', icon: MessageSquare },
+        { name: 'Notifications', path: '/notifications', icon: Bell },
       ],
     },
   ];
 
   const hrSections = [
     {
-      title: "Recruiter Discovery & Hiring",
+      title: 'Recruiter Discovery & Hiring',
       items: [
-        { name: "Candidate Search", path: "/candidates", icon: Search },
-        { name: "Job Postings & Intake", path: "/hr/jobs", icon: Briefcase },
-        { name: "Applicants Review", path: "/hr/applicants", icon: Briefcase },
+        { name: 'Candidate Search', path: '/candidates', icon: Search },
+        { name: 'Job Postings', path: '/hr/jobs', icon: Briefcase },
+        { name: 'Applicants Review', path: '/hr/applicants', icon: Briefcase },
       ],
     },
     {
-      title: "Networking",
+      title: 'Networking',
       items: [
-        { name: "Connections", path: "/connections", icon: Users },
-        { name: "Direct Chat", path: "/chat", icon: MessageSquare },
-        { name: "Notifications", path: "/notifications", icon: Bell },
+        { name: 'Connections', path: '/connections', icon: Users },
+        { name: 'Direct Chat', path: '/chat', icon: MessageSquare },
+        { name: 'Notifications', path: '/notifications', icon: Bell },
       ],
     },
   ];
 
   const activeSections = isHr ? hrSections : candidateSections;
-  const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
+  const userInitial = (user?.fullName || user?.email || 'U').charAt(0).toUpperCase();
 
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-border bg-card text-card-foreground shadow-sm">
@@ -123,8 +123,8 @@ export default function Sidebar() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all ${
                         isActive
-                          ? "bg-primary text-primary-foreground shadow-sm font-semibold"
-                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                          ? 'bg-primary text-primary-foreground shadow-sm font-semibold'
+                          : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                       }`
                     }
                   >
@@ -157,10 +157,10 @@ export default function Sidebar() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-foreground truncate">
-              {user?.fullName || "Candidate"}
+              {user?.fullName || 'Candidate'}
             </p>
             <p className="text-[11px] text-muted-foreground truncate">
-              {user?.email || "user@fortlio.dev"}
+              {user?.email || 'user@fortlio.dev'}
             </p>
           </div>
           <Button

@@ -20,8 +20,8 @@ import {
   ViewedProfilesGrid,
   useCandidateSearch,
   useHrHistory,
+  type ICandidateSearchResult,
 } from '@/features/hr';
-import type { ICandidateSearchResult } from '@/features/hr';
 import { HrCandidateChatDrawer } from '@/features/forti';
 
 export default function CandidateSearch() {

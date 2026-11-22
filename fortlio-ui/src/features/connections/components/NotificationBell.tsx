@@ -28,14 +28,14 @@ export function NotificationBell() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'connection_request':
-        return <Users className="size-3.5 text-purple-600" />;
-      case 'connection_accepted':
-        return <CheckCircle2 className="size-3.5 text-emerald-500" />;
-      case 'new_message':
-        return <MessageSquare className="size-3.5 text-indigo-500" />;
-      default:
-        return <Sparkles className="size-3.5 text-amber-500" />;
+    case 'connection_request':
+      return <Users className="size-3.5 text-purple-600" />;
+    case 'connection_accepted':
+      return <CheckCircle2 className="size-3.5 text-emerald-500" />;
+    case 'new_message':
+      return <MessageSquare className="size-3.5 text-indigo-500" />;
+    default:
+      return <Sparkles className="size-3.5 text-amber-500" />;
     }
   };
 

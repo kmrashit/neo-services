@@ -107,21 +107,21 @@
 > Track completion progress across all architectural layers. Keep updated after each feature milestone.
 
 | Feature ID | Feature Description | Backend API | Mongo Aggregations | Typesense | Shadcn UI | Bun Tests | Playwright E2E | Overall Progress |
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **F01** | Auth & Session Management | 🟢 100% | 🟢 100% | N/A | 🟢 85% | 🟢 100% | 🟢 100% | **97%** |
-| **F02** | User & RBAC Management | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
-| **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟢 90% | 🟢 90% | 🟢 100% | 🟢 90% | 🟢 100% | 🟢 100% | **95%** |
-| **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
-| **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
-| **F06** | Connections & Notifications | 🟢 100% | 🟢 100% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **100%** |
-| **F07** | Real-Time Chat & WebSocket | 🟢 90% | 🟢 85% | N/A | 🟡 35% | 🟢 80% | 🔴 0% | **58%** |
-| **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** |
-| **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 95% | 🟢 100% | 🟢 100% | **98%** |
-| **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
-| **F11** | Job Board & Recruitment Engine | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 0% | **0%** |
-| **Total** | **Fortlio Platform Master** | **80%** | **78%** | **75%** | **72%** | **80%** | **73%** | **77%** |
+|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **F01** | Auth & Session Management | 🟢 100% | 🔴 20% | N/A | 🟢 90% | 🟢 100% | 🟢 100% | **82%** | ⚠️ Needs Aggregation Refactor |
+| **F02** | User & RBAC Management | 🟢 100% | 🟢 95% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **98%** | 🟢 Completed |
+| **F03** | Candidate Profile, MD-to-PDF & AI Resume OCR | 🟡 75% | 🔴 30% | 🟢 90% | 🟢 85% | 🟢 100% | 🟢 100% | **78%** | 🟡 Partially Complete (OCR Pending) |
+| **F04** | Candidate Blogs, Draw Imagination & AI Blog Improver | 🟡 70% | 🟢 90% | N/A | 🟢 90% | 🟢 100% | 🟢 100% | **88%** | 🟡 Partially Complete (AI Improver Pending) |
+| **F05** | HR Search & Video Ad Monetization | 🟢 100% | 🟢 95% | 🟢 90% | 🟢 95% | 🟢 100% | 🟢 100% | **96%** | 🟢 Completed |
+| **F06** | Connections & Notifications | 🟢 100% | 🟢 95% | N/A | 🟢 100% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
+| **F07** | Real-Time Chat & WebSocket | 🟢 85% | 🟢 90% | N/A | 🔴 20% | 🟢 90% | 🔴 0% | **57%** | 🔧 In Progress / Needs Fixing (UI/WS) |
+| **F08** | Link Shortener & Share Analytics | 🟢 100% | 🟢 100% | N/A | 🟢 95% | 🟢 100% | 🟢 100% | **99%** | 🟢 Completed |
+| **F09** | Forti AI Engine (Authentic Input Evaluation) | 🟢 90% | 🟢 80% | 🟢 85% | 🟢 95% | 🟢 100% | 🟢 100% | **92%** | 🟢 Completed |
+| **F10** | AI Interactive Interviews & Domain Readiness | 🔴 0% | 🔴 0% | 🔴 0% | 🔴 5% | 🔴 0% | 🔴 0% | **1%** | ❌ Not Started |
+| **F11** | Job Board & Recruitment Engine | 🟢 95% | 🟢 95% | N/A | 🟡 30% | 🟢 100% | 🔴 0% | **64%** | 🔧 In Progress (FE Wiring & E2E) |
+| **Total** | **Fortlio Platform Master** | **85%** | **72%** | **66%** | **73%** | **90%** | **73%** | **78%** | **Platform Wide** |
 
-*Legend: 🟢 Completed (>=80%) | 🟡 In Progress (30-79%) | 🔴 Pending (<30%) | N/A Not Applicable*
+*Legend: 🟢 Completed (>=80%) | 🟡 In Progress / Partially Complete (30-79%) | 🔴 Pending / Needs Action (<30%) | N/A Not Applicable*
 
 ---
 
@@ -173,6 +173,11 @@ When implementing or modifying any feature:
    - Update checklist items in Section 2 of `docs/F0<X>.md`.
    - Append an entry in Section 6 (`Changelog & Progress Log`) of `docs/F0<X>.md`.
    - Recalculate and update the feature's status percentage in the Main Master Progress Tracker in `GEMINI.md`.
+6. **Mandatory Linting Verification (Run Every Time)**:
+   - At the conclusion of every feature implementation, modification, or bug fix, ALWAYS run lint on both backend and frontend:
+     - Backend: `cd fortlio-be && bun run lint` (or `bun run lint:fix` to auto-fix)
+     - Frontend: `cd fortlio-ui && bun run lint`
+   - All lint errors and warnings must be resolved before marking the feature complete or presenting changes for review.
 
 ---
 

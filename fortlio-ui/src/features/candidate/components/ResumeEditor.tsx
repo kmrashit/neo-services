@@ -106,9 +106,7 @@ A results-driven **[Specialty / Profession Title]** with **[X+] years of proven 
 `;
 
 export const ResumeEditor: React.FC = () => {
-  const [markdown, setMarkdown] = useState(() => {
-    return localStorage.getItem('fortlio_resume_markdown') || DEFAULT_RESUME_MARKDOWN;
-  });
+  const [markdown, setMarkdown] = useState(() => localStorage.getItem('fortlio_resume_markdown') || DEFAULT_RESUME_MARKDOWN);
   const [activeTab, setActiveTab] = useState<'split' | 'edit' | 'preview'>('split');
   const [isSaved, setIsSaved] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);

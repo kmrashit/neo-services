@@ -25,19 +25,19 @@ export function useConnections(currentUserId?: string) {
   }, [fetchConnections]);
 
   const getTargetUserId = (target: any): string => {
-    if (!target) return '';
-    if (typeof target === 'string') return target;
+    if (!target) {return '';}
+    if (typeof target === 'string') {return target;}
     return target._id || '';
   };
 
   const activeConnections = connections.filter((c) => c.status === 'accepted');
 
   const pendingReceived = connections.filter(
-    (c) => c.status === 'pending' && currentUserId && getTargetUserId(c.receiverId) === currentUserId
+    (c) => c.status === 'pending' && currentUserId && getTargetUserId(c.receiverId) === currentUserId,
   );
 
   const pendingSent = connections.filter(
-    (c) => c.status === 'pending' && currentUserId && getTargetUserId(c.senderId) === currentUserId
+    (c) => c.status === 'pending' && currentUserId && getTargetUserId(c.senderId) === currentUserId,
   );
 
   return {

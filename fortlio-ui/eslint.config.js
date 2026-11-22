@@ -6,12 +6,14 @@ import tseslint from 'typescript-eslint'
 import react from 'eslint-plugin-react'
 import { globalIgnores } from 'eslint/config'
 import unicorn from 'eslint-plugin-unicorn';
+import importPlugin from 'eslint-plugin-import';
 
 export default [
   globalIgnores(['dist','node_modules','**/*.d.ts']),
   js.configs.recommended,
   ...tseslint.configs.recommended,
   react.configs.flat.recommended,
+  react.configs.flat['jsx-runtime'],
   reactHooks.configs.flat.recommended,
   reactRefresh.configs.vite,
   {
@@ -21,7 +23,7 @@ export default [
       sourceType: 'module',
       parser: tseslint.parser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: ['./tsconfig.app.json', './tsconfig.node.json'],
       },
       globals: {
         ...globals.browser,
@@ -40,11 +42,12 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      unicorn
+      unicorn,
+      import: importPlugin,
     },
         settings: {
       react: {
-        version: 'detect',
+        version: '19.0',
       },
     },
     rules: {
@@ -57,7 +60,7 @@ export default [
       'eqeqeq': ['error', 'always'],
       'no-eval': 'error',
       'no-implied-eval': 'error',
-      'no-return-await': 'error',
+      'no-return-await': 'off',
       'no-param-reassign': 'error',
       "indent": ["error", 2],
       'max-classes-per-file': ['error', 1],
@@ -67,7 +70,20 @@ export default [
       }],
       
 
+      // React Specific
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
+      'react/display-name': 'off',
+      'react/prop-types': 'off',
+      'react/no-unescaped-entities': 'off',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/static-components': 'warn',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+
       // TypeScript Specific
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '_' }],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-empty-function': 'warn',

@@ -93,7 +93,7 @@ export default function HrJobsPage() {
 
   const handleCreateJob = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {return;}
 
     const newJob: HrJob = {
       id: `hr-job-${Date.now()}`,
@@ -125,7 +125,7 @@ export default function HrJobsPage() {
           return { ...j, status: j.status === 'active' ? 'closed' : 'active' };
         }
         return j;
-      })
+      }),
     );
   };
 
@@ -138,7 +138,7 @@ export default function HrJobsPage() {
             <div className="flex items-center gap-2">
               <Badge className="bg-purple-600/20 text-purple-600 dark:text-purple-300 border-purple-500/30 text-xs px-2.5 py-0.5">
                 <Briefcase className="size-3 mr-1" />
-                Recruiter Job Postings & Talent Intake
+                Recruiter Job Postings
               </Badge>
               <Badge variant="outline" className="text-xs px-2.5 py-0.5 font-mono">
                 HR Workspace

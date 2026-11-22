@@ -15,7 +15,7 @@ export const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!email || !password) {return;}
     await login({ email: email.trim(), password });
   };
 

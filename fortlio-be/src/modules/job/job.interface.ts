@@ -1,3 +1,5 @@
+import { IFilter } from '../../interface/common.interface';
+
 export interface IJobCreate {
   title: string;
   companyName: string;
@@ -25,7 +27,7 @@ export interface IJobUpdate {
   status?: 'active' | 'closed' | 'draft';
 }
 
-export interface IJobFilter {
+export interface IJobFilter extends IFilter {
   searchKey?: string;
   profession?: string;
   workplaceType?: 'Remote' | 'Hybrid' | 'Onsite';

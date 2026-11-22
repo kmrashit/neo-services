@@ -10,7 +10,7 @@ export const authApi = {
   register: async (payload: RegisterPayload) => {
     const response = await api.post<AuthApiResponse<{ message: string; user?: any }>>(
       '/auth/register',
-      payload
+      payload,
     );
     return response.data;
   },
@@ -18,7 +18,7 @@ export const authApi = {
   login: async (payload: LoginPayload) => {
     const response = await api.post<AuthApiResponse<LoginResponseData>>(
       '/auth/login',
-      payload
+      payload,
     );
     return response.data;
   },
@@ -30,21 +30,21 @@ export const authApi = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     return response.data;
   },
 
   logout: async (userId: string) => {
     const response = await api.get<AuthApiResponse<{ message: string }>>(
-      `/auth/logout?userId=${encodeURIComponent(userId)}`
+      `/auth/logout?userId=${encodeURIComponent(userId)}`,
     );
     return response.data;
   },
 
   verifyEmail: async (token: string) => {
     const response = await api.get<AuthApiResponse<{ message: string }>>(
-      `/auth/verifyEmail?token=${encodeURIComponent(token)}`
+      `/auth/verifyEmail?token=${encodeURIComponent(token)}`,
     );
     return response.data;
   },
@@ -52,7 +52,7 @@ export const authApi = {
   resendVerification: async (email: string) => {
     const response = await api.post<AuthApiResponse<{ message: string }>>(
       '/auth/resendVerification',
-      { email }
+      { email },
     );
     return response.data;
   },

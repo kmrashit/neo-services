@@ -253,10 +253,10 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   const { user } = useAuth();
   const [mode, setMode] = useState<'resume' | 'blog'>(initialMode);
   const [markdown, setMarkdown] = useState<string>(() => {
-    if (initialMarkdown) return initialMarkdown;
+    if (initialMarkdown) {return initialMarkdown;}
     const key = mode === 'resume' ? 'fortlio_resume_markdown' : 'fortlio_blog_markdown';
     const saved = localStorage.getItem(key);
-    if (saved) return saved;
+    if (saved) {return saved;}
     return mode === 'resume' ? DEFAULT_RESUME_MARKDOWN : DEFAULT_BLOG_MARKDOWN;
   });
 
@@ -281,7 +281,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   }, [markdown, mode]);
 
   const handleModeSwitch = (newMode: 'resume' | 'blog') => {
-    if (newMode === mode) return;
+    if (newMode === mode) {return;}
     setMode(newMode);
     const key = newMode === 'resume' ? 'fortlio_resume_markdown' : 'fortlio_blog_markdown';
     const saved = localStorage.getItem(key);
@@ -291,7 +291,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   const handleSave = () => {
     const key = mode === 'resume' ? 'fortlio_resume_markdown' : 'fortlio_blog_markdown';
     localStorage.setItem(key, markdown);
-    if (onSave) onSave(markdown);
+    if (onSave) {onSave(markdown);}
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
@@ -322,12 +322,12 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
     if (action === 'action-verbs') {
       setMarkdown((prev) =>
         prev +
-        `\n\n### Key Technical Impact Highlights\n- **Architected** distributed resilient data pipelines handling high-throughput event spikes.\n- **Spearheaded** cross-functional reliability audits reducing latency variance by 40%.\n- **Authored** comprehensive developer tooling to accelerate pod velocity.`
+        '\n\n### Key Technical Impact Highlights\n- **Architected** distributed resilient data pipelines handling high-throughput event spikes.\n- **Spearheaded** cross-functional reliability audits reducing latency variance by 40%.\n- **Authored** comprehensive developer tooling to accelerate pod velocity.',
       );
     } else if (action === 'quantify') {
       setMarkdown((prev) =>
         prev +
-        `\n\n### Quantifiable Engineering Metrics\n- Improved system uptime from 99.8% to **99.99%** over 18 consecutive months.\n- Reduced infrastructure overhead by **35%** via intelligent resource autoscaling.`
+        '\n\n### Quantifiable Engineering Metrics\n- Improved system uptime from 99.8% to **99.99%** over 18 consecutive months.\n- Reduced infrastructure overhead by **35%** via intelligent resource autoscaling.',
       );
     }
     setIsAiResumeOpen(false);
@@ -339,7 +339,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   const handleApplyBlogAi = () => {
     setMarkdown((prev) =>
       prev +
-      `\n\n## Key Takeaways & Methodological Insights\n- Structured domain synthesis based on verified evidence and benchmarked telemetry.\n- High-impact execution with measurable architectural outcomes.\n\n*Authentic Trajectory Note*: Original candidate draft preserved for Forti learning velocity evaluation.`
+      '\n\n## Key Takeaways & Methodological Insights\n- Structured domain synthesis based on verified evidence and benchmarked telemetry.\n- High-impact execution with measurable architectural outcomes.\n\n*Authentic Trajectory Note*: Original candidate draft preserved for Forti learning velocity evaluation.',
     );
     setIsAiBlogOpen(false);
     setAiNotice('Article refined! Remember: Forti AI evaluates your learning velocity based strictly on authentic inputs.');

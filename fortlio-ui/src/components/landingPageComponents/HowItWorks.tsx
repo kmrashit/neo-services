@@ -1,32 +1,32 @@
 // sections/HowItWorks.tsx
-import { motion } from "framer-motion";
-import { UserPlus, Search, CheckCircle, TrendingUp } from "lucide-react";
+import { motion } from 'framer-motion';
+import { UserPlus, Search, CheckCircle, TrendingUp } from 'lucide-react';
 
 const steps = [
   {
     icon: UserPlus,
-    title: "Create Account",
-    description: "Sign up as a job seeker or HR professional in minutes.",
-    color: "from-purple-500 to-indigo-500"
+    title: 'Create Account',
+    description: 'Sign up as a job seeker or HR professional in minutes.',
+    color: 'from-purple-500 to-indigo-500',
   },
   {
     icon: Search,
-    title: "Find or Post Jobs",
-    description: "Search for jobs or post openings that match your requirements.",
-    color: "from-indigo-500 to-purple-500"
+    title: 'Find or Post Jobs',
+    description: 'Search for jobs or post openings that match your requirements.',
+    color: 'from-indigo-500 to-purple-500',
   },
   {
     icon: CheckCircle,
-    title: "Apply or Review",
-    description: "Apply to jobs or review applications from qualified candidates.",
-    color: "from-purple-600 to-indigo-600"
+    title: 'Apply or Review',
+    description: 'Apply to jobs or review applications from qualified candidates.',
+    color: 'from-purple-600 to-indigo-600',
   },
   {
     icon: TrendingUp,
-    title: "Get Hired or Hire",
-    description: "Start your new job or find the perfect candidate for your team.",
-    color: "from-indigo-600 to-purple-600"
-  }
+    title: 'Get Hired or Hire',
+    description: 'Start your new job or find the perfect candidate for your team.',
+    color: 'from-indigo-600 to-purple-600',
+  },
 ];
 
 export default function HowItWorks() {
@@ -41,7 +41,7 @@ export default function HowItWorks() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            How It{" "}
+            How It{' '}
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Works
             </span>

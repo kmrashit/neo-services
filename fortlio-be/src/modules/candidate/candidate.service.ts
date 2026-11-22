@@ -7,9 +7,9 @@ import { IFilter } from '../../interface/common.interface';
 import { AppError } from '../../core/core-utils/err-util';
 import { sensiSearch, bullMQService } from '../../clients';
 import { TYPSENSE_COLLECTION_NAME, BULLMQQUEUES } from '../../core/core-constants/common.constants';
-import { getDataByFilter } from '../../core/core-helper';
+import { getDataWithLookupsAfterFilter } from '../../core/core-helper';
 import * as CANDIDATE_MSGS from './candidate.constants';
-import { getCandidateBlogsPipeline } from './candidate.queries';
+import { getCandidateBlogsPipeline, candidateBlogAuthorLookupPipeline } from './candidate.queries';
 
 export class CandidateService {
   async upsertProfile(userId: string, data: ICandidateCreate) {
@@ -97,7 +97,13 @@ export class CandidateService {
     try {
       const basePipeline = getCandidateBlogsPipeline(filterUserId);
       const searchFields = ['title', 'content', 'blogKeywords'];
-      return await getDataByFilter(filterQuery, basePipeline, searchFields, CandidateBlog);
+      return await getDataWithLookupsAfterFilter(
+        filterQuery,
+        basePipeline,
+        candidateBlogAuthorLookupPipeline,
+        searchFields,
+        CandidateBlog,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CANDIDATE_MSGS.ERR.FAILED_TO_LIST_BLOGS, apiName: 'listBlogs' });
     }

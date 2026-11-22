@@ -6,7 +6,7 @@ const profileViewSchema = new mongoose.Schema(
     viewedUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
     viewedAt: { type: Date, default: Date.now },
   },
-  { timestamps: { createdAt: 'viewedAt', updatedAt: false } }
+  { timestamps: { createdAt: 'viewedAt', updatedAt: false } },
 );
 
 profileViewSchema.index({ userId: 1, viewedUserId: 1 }, { unique: true });

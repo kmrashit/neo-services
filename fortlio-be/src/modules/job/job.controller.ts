@@ -19,7 +19,7 @@ export class JobController {
       const job = await this.jobService.createJob(hrUserId, body);
       return fmtRes(res, job);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_CREATE_JOB,
         apiName: 'createJob',
@@ -35,10 +35,11 @@ export class JobController {
         throw new AppError(JOB_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'getMyJobs' }, 401);
       }
 
-      const jobs = await this.jobService.getMyJobs(hrUserId);
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const jobs = await this.jobService.getMyJobs(hrUserId, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, jobs);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
         apiName: 'getMyJobs',
@@ -59,7 +60,7 @@ export class JobController {
       const updatedJob = await this.jobService.updateJobStatus(hrUserId, jobId, status);
       return fmtRes(res, updatedJob);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_UPDATE_JOB,
         apiName: 'updateJobStatus',
@@ -70,12 +71,17 @@ export class JobController {
 
   searchJobs = async (req: Request, res: Response) => {
     try {
-      const { searchKey, profession, workplaceType, minExperience, skills } = req.query as {
+      const { searchKey, profession, workplaceType, minExperience, skills, page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as {
         searchKey?: string;
         profession?: string;
         workplaceType?: 'Remote' | 'Hybrid' | 'Onsite';
         minExperience?: string;
         skills?: string;
+        page?: string;
+        pageSize?: string;
+        search?: string;
+        sortBy?: string;
+        sortOrder?: 'asc' | 'desc';
       };
 
       const skillsList = skills ? skills.split(',').map((s) => s.trim()).filter(Boolean) : undefined;
@@ -87,11 +93,16 @@ export class JobController {
         workplaceType,
         minExperience: minExp,
         skills: skillsList,
+        page,
+        pageSize,
+        search,
+        sortBy,
+        sortOrder,
       });
 
       return fmtRes(res, jobs);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
         apiName: 'searchJobs',
@@ -110,7 +121,7 @@ export class JobController {
       const suggestions = await this.jobService.getSuggestions(candidateUserId);
       return fmtRes(res, suggestions);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
         apiName: 'getSuggestions',
@@ -131,7 +142,7 @@ export class JobController {
       const application = await this.jobService.applyJob(candidateUserId, jobId, coverNote);
       return fmtRes(res, application);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_APPLY_JOB,
         apiName: 'applyJob',
@@ -148,10 +159,11 @@ export class JobController {
         throw new AppError(JOB_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'getJobApplicants' }, 401);
       }
 
-      const applicants = await this.jobService.getJobApplicants(hrUserId, jobId);
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const applicants = await this.jobService.getJobApplicants(hrUserId, jobId, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, applicants);
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_APPLICANTS,
         apiName: 'getJobApplicants',

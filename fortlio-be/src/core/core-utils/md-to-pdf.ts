@@ -44,7 +44,7 @@ export async function convertMdToPdf(markdown: string, settings?: any, s3Options
       }
     `;
 
-    const watermarkHtml = `\n\n<div class="fortlio-pdf-watermark"><span>By :</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 2px; vertical-align: middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> <strong style="color: #7c3aed;">Fortlio</strong></div>`;
+    const watermarkHtml = '\n\n<div class="fortlio-pdf-watermark"><span>By :</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 2px; vertical-align: middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> <strong style="color: #7c3aed;">Fortlio</strong></div>';
     const contentWithWatermark = markdown.includes('fortlio-pdf-watermark')
       ? markdown
       : markdown + watermarkHtml;

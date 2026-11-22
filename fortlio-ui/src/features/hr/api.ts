@@ -10,7 +10,7 @@ import type {
 export const hrApi = {
   searchCandidates: async (filter: ISearchFilter): Promise<ISearchApiResponse> => {
     const params: Record<string, string> = {};
-    if (filter.searchKey) params.searchKey = filter.searchKey;
+    if (filter.searchKey) {params.searchKey = filter.searchKey;}
     if (filter.minExperience !== undefined && filter.minExperience > 0) {
       params.minExperience = String(filter.minExperience);
     }
@@ -25,29 +25,31 @@ export const hrApi = {
         headers: {
           'x-checksum': 'dev-checksum',
         },
-      }
+      },
     );
 
     return response.data?.data || { candidates: [], remainingCoins: 0 };
   },
 
   getSearchHistory: async (): Promise<ISearchHistoryItem[]> => {
-    const response = await api.get<{ success: boolean; data: ISearchHistoryItem[] }>(
-      '/hr/history/searches'
+    const response = await api.get<{ success: boolean; data: any }>(
+      '/hr/history/searches',
     );
-    return response.data?.data || [];
+    const rawData = response.data?.data;
+    return Array.isArray(rawData) ? rawData : (rawData?.data || []);
   },
 
   getViewedProfiles: async (): Promise<IViewedProfileItem[]> => {
-    const response = await api.get<{ success: boolean; data: IViewedProfileItem[] }>(
-      '/hr/history/viewed-profiles'
+    const response = await api.get<{ success: boolean; data: any }>(
+      '/hr/history/viewed-profiles',
     );
-    return response.data?.data || [];
+    const rawData = response.data?.data;
+    return Array.isArray(rawData) ? rawData : (rawData?.data || []);
   },
 
   getHrProfile: async (userId: string): Promise<IHrProfile | null> => {
     const response = await api.get<{ success: boolean; data: IHrProfile }>(
-      `/hr/profile/${userId}`
+      `/hr/profile/${userId}`,
     );
     return response.data?.data || null;
   },
@@ -55,7 +57,7 @@ export const hrApi = {
   upsertHrProfile: async (data: Partial<IHrProfile>): Promise<IHrProfile> => {
     const response = await api.post<{ success: boolean; data: IHrProfile }>(
       '/hr/profile',
-      data
+      data,
     );
     return response.data?.data;
   },
@@ -70,7 +72,7 @@ export const hrApi = {
     const response = await api.post<{ success: boolean; data: { coins: number; message: string } }>(
       '/user/watch-ad',
       {},
-      { headers }
+      { headers },
     );
     return response.data?.data || { coins: 10, message: 'Ad reward claimed' };
   },

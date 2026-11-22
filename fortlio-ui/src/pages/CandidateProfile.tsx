@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Download,
   Share2,
@@ -17,32 +17,32 @@ import {
   Bot,
   TrendingUp,
   Link as LinkIcon,
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCandidateProfile } from "@/features/candidate";
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCandidateProfile } from '@/features/candidate';
 import {
   useTrackLinkDwellTime,
   useLinkAnalytics,
   ShareAnalyticsCard,
   ShareLinkModal,
   MySharedLinksTable,
-} from "@/features/shortener";
+} from '@/features/shortener';
 import {
   useCandidateInsights,
   CandidateAiInsightsCard,
   HrCandidateChatDrawer,
-} from "@/features/forti";
+} from '@/features/forti';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export default function CandidateProfile() {
   const { user } = useAuth();
@@ -58,72 +58,72 @@ export default function CandidateProfile() {
 
   // Candidate portfolio data (connected to active user credentials & candidate profile)
   const candidate = {
-    fullName: profile?.fullName || user?.fullName || "Alex Mercer",
-    headline: profile?.headline || "Staff Systems Engineer & Distributed Architect",
-    profession: profile?.profession || "Engineering & Technology",
-    industry: profile?.industry || "Technology & Software",
+    fullName: profile?.fullName || user?.fullName || 'Alex Mercer',
+    headline: profile?.headline || 'Staff Systems Engineer & Distributed Architect',
+    profession: profile?.profession || 'Engineering & Technology',
+    industry: profile?.industry || 'Technology & Software',
     educationLevel: profile?.educationLevel || "Bachelor's Degree (BS in Computer Science)",
-    email: profile?.email || user?.email || "alex.mercer@fortlio.dev",
-    phone: profile?.mobileNumber || "+1 (555) 382-9102",
-    location: profile?.location || "San Francisco, CA (Open to Remote)",
-    bio: profile?.bio || "Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.",
+    email: profile?.email || user?.email || 'alex.mercer@fortlio.dev',
+    phone: profile?.mobileNumber || '+1 (555) 382-9102',
+    location: profile?.location || 'San Francisco, CA (Open to Remote)',
+    bio: profile?.bio || 'Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.',
     skills: profile?.skills || [
-      "TypeScript", "Go", "Distributed Systems", "Kubernetes", "Kafka",
-      "MongoDB Aggregations", "Redis", "Bun", "PostgreSQL", "Docker", "Typesense"
+      'TypeScript', 'Go', 'Distributed Systems', 'Kubernetes', 'Kafka',
+      'MongoDB Aggregations', 'Redis', 'Bun', 'PostgreSQL', 'Docker', 'Typesense',
     ],
     social: profile?.social || {
-      github: profile?.githubUrl || "https://github.com",
-      linkedin: profile?.linkedinUrl || "https://linkedin.com",
-      website: profile?.portfolioUrl || "https://alexmercer.dev",
+      github: profile?.githubUrl || 'https://github.com',
+      linkedin: profile?.linkedinUrl || 'https://linkedin.com',
+      website: profile?.portfolioUrl || 'https://alexmercer.dev',
     },
     experiences: profile?.experiences || [
       {
-        role: "Lead Systems Architect",
-        company: "Veloce Cloud Systems",
-        period: "2023 - Present",
-        description: "Architected distributed telemetry ingestion processing 45k events/sec with sub-50ms latency using Bun, Redis streams, and MongoDB aggregations.",
+        role: 'Lead Systems Architect',
+        company: 'Veloce Cloud Systems',
+        period: '2023 - Present',
+        description: 'Architected distributed telemetry ingestion processing 45k events/sec with sub-50ms latency using Bun, Redis streams, and MongoDB aggregations.',
       },
       {
-        role: "Senior Backend Engineer",
-        company: "Stratos Core Inc.",
-        period: "2021 - 2023",
-        description: "Scaled microservices infrastructure across Kubernetes clusters. Authored internal developer SDKs reducing deployment lead time by 40%.",
+        role: 'Senior Backend Engineer',
+        company: 'Stratos Core Inc.',
+        period: '2021 - 2023',
+        description: 'Scaled microservices infrastructure across Kubernetes clusters. Authored internal developer SDKs reducing deployment lead time by 40%.',
       },
     ],
     education: profile?.education || [
       {
-        degree: "B.S. in Computer Science",
-        institution: "University of California, Berkeley",
-        year: "2017 - 2021",
+        degree: 'B.S. in Computer Science',
+        institution: 'University of California, Berkeley',
+        year: '2017 - 2021',
       },
     ],
     blogs: profile?.blogs || [
       {
-        title: "Optimizing MongoDB Pipelines with Post-Facet Slicing",
-        date: "Nov 15, 2026",
-        readTime: "6 min read",
-        tags: ["MongoDB", "Database", "Performance"],
+        title: 'Optimizing MongoDB Pipelines with Post-Facet Slicing',
+        date: 'Nov 15, 2026',
+        readTime: '6 min read',
+        tags: ['MongoDB', 'Database', 'Performance'],
       },
       {
-        title: "Architecting Microservices with Bun and Redis Stream Consumers",
-        date: "Oct 28, 2026",
-        readTime: "9 min read",
-        tags: ["Bun", "Redis", "Distributed Systems"],
+        title: 'Architecting Microservices with Bun and Redis Stream Consumers',
+        date: 'Oct 28, 2026',
+        readTime: '9 min read',
+        tags: ['Bun', 'Redis', 'Distributed Systems'],
       },
       {
-        title: "Typesense vs Elasticsearch for Real-Time Recruiter Search",
-        date: "Sep 12, 2026",
-        readTime: "5 min read",
-        tags: ["Search", "Typesense", "DevOps"],
+        title: 'Typesense vs Elasticsearch for Real-Time Recruiter Search',
+        date: 'Sep 12, 2026',
+        readTime: '5 min read',
+        tags: ['Search', 'Typesense', 'DevOps'],
       },
     ],
     fortiAiInsights: profile?.fortiAiInsights || {
       velocityScore: 94,
-      progressionRate: "Rapid Velocity",
-      depthLevel: "Expert",
-      diversityScore: "9.2/10",
-      leadershipTraits: ["System Architecture", "Mentorship", "Technical Writing", "Production Resilience"],
-      primaryDomains: ["Distributed Systems", "High-Throughput Databases", "Cloud Native"],
+      progressionRate: 'Rapid Velocity',
+      depthLevel: 'Expert',
+      diversityScore: '9.2/10',
+      leadershipTraits: ['System Architecture', 'Mentorship', 'Technical Writing', 'Production Resilience'],
+      primaryDomains: ['Distributed Systems', 'High-Throughput Databases', 'Cloud Native'],
     },
   };
 
@@ -185,7 +185,7 @@ export default function CandidateProfile() {
                 className="gap-1.5 text-xs font-medium cursor-pointer"
               >
                 {copied ? <Check className="size-3.5 text-emerald-500" /> : <Share2 className="size-3.5" />}
-                <span>{copied ? "Link Copied" : "Share Profile"}</span>
+                <span>{copied ? 'Link Copied' : 'Share Profile'}</span>
               </Button>
 
               <Button

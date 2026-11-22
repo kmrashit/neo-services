@@ -1,7 +1,7 @@
 // sections/Footer.tsx
-import { motion } from "framer-motion";
-import { Briefcase, Mail, Phone, MapPin } from "lucide-react";
-import { APP_NAME } from "../../constants/appName";
+import { motion } from 'framer-motion';
+import { Briefcase, Mail, Phone, MapPin } from 'lucide-react';
+import { APP_NAME } from '../../constants/appName';
 
 export default function Footer() {
   return (

@@ -10,7 +10,7 @@ export function useConnectionActions(onSuccess?: () => void) {
       setActionLoading(true);
       setError(null);
       const result = await connectionsApi.createConnection(receiverId, message);
-      if (onSuccess) onSuccess();
+      if (onSuccess) {onSuccess();}
       return result;
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message || 'Failed to send connection request';
@@ -26,7 +26,7 @@ export function useConnectionActions(onSuccess?: () => void) {
       setActionLoading(true);
       setError(null);
       const result = await connectionsApi.respondToConnection(connectionId, action);
-      if (onSuccess) onSuccess();
+      if (onSuccess) {onSuccess();}
       return result;
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message || `Failed to ${action} connection`;

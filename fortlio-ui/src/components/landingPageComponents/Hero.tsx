@@ -1,7 +1,7 @@
 // sections/Hero.tsx
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { ArrowRight, Search, Users, Building2 } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Search, Users, Building2 } from 'lucide-react';
 
 export default function Hero() {
   return (

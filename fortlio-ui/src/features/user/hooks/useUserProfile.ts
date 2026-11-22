@@ -11,7 +11,7 @@ export function useUserProfile() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {return;}
     setIsLoading(true);
     setError(null);
     try {
@@ -39,7 +39,7 @@ export function useUserProfile() {
   }, [fetchProfile]);
 
   const saveProfile = async (updates: Partial<Omit<UpdateUserPayload, 'userId'>>) => {
-    if (!user?.id) return null;
+    if (!user?.id) {return null;}
     setIsSaving(true);
     setError(null);
     try {
@@ -56,7 +56,7 @@ export function useUserProfile() {
         });
         return res.data;
       }
-    } catch (err: any) {
+    } catch {
       // In dev/mock mode or when network aggregate is unavailable, update local state gracefully
       setProfile((prev) => (prev ? { ...prev, ...updates } : null));
       if (updates.fullName) {

@@ -1,45 +1,45 @@
 // sections/Features.tsx
-import { motion } from "framer-motion";
-import { Search, FileText, Users, MessageSquare, Award, Clock } from "lucide-react";
-import { APP_NAME } from "../../constants/appName";
+import { motion } from 'framer-motion';
+import { Search, FileText, Users, MessageSquare, Award, Clock } from 'lucide-react';
+import { APP_NAME } from '../../constants/appName';
 
 const features = [
   {
     icon: Search,
-    title: "Smart Job Search",
-    description: "AI-powered search to find the perfect job match based on your skills and preferences.",
-    color: "from-purple-500 to-indigo-500"
+    title: 'Smart Job Search',
+    description: 'AI-powered search to find the perfect job match based on your skills and preferences.',
+    color: 'from-purple-500 to-indigo-500',
   },
   {
     icon: FileText,
-    title: "Easy Applications",
-    description: "Apply to jobs with one click using your saved profile and resume.",
-    color: "from-purple-600 to-indigo-600"
+    title: 'Easy Applications',
+    description: 'Apply to jobs with one click using your saved profile and resume.',
+    color: 'from-purple-600 to-indigo-600',
   },
   {
     icon: Users,
-    title: "Network Building",
-    description: "Connect with industry professionals and grow your professional network.",
-    color: "from-indigo-500 to-purple-500"
+    title: 'Network Building',
+    description: 'Connect with industry professionals and grow your professional network.',
+    color: 'from-indigo-500 to-purple-500',
   },
   {
     icon: MessageSquare,
-    title: "Direct Messaging",
-    description: "Communicate directly with HR professionals and hiring managers.",
-    color: "from-purple-500 to-indigo-500"
+    title: 'Direct Messaging',
+    description: 'Communicate directly with HR professionals and hiring managers.',
+    color: 'from-purple-500 to-indigo-500',
   },
   {
     icon: Award,
-    title: "Skill Verification",
-    description: "Showcase your verified skills and certifications to stand out.",
-    color: "from-indigo-600 to-purple-600"
+    title: 'Skill Verification',
+    description: 'Showcase your verified skills and certifications to stand out.',
+    color: 'from-indigo-600 to-purple-600',
   },
   {
     icon: Clock,
-    title: "Real-time Updates",
-    description: "Get instant notifications about new jobs and application status.",
-    color: "from-purple-500 to-indigo-500"
-  }
+    title: 'Real-time Updates',
+    description: 'Get instant notifications about new jobs and application status.',
+    color: 'from-purple-500 to-indigo-500',
+  },
 ];
 
 export default function Features() {
@@ -54,7 +54,7 @@ export default function Features() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Why Choose{" "}
+            Why Choose{' '}
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               {APP_NAME}
             </span>

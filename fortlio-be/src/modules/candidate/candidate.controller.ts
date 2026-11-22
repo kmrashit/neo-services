@@ -172,10 +172,10 @@ export class CandidateController {
 
   listBlogs = async (req: Request, res: Response) => {
     try {
-      const { page, pageSize, userId } = req.query as any;
+      const { page, pageSize, userId, search, sortBy, sortOrder } = (req.query || {}) as any;
       FilterQueryValidation.parse({ page: page ? Number(page) : undefined, pageSize: pageSize ? Number(pageSize) : undefined });
 
-      const result = await this.candidateService.listBlogs({ page, pageSize }, userId);
+      const result = await this.candidateService.listBlogs({ page, pageSize, search, sortBy, sortOrder }, userId);
       return fmtRes(res, result);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CANDIDATE_MSGS.ERR.FAILED_TO_LIST_BLOGS, apiName: 'listBlogs' }, 400);

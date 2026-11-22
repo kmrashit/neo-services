@@ -1,8 +1,8 @@
 // sections/CTA.tsx
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { APP_NAME } from "../../constants/appName";
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { APP_NAME } from '../../constants/appName';
 
 export default function CTA() {
   return (

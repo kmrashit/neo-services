@@ -79,7 +79,7 @@ test.describe('App Shell Navigation & Theme E2E Tests', () => {
 
     // Verify HR-specific navigation links
     await expect(page.getByRole('link', { name: 'Candidate Search' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Job Postings & Intake' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Job Postings' })).toBeVisible();
 
     // Verify Candidate-only links are not rendered
     await expect(page.getByRole('link', { name: 'Job Suggestions & Search' })).not.toBeVisible();

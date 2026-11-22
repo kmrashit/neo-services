@@ -14,7 +14,7 @@ export function LearningVelocityBadge({
   className,
 }: LearningVelocityBadgeProps) {
   return (
-    <div className={cn("inline-flex items-center gap-2", className)}>
+    <div className={cn('inline-flex items-center gap-2', className)}>
       <Badge
         variant="outline"
         className="gap-1.5 py-1 px-2.5 border-purple-500/40 bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold text-xs"

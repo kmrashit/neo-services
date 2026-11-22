@@ -11,7 +11,7 @@ export function BlogTagFilter({ tags, selectedTag, onSelectTag }: BlogTagFilterP
     <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
       <Button
         size="sm"
-        variant={selectedTag === null ? "default" : "outline"}
+        variant={selectedTag === null ? 'default' : 'outline'}
         className="text-xs h-9 rounded-lg"
         onClick={() => onSelectTag(null)}
       >
@@ -21,7 +21,7 @@ export function BlogTagFilter({ tags, selectedTag, onSelectTag }: BlogTagFilterP
         <Button
           key={tag}
           size="sm"
-          variant={selectedTag === tag ? "default" : "outline"}
+          variant={selectedTag === tag ? 'default' : 'outline'}
           className="text-xs h-9 rounded-lg shrink-0"
           onClick={() => onSelectTag(selectedTag === tag ? null : tag)}
         >

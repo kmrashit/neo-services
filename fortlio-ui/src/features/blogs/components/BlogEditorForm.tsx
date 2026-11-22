@@ -56,19 +56,17 @@ export function BlogEditorForm({ isOpen, onClose, onPublished }: BlogEditorFormP
     setIsImproving(true);
     setTimeout(() => {
       setIsImproving(false);
-      setContent((prev) => {
-        return (
-          prev +
+      setContent((prev) => (
+        prev +
           '\n\n## Key Takeaways & Methodological Insights\n- Structured domain synthesis based on verified evidence.\n- High-impact execution with measurable outcomes.'
-        );
-      });
+      ));
       setAiNotice('Article polished! Remember: Forti AI evaluates your learning velocity and domain depth strictly based on your authentic inputs and critical thinking.');
       setTimeout(() => setAiNotice(null), 8000);
     }, 800);
   };
 
   const handleDrawImagination = () => {
-    const diagramTemplate = `\n\n### System / Domain Architecture\n\`\`\`mermaid\ngraph TD\n  A[Challenge / Problem Hypothesis] --> B[Domain Analysis & Method]\n  B --> C[Execution & Architecture]\n  C --> D[Verified Result & Impact]\n\`\`\`\n`;
+    const diagramTemplate = '\n\n### System / Domain Architecture\n```mermaid\ngraph TD\n  A[Challenge / Problem Hypothesis] --> B[Domain Analysis & Method]\n  B --> C[Execution & Architecture]\n  C --> D[Verified Result & Impact]\n```\n';
     setContent((prev) => prev + diagramTemplate);
   };
 

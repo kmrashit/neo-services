@@ -26,8 +26,8 @@ export function useLogin() {
       const role = data.user?.role
         ? data.user.role.toLowerCase()
         : email.includes('hr')
-        ? 'hr'
-        : 'candidate';
+          ? 'hr'
+          : 'candidate';
 
       const user = {
         id: data.user?._id || data.user?.id || '',
@@ -44,7 +44,7 @@ export function useLogin() {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         },
-        user
+        user,
       );
 
       if (user.role === 'hr') {

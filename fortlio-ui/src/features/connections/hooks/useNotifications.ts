@@ -28,7 +28,7 @@ export function useNotifications() {
     try {
       await connectionsApi.markNotificationAsRead(id);
       setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
       );
     } catch (err) {
       console.error('Failed to mark notification as read:', err);

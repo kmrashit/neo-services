@@ -31,8 +31,8 @@ export function ConnectionCard({
   const navigate = useNavigate();
 
   const getTargetUserId = (target: any): string => {
-    if (!target) return '';
-    if (typeof target === 'string') return target;
+    if (!target) {return '';}
+    if (typeof target === 'string') {return target;}
     return target._id || '';
   };
 

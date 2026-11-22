@@ -1,147 +1,80 @@
-import api from "../api/api";
-
-
+import api from '../api/api';
 
 // get all connections
 
-export const getConnections = async () => {
-
-  return await api.get(
-    "/connections/list"
-  );
-
-};
-
-
-
+export const getConnections = async () => await api.get(
+  '/connections/list',
+);
 
 // accept reject
 
 export const respondConnection = async (
   id: string,
-  action: "accept" | "reject"
-) => {
+  action: 'accept' | 'reject',
+) => await api.post(
 
+  `/connections/respond/${id}`,
 
-  return await api.post(
+  {
+    action,
+  },
 
-    `/connections/respond/${id}`,
-
-    {
-      action
-    }
-
-  );
-
-};
-
-
-
-
+);
 
 // create connection
 
 export const createConnection = async (
   receiverId: string,
-  message: string
-) => {
+  message: string,
+) => await api.post(
 
+  '/connections/connect',
 
-  return await api.post(
+  {
+    receiverId,
+    message,
+  },
 
-    "/connections/connect",
-
-    {
-      receiverId,
-      message
-    }
-
-  );
-
-};
-
-
-
-
-
-
+);
 
 // chat history
 
 export const getChatHistory = async (
-  connectionId: string
-) => {
+  connectionId: string,
+) => await api.get(
 
+  `/connections/chat/history/${connectionId}`,
 
-  return await api.get(
-
-    `/connections/chat/history/${connectionId}`
-
-  );
-
-};
-
-
-
-
-
-
-
+);
 
 // send message
 
 export const sendMessage = async (
   connectionId: string,
-  message: string
-) => {
+  message: string,
+) => await api.post(
 
+  '/connections/chat/send',
 
-  return await api.post(
+  {
+    connectionId,
+    message,
+  },
 
-    "/connections/chat/send",
-
-    {
-      connectionId,
-      message
-    }
-
-  );
-
-};
-
-
-
-
-
-
+);
 
 // notifications
 
-export const getNotifications = async () => {
+export const getNotifications = async () => await api.get(
 
+  '/connections/notifications',
 
-  return await api.get(
-
-    "/connections/notifications"
-
-  );
-
-};
-
-
-
-
-
+);
 
 export const readNotification = async (
-  id: string
-) => {
+  id: string,
+) => await api.post(
 
+  `/connections/notifications/read/${id}`,
 
-  return await api.post(
-
-    `/connections/notifications/read/${id}`
-
-  );
-
-};
+);

@@ -23,7 +23,7 @@ export const UserRoleBadge: React.FC<UserRoleBadgeProps> = ({
         variant="secondary"
         className={cn(
           'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium gap-1 text-xs px-2.5 py-0.5',
-          className
+          className,
         )}
       >
         {showIcon && <Briefcase className="size-3" />}
@@ -38,7 +38,7 @@ export const UserRoleBadge: React.FC<UserRoleBadgeProps> = ({
         variant="secondary"
         className={cn(
           'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-medium gap-1 text-xs px-2.5 py-0.5',
-          className
+          className,
         )}
       >
         {showIcon && <ShieldAlert className="size-3" />}
@@ -53,7 +53,7 @@ export const UserRoleBadge: React.FC<UserRoleBadgeProps> = ({
       variant="secondary"
       className={cn(
         'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-medium gap-1 text-xs px-2.5 py-0.5',
-        className
+        className,
       )}
     >
       {showIcon && <Code className="size-3" />}

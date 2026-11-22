@@ -54,9 +54,9 @@ export function DrawYourImaginationModal({
     if (open && activeTab === 'canvas') {
       setTimeout(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas) {return;}
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) {return;}
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }, 50);
@@ -65,9 +65,9 @@ export function DrawYourImaginationModal({
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     setIsDrawing(true);
     const rect = canvas.getBoundingClientRect();
@@ -79,11 +79,11 @@ export function DrawYourImaginationModal({
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
+    if (!isDrawing) {return;}
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const rect = canvas.getBoundingClientRect();
     const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
@@ -104,54 +104,54 @@ export function DrawYourImaginationModal({
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {return;}
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
   const handleInsertCanvasImage = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const dataUrl = canvas.toDataURL('image/png');
     const title = mode === 'resume' ? 'System Architecture Sketch' : 'Visual Concept Illustration';
     const markdownImage = `\n\n### ${title}\n![${title}](${dataUrl})\n\n`;
     onInsertMarkdown(
       markdownImage,
-      `Hand-drawn ${mode === 'resume' ? 'architecture sketch' : 'concept diagram'} embedded into ${mode}!`
+      `Hand-drawn ${mode === 'resume' ? 'architecture sketch' : 'concept diagram'} embedded into ${mode}!`,
     );
     onOpenChange(false);
   };
 
   const handleInsertTemplate = (type: string) => {
-    let templateMarkdown = '';
-    let description = '';
+    let templateMarkdown: string;
+    let description: string;
 
     if (mode === 'resume') {
       if (type === 'system') {
-        templateMarkdown = `\n\n### System Architecture Blueprint\n\`\`\`mermaid\ngraph TD\n  Client[Universal Web & Mobile Clients] --> Gateway[API Gateway / AuthGuard]\n  Gateway --> Service[Core Microservices Engine]\n  Service --> Cache[(Redis Cache & Session Store)]\n  Service --> Mongo[(MongoDB Aggregation Cluster)]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### System Architecture Blueprint\n```mermaid\ngraph TD\n  Client[Universal Web & Mobile Clients] --> Gateway[API Gateway / AuthGuard]\n  Gateway --> Service[Core Microservices Engine]\n  Service --> Cache[(Redis Cache & Session Store)]\n  Service --> Mongo[(MongoDB Aggregation Cluster)]\n```\n';
         description = 'System Architecture Blueprint inserted into resume!';
       } else if (type === 'clinical') {
-        templateMarkdown = `\n\n### Clinical Diagnostic & Treatment Protocol\n\`\`\`mermaid\ngraph LR\n  Screen[Patient Clinical Presentation] --> Biomarker[Genomic Sequencing / Variant Assay]\n  Biomarker --> Differential[Diagnostic Staging]\n  Differential --> TargetedRx[Targeted Precision Therapeutics]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Clinical Diagnostic & Treatment Protocol\n```mermaid\ngraph LR\n  Screen[Patient Clinical Presentation] --> Biomarker[Genomic Sequencing / Variant Assay]\n  Biomarker --> Differential[Diagnostic Staging]\n  Differential --> TargetedRx[Targeted Precision Therapeutics]\n```\n';
         description = 'Clinical Pathway schematic inserted into resume!';
       } else if (type === 'legal') {
-        templateMarkdown = `\n\n### Regulatory Governance & Compliance Schema\n\`\`\`mermaid\ngraph TD\n  Regulation[Global Statutory Framework] --> RiskAudit[Systemic Risk Assessment]\n  RiskAudit --> SafeGuards[Guardrail Enforcement]\n  SafeGuards --> VerifiedAudit[Regulatory Certification]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Regulatory Governance & Compliance Schema\n```mermaid\ngraph TD\n  Regulation[Global Statutory Framework] --> RiskAudit[Systemic Risk Assessment]\n  RiskAudit --> SafeGuards[Guardrail Enforcement]\n  SafeGuards --> VerifiedAudit[Regulatory Certification]\n```\n';
         description = 'Legal Governance Framework inserted into resume!';
       } else {
-        templateMarkdown = `\n\n### Execution Process & Impact Flowchart\n\`\`\`mermaid\ngraph LR\n  Hypothesis[Problem Discovery] --> Prototype[Rapid Prototyping]\n  Prototype --> Verification[Rigorous Telemetry]\n  Verification --> QuantifiedScale[Verified Business Scale]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Execution Process & Impact Flowchart\n```mermaid\ngraph LR\n  Hypothesis[Problem Discovery] --> Prototype[Rapid Prototyping]\n  Prototype --> Verification[Rigorous Telemetry]\n  Verification --> QuantifiedScale[Verified Business Scale]\n```\n';
         description = 'Process Flowchart inserted into resume!';
       }
     } else {
       // Blog Mode
       if (type === 'system') {
-        templateMarkdown = `\n\n### Multi-Tier Pipeline Topology\n\`\`\`mermaid\ngraph LR\n  Ingress[Event Streams / Telemetry] --> Worker[BullMQ Async Processing]\n  Worker --> Slicing[Post-Facet MongoDB Pipeline]\n  Slicing --> Client[Sub-10ms Verified Response]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Multi-Tier Pipeline Topology\n```mermaid\ngraph LR\n  Ingress[Event Streams / Telemetry] --> Worker[BullMQ Async Processing]\n  Worker --> Slicing[Post-Facet MongoDB Pipeline]\n  Slicing --> Client[Sub-10ms Verified Response]\n```\n';
         description = 'Pipeline topology diagram inserted into article!';
       } else if (type === 'interaction') {
-        templateMarkdown = `\n\n### Domain Interaction Sequence\n\`\`\`mermaid\nsequenceDiagram\n  autonumber\n  Candidate->>Fortlio: Publish Authentic Markdown Knowledge\n  Fortlio->>Forti AI: Synthesize Learning Velocity & Depth\n  Recruiter->>Candidate: Discover Verified Domain Mastery\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Domain Interaction Sequence\n```mermaid\nsequenceDiagram\n  autonumber\n  Candidate->>Fortlio: Publish Authentic Markdown Knowledge\n  Fortlio->>Forti AI: Synthesize Learning Velocity & Depth\n  Recruiter->>Candidate: Discover Verified Domain Mastery\n```\n';
         description = 'Interaction sequence model inserted into article!';
       } else {
-        templateMarkdown = `\n\n### Conceptual Tradeoff & Decision Tree\n\`\`\`mermaid\ngraph TD\n  Challenge{Performance Bottleneck} -->|In-Memory Filter| HighMem[Working RAM Spikes]\n  Challenge -->|Post-Facet Pipeline| Optimal[Sub-10ms Latency]\n\`\`\`\n`;
+        templateMarkdown = '\n\n### Conceptual Tradeoff & Decision Tree\n```mermaid\ngraph TD\n  Challenge{Performance Bottleneck} -->|In-Memory Filter| HighMem[Working RAM Spikes]\n  Challenge -->|Post-Facet Pipeline| Optimal[Sub-10ms Latency]\n```\n';
         description = 'Decision tree diagram inserted into article!';
       }
     }

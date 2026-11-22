@@ -41,20 +41,20 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   const [location, setLocation] = useState(initialProfile?.location || 'San Francisco, CA (Open to Remote)');
   const [bio, setBio] = useState(
     initialProfile?.bio ||
-      'Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling.'
+      'Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling.',
   );
 
   const [profession, setProfession] = useState(initialProfile?.profession || PROFESSIONS_TAXONOMY[0].name);
   const [industry, setIndustry] = useState(initialProfile?.industry || INDUSTRIES_LIST[0]);
   const [educationLevel, setEducationLevel] = useState(
-    initialProfile?.educationLevel || EDUCATION_LEVELS[2]
+    initialProfile?.educationLevel || EDUCATION_LEVELS[2],
   );
 
   const [skills, setSkills] = useState<string[]>(
     initialProfile?.skills || [
       'TypeScript', 'Go', 'Distributed Systems', 'Kubernetes', 'Kafka',
       'MongoDB Aggregations', 'Redis', 'Bun',
-    ]
+    ],
   );
   const [skillInput, setSkillInput] = useState('');
   const [githubUrl, setGithubUrl] = useState(initialProfile?.githubUrl || 'https://github.com/alexmercer');

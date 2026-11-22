@@ -7,7 +7,7 @@ trigger: always_on
 1. **ALWAYS ASK BEFORE COMMITTING**:
    - The agent MUST NEVER execute `git commit` or create git commits autonomously or automatically without explicit prior user approval and confirmation.
    - When changes are ready to commit:
-     1. Run necessary tests and verification checks.
+     1. Run necessary tests, verification checks, and linters (`cd fortlio-be && bun run lint` and `cd fortlio-ui && bun run lint`).
      2. Inspect `git status` and changed files.
      3. Present the proposed commit message, summary of changes, and list of modified/added files to the USER.
      4. Explicitly ask the user for confirmation to proceed with the commit and wait for their approval.

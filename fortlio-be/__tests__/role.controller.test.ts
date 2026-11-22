@@ -79,7 +79,7 @@ describe('RoleController Unit Tests', () => {
       mockRoleService.getRoles.mockRejectedValue(new Error('Database error'));
 
       expect(roleController.getRoles(req, mockRes)).rejects.toThrow(
-        new AppError('Database error')
+        new AppError('Database error'),
       );
     });
   });
@@ -139,7 +139,7 @@ describe('RoleController Unit Tests', () => {
       mockRoleService.getPrivileges.mockRejectedValue(new Error('Fetch failed'));
 
       expect(roleController.getPrivileges(req, mockRes)).rejects.toThrow(
-        new AppError('Fetch failed')
+        new AppError('Fetch failed'),
       );
     });
   });
@@ -189,7 +189,7 @@ describe('RoleController Unit Tests', () => {
       mockRoleService.getRoleById.mockResolvedValue(null);
 
       expect(roleController.getRoleById(req, mockRes)).rejects.toThrow(
-        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND)
+        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND),
       );
     });
   });
@@ -221,7 +221,7 @@ describe('RoleController Unit Tests', () => {
         roleData.roleName,
         roleData.description,
         roleData.rolePrivileges,
-        VALID_USER_ID
+        VALID_USER_ID,
       );
       expect(mockRes.statusCode).toBe(201);
       expect(mockRes.body).toEqual({
@@ -271,7 +271,7 @@ describe('RoleController Unit Tests', () => {
         updateData.roleName,
         updateData.description,
         updateData.rolePrivileges,
-        VALID_USER_ID
+        VALID_USER_ID,
       );
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body).toEqual({
@@ -300,7 +300,7 @@ describe('RoleController Unit Tests', () => {
       mockRoleService.updateRole.mockResolvedValue(null);
 
       expect(roleController.updateRole(req, mockRes)).rejects.toThrow(
-        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND)
+        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND),
       );
     });
   });
@@ -340,7 +340,7 @@ describe('RoleController Unit Tests', () => {
       mockRoleService.deleteRoleById.mockResolvedValue(null);
 
       expect(roleController.deleteRole(req, mockRes)).rejects.toThrow(
-        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND)
+        new AppError(ROLE_MSGS.ERR.ROLE_NOT_FOUND),
       );
     });
   });

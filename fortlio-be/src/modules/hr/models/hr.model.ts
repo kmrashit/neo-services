@@ -8,7 +8,7 @@ const hrSchema = new mongoose.Schema(
     companyWebsite: { type: String, default: '' },
     designation: { type: String, default: '' },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
+  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
 );
 
 hrSchema.virtual('hrId').get(function () {
