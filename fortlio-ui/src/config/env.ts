@@ -38,7 +38,7 @@ export function getBackendBaseUrl(): string {
   // If environment explicitly has custom URL defined and no local override set
   if (typeof window !== 'undefined' && !localStorage.getItem(STORAGE_KEY)) {
     const envUrl = import.meta.env.VITE_BACKEND_URL;
-    if (envUrl) return envUrl;
+    if (envUrl) {return envUrl;}
   }
 
   return target.httpUrl;
@@ -50,7 +50,7 @@ export function getWebSocketUrl(): string {
 
   if (typeof window !== 'undefined' && !localStorage.getItem(STORAGE_KEY)) {
     const envWs = import.meta.env.VITE_WS_URL;
-    if (envWs) return envWs;
+    if (envWs) {return envWs;}
   }
 
   return target.wsUrl;

@@ -50,8 +50,8 @@ export class ConnectionController {
         throw new AppError(CONNECTION_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'listConnections' }, 401);
       }
 
-      const status = req.query.status as string | undefined;
-      const connections = await this.connectionService.listConnections(loggedInUserId, status);
+      const { status, page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const connections = await this.connectionService.listConnections(loggedInUserId, status, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, connections);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_LIST_CONNECTIONS, apiName: 'listConnections' }, 400);
@@ -100,7 +100,8 @@ export class ConnectionController {
         throw new AppError(CONNECTION_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'listNotifications' }, 401);
       }
 
-      const notifications = await this.connectionService.listNotifications(loggedInUserId);
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const notifications = await this.connectionService.listNotifications(loggedInUserId, { page, pageSize, search, sortBy, sortOrder });
       return fmtRes(res, notifications);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_FETCH_NOTIFICATIONS, apiName: 'listNotifications' }, 400);

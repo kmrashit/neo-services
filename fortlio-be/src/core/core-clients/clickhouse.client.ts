@@ -16,7 +16,7 @@ export class ClickHouseClient {
     const chConfig = await new DatabaseConfigManager(this.config).getClickHouseConfig();
 
     return createClient({
-      url: chConfig.cluster,              // e.g. http://localhost:8123
+      url: chConfig.cluster, // e.g. http://localhost:8123
       username: chConfig.username,
       password: chConfig.password,
       database: chConfig.dbName,

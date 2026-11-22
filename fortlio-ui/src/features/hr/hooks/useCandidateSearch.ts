@@ -107,15 +107,15 @@ export function useCandidateSearch() {
         const searchResults = response.candidates && response.candidates.length > 0
           ? response.candidates
           : DEFAULT_DEMO_CANDIDATES.filter((c) => {
-              const query = (activeFilter.searchKey || '').toLowerCase();
-              if (!query) return true;
-              return (
-                c.fullName.toLowerCase().includes(query) ||
+            const query = (activeFilter.searchKey || '').toLowerCase();
+            if (!query) {return true;}
+            return (
+              c.fullName.toLowerCase().includes(query) ||
                 c.profession?.toLowerCase().includes(query) ||
                 c.skills.some((s) => s.toLowerCase().includes(query)) ||
                 c.headline?.toLowerCase().includes(query)
-              );
-            });
+            );
+          });
 
         setCandidates(searchResults);
         const newCoins = response.remainingCoins ?? Math.max(0, currentCoins - 5);
@@ -134,7 +134,7 @@ export function useCandidateSearch() {
           // Gracefully filter local demo records for smooth demo experience
           const query = (activeFilter.searchKey || '').toLowerCase();
           const filtered = DEFAULT_DEMO_CANDIDATES.filter((c) => {
-            if (!query) return true;
+            if (!query) {return true;}
             return (
               c.fullName.toLowerCase().includes(query) ||
               c.profession?.toLowerCase().includes(query) ||
@@ -151,7 +151,7 @@ export function useCandidateSearch() {
         setIsLoading(false);
       }
     },
-    [filter, remainingCoins, user, updateUser]
+    [filter, remainingCoins, user, updateUser],
   );
 
   const resetFilters = useCallback(() => {
@@ -171,7 +171,7 @@ export function useCandidateSearch() {
       updateUser({ coins: newCoins } as any);
       setError(null);
     },
-    [updateUser]
+    [updateUser],
   );
 
   useEffect(() => {

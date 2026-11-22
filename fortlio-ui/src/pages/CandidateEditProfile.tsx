@@ -1,4 +1,4 @@
-import { useCandidateProfile, ProfileEditForm } from "@/features/candidate";
+import { useCandidateProfile, ProfileEditForm } from '@/features/candidate';
 
 export default function CandidateEditProfile() {
   const { profile } = useCandidateProfile();

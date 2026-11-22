@@ -9,7 +9,7 @@ import type {
 export const candidateApi = {
   getProfile: async (userId: string) => {
     const response = await api.get<CandidateApiResponse<ICandidateProfile>>(
-      `/candidate/profile/${encodeURIComponent(userId)}`
+      `/candidate/profile/${encodeURIComponent(userId)}`,
     );
     return response.data;
   },
@@ -17,7 +17,7 @@ export const candidateApi = {
   upsertProfile: async (payload: CandidateProfileUpsertPayload) => {
     const response = await api.post<CandidateApiResponse<ICandidateProfile>>(
       '/candidate/profile',
-      payload
+      payload,
     );
     return response.data;
   },

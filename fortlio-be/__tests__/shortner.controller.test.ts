@@ -120,7 +120,7 @@ describe('ShortnerController Unit Tests', () => {
     });
   });
 
-    describe('createShortUrlByGuest', () => {
+  describe('createShortUrlByGuest', () => {
     it('should successfully create short URL for guest with null createdBy', async () => {
       const req = {
         body: { originalUrl: ORIGINAL_URL },

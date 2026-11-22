@@ -34,7 +34,7 @@ export const AdRewardModal: React.FC<AdRewardModalProps> = ({
   } = useAdReward({
     durationSeconds: 5,
     onSuccess: (coins) => {
-      if (onRewardClaimed) onRewardClaimed(coins);
+      if (onRewardClaimed) {onRewardClaimed(coins);}
     },
   });
 

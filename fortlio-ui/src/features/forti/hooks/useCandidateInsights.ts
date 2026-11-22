@@ -54,7 +54,7 @@ export function useCandidateInsights(candidateId?: string) {
   }, [candidateId]);
 
   const forceSynthesize = async () => {
-    if (!candidateId) return;
+    if (!candidateId) {return;}
     setIsLoading(true);
     try {
       const res = await fortiApi.synthesizeInsights(candidateId);

@@ -128,8 +128,23 @@ export class ShortnerController {
       if (!userId) {
         throw new AppError('Unauthorized', { msg: 'User ID missing in headers', apiName: 'getMyLinks' }, 401);
       }
-      const links = await this.shortenerService.getMyLinks(userId);
-      return fmtRes(res, { links, total: links.length });
+      const hasQuery = req.query && Object.keys(req.query).length > 0;
+      const { page, pageSize, search, sortBy, sortOrder } = (req.query || {}) as any;
+      const result = hasQuery
+        ? await this.shortenerService.getMyLinks(userId, { page, pageSize, search, sortBy, sortOrder })
+        : await this.shortenerService.getMyLinks(userId);
+      const links = Array.isArray(result) ? result : (result?.data || []);
+      const total = Array.isArray(result) ? result.length : (result?.totalCount ?? links.length);
+      return fmtRes(res, {
+        links,
+        total,
+        data: links,
+        totalCount: total,
+        totalPages: result?.totalPages ?? 1,
+        currentPage: result?.currentPage ?? 1,
+        hasPrev: result?.hasPrev ?? false,
+        hasNext: result?.hasNext ?? false,
+      });
     } catch (error: any) {
       if (error instanceof AppError) {
         throw error;

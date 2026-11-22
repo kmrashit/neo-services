@@ -44,3 +44,8 @@ Follow this 7-phase sequence to maximize token efficiency, prevent regressions, 
 1. Check off completed deliverables in Section 2 of `docs/F0<X>.md`.
 2. Append a changelog entry in Section 6 of `docs/F0<X>.md`.
 3. Update the overall progress percentage for this feature in [GEMINI.md](file:///home/ashit/neo-services/GEMINI.md).
+
+## Phase 8: Mandatory Linting Verification (Run in the End Every Time)
+1. Run backend linter: `cd fortlio-be && bun run lint` (or `bun run lint:fix` to resolve auto-fixable issues).
+2. Run frontend linter: `cd fortlio-ui && bun run lint`.
+3. Resolve all linting warnings and errors across both packages before marking the feature complete or seeking commit approval.

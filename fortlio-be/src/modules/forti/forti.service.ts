@@ -50,7 +50,7 @@ export class FortiService {
       const allKeywords = new Set<string>();
       for (const b of blogs) {
         if (b.blogKeywords) {
-          for (const kw of b.blogKeywords) allKeywords.add(kw);
+          for (const kw of b.blogKeywords) {allKeywords.add(kw);}
         }
       }
       const exploredTopics = Array.from(allKeywords);
@@ -153,7 +153,7 @@ export class FortiService {
             fullResponse += chunk;
             onChunk(chunk);
           }
-          if (fullResponse) return fullResponse;
+          if (fullResponse) {return fullResponse;}
         } catch {
           // Fall back to deterministic grounded synthesis if external LLM client unavailable
         }
@@ -169,11 +169,11 @@ export class FortiService {
         fullResponse = `**${candidateName}** demonstrates strong leadership qualities across multiple dimensions:\n\n` +
           `- **Architecture & Technical Direction**: As ${experiences[0]?.role || 'Lead Systems Architect'} at ${experiences[0]?.company || 'Veloce Cloud Systems'}, they spearheaded core system designs and guided team-wide engineering standards.\n` +
           `- **Technical Writing & Knowledge Sharing**: Authored ${blogs.length || 3}+ domain blogs demonstrating deep conceptual clarity and mentorship mindset.\n` +
-          `- **Verified Forti Mindset Traits**: Rated high in *Production Resilience*, *System Architecture*, and *Cross-Functional Mentorship*.`;
+          '- **Verified Forti Mindset Traits**: Rated high in *Production Resilience*, *System Architecture*, and *Cross-Functional Mentorship*.';
       } else if (/blog|article|publication|writing/i.test(question)) {
         fullResponse = `**${candidateName}** has published technical articles showcasing verified learning trajectory:\n\n` +
           blogs.map((b: any) => `- **${b.title}**: In-depth analysis focusing on domain optimization and clean system design.`).join('\n') +
-          `\n\n*Forti AI Engine Insight*: Their authentic drafting exhibits genuine conceptual curiosity with an evaluated Learning Velocity of **94/100**.`;
+          '\n\n*Forti AI Engine Insight*: Their authentic drafting exhibits genuine conceptual curiosity with an evaluated Learning Velocity of **94/100**.';
       } else if (/experience|background|history/i.test(question)) {
         fullResponse = `**${candidateName}** has extensive practical experience in high-throughput systems:\n\n` +
           experiences.map((e: any) => `- **${e.role}** at **${e.company}** (${e.period}): ${e.description}`).join('\n') +

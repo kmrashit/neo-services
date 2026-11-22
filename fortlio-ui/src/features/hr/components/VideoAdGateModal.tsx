@@ -42,7 +42,7 @@ export const VideoAdGateModal: React.FC<VideoAdGateModalProps> = ({
       setCompleted(true);
     }
     return () => {
-      if (timer) clearInterval(timer);
+      if (timer) {clearInterval(timer);}
     };
   }, [isWatching, countdown]);
 

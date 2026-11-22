@@ -41,7 +41,7 @@ export function useResumePdfExport() {
       document.body.removeChild(link);
 
       return url;
-    } catch (err: any) {
+    } catch {
       // In offline/mock mode fallback to client-side text or notification
       const blob = new Blob([markdownContent], { type: 'text/markdown' });
       const fallbackUrl = URL.createObjectURL(blob);

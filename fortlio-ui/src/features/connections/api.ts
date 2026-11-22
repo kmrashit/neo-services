@@ -7,49 +7,51 @@ export const connectionsApi = {
     if (status && status !== 'all') {
       params.status = status;
     }
-    const response = await api.get<{ success: boolean; data: IConnection[] }>(
+    const response = await api.get<{ success: boolean; data: any }>(
       '/connections/list',
-      { params }
+      { params },
     );
-    return response.data?.data || [];
+    const rawData = response.data?.data;
+    return Array.isArray(rawData) ? rawData : (rawData?.data || []);
   },
 
   createConnection: async (receiverId: string, message?: string): Promise<IConnection> => {
     const response = await api.post<{ success: boolean; data: IConnection }>(
       '/connections/connect',
-      { receiverId, message: message || '' }
+      { receiverId, message: message || '' },
     );
     return response.data?.data;
   },
 
   respondToConnection: async (
     connectionId: string,
-    action: 'accept' | 'reject'
+    action: 'accept' | 'reject',
   ): Promise<IConnection> => {
     const response = await api.post<{ success: boolean; data: IConnection }>(
       `/connections/respond/${connectionId}`,
-      { action }
+      { action },
     );
     return response.data?.data;
   },
 
   getNotifications: async (): Promise<INotification[]> => {
-    const response = await api.get<{ success: boolean; data: INotification[] }>(
-      '/connections/notifications'
+    const response = await api.get<{ success: boolean; data: any }>(
+      '/connections/notifications',
     );
-    return response.data?.data || [];
+    const rawData = response.data?.data;
+    return Array.isArray(rawData) ? rawData : (rawData?.data || []);
   },
 
   markNotificationAsRead: async (notificationId: string): Promise<INotification> => {
     const response = await api.post<{ success: boolean; data: INotification }>(
-      `/connections/notifications/read/${notificationId}`
+      `/connections/notifications/read/${notificationId}`,
     );
     return response.data?.data;
   },
 
   markAllNotificationsAsRead: async (): Promise<{ success: boolean }> => {
     const response = await api.post<{ success: boolean; data: { success: boolean } }>(
-      '/connections/notifications/read-all'
+      '/connections/notifications/read-all',
     );
     return response.data?.data || { success: true };
   },

@@ -1,25 +1,25 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import VerifyEmail from "./pages/VerifyEmail";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 
-import CandidateProfile from "./pages/CandidateProfile";
-import CandidateSearch from "./pages/CandidateSearch";
-import JobsPage from "./pages/JobsPage";
-import HrJobsPage from "./pages/HrJobsPage";
-import EditorPage from "./pages/EditorPage";
-import CandidateBlogs from "./pages/CandidateBlogs";
+import CandidateProfile from './pages/CandidateProfile';
+import CandidateSearch from './pages/CandidateSearch';
+import JobsPage from './pages/JobsPage';
+import HrJobsPage from './pages/HrJobsPage';
+import EditorPage from './pages/EditorPage';
+import CandidateBlogs from './pages/CandidateBlogs';
 
-import ConnectionsList from "./pages/ConnectionsList";
-import ConnectionsChat from "./pages/ConnectionsChat";
-import ConnectionsNotification from "./pages/ConnectionsNotifications";
+import ConnectionsList from './pages/ConnectionsList';
+import ConnectionsChat from './pages/ConnectionsChat';
+import ConnectionsNotification from './pages/ConnectionsNotifications';
 
-import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute";
-import CreateCandidateProfile from "./pages/CreateCandidateProfile";
-import CandidateEditProfile from "./pages/CandidateEditProfile";
-import LandingPage from "./pages/LandingPage";
-import { BackendModeIndicator } from "./components/shared/BackendModeIndicator";
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import CreateCandidateProfile from './pages/CreateCandidateProfile';
+import CandidateEditProfile from './pages/CandidateEditProfile';
+import LandingPage from './pages/LandingPage';
+import { BackendModeIndicator } from './components/shared/BackendModeIndicator';
 
 function App() {
   return (
@@ -34,10 +34,10 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />}/>
 
         <Route element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
         >
           <Route path="/candidate-profile" element={<CandidateProfile />}/>
           <Route path="/jobs" element={<JobsPage />}/>
@@ -51,7 +51,6 @@ function App() {
           <Route path="/connections" element={<ConnectionsList />}/>
           <Route path="/chat" element={<ConnectionsChat />}/>
           <Route path="/notifications" element={<ConnectionsNotification />}/>
-          
 
         </Route>
 
@@ -66,11 +65,6 @@ function App() {
 
 export default App;
 
-
-
-
-
-
 // import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // import Login from './pages/Login';
 // import Register from './pages/Register';
@@ -82,7 +76,6 @@ export default App;
 // import ConnectionsList from './pages/ConnectionsList';
 // import ConnectionsChat from './pages/ConnectionsChat';
 // import ConnectionsNotification from './pages/ConnectionsNotifications';
-
 
 // function App() {
 //   return (

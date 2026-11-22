@@ -5,15 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 export const BackendModeIndicator: React.FC = () => {
-  // Only render in development mode
-  if (!import.meta.env.DEV) {
-    return null;
-  }
-
+  const isDev = Boolean(import.meta.env.DEV);
   const [mode, setMode] = useState<BackendMode>(getBackendMode());
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
+    if (!isDev) {
+      return;
+    }
     const handleModeChange = (e: Event) => {
       const customEvent = e as CustomEvent<{ mode: BackendMode }>;
       if (customEvent.detail?.mode) {
@@ -25,7 +24,11 @@ export const BackendModeIndicator: React.FC = () => {
     return () => {
       window.removeEventListener('fortlio:backend-mode-change', handleModeChange);
     };
-  }, []);
+  }, [isDev]);
+
+  if (!isDev) {
+    return null;
+  }
 
   const handleToggle = () => {
     const nextMode: BackendMode = mode === 'local' ? 'prod' : 'local';

@@ -1,18 +1,17 @@
-import { getDataByFilter } from '../../core/core-helper';
+import { getDataWithLookupsAfterFilter } from '../../core/core-helper';
 import User from './models/user.model';
 import { IUserCreate, IUserUpdate } from '../../interface/user-interface';
 import { IFilter } from '../../interface/common.interface';
 import { AppError } from '../../core/core-utils/err-util';
 import * as USER_MSGS from './user.constants';
-import { getUsersPipeline, getUserByIdPipeline } from './user.queries';
+import { userRoleLookupPipeline, getUserByIdPipeline } from './user.queries';
 
 export class UserService {
   async getUsers(filterQuery: IFilter) {
     try {
-      const pipeline = getUsersPipeline;
       const searchFields = ['fullName', 'lastName', 'mobileNumber', 'email'];
 
-      return await getDataByFilter(filterQuery, pipeline, searchFields, User);
+      return await getDataWithLookupsAfterFilter(filterQuery, [], userRoleLookupPipeline, searchFields, User);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: USER_MSGS.ERR.FAILED_TO_FETCH_USERS, apiName: 'getUsers' });
     }

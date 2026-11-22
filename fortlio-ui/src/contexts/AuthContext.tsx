@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAccessToken(tokens.accessToken);
       setUser(loggedInUser);
     },
-    []
+    [],
   );
 
   const logout = useCallback(async () => {
@@ -74,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUser = useCallback((updatedUser: Partial<AuthUser>) => {
     setUser((prev) => {
-      if (!prev) return null;
+      if (!prev) {return null;}
       const merged = { ...prev, ...updatedUser };
       localStorage.setItem('user', JSON.stringify(merged));
       return merged;

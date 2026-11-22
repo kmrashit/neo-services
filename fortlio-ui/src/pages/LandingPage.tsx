@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import {
   FileCode,
   Sparkles,
@@ -7,11 +7,11 @@ import {
   Clock,
   FolderGit2,
   Palette,
-  Bot
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
+  Bot,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth();
@@ -96,7 +96,7 @@ export default function LandingPage() {
 
           {/* Universal Professions Pill Bar */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto">
-            {["Technology & Engineering", "Healthcare & Medicine", "Design & Arts", "Law & Legal Services", "Finance & Banking", "Science & Research", "Marketing & Media", "Education & Academia"].map((p) => (
+            {['Technology & Engineering', 'Healthcare & Medicine', 'Design & Arts', 'Law & Legal Services', 'Finance & Banking', 'Science & Research', 'Marketing & Media', 'Education & Academia'].map((p) => (
               <span key={p} className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-muted/80 text-muted-foreground border border-border/60">
                 {p}
               </span>

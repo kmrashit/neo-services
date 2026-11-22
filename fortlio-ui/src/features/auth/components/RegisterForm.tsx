@@ -20,7 +20,7 @@ export const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !password) return;
+    if (!fullName || !email || !password) {return;}
 
     const ok = await register({
       fullName: fullName.trim(),

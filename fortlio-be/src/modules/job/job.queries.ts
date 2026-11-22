@@ -1,9 +1,11 @@
 import mongoose, { PipelineStage } from 'mongoose';
 import { IJobFilter } from './job.interface';
 
-export const getMyJobsPipeline = (hrUserId: string | mongoose.Types.ObjectId): PipelineStage[] => [
+export const getMyJobsBasePipeline = (hrUserId: string | mongoose.Types.ObjectId): PipelineStage[] => [
   { $match: { postedBy: new mongoose.Types.ObjectId(hrUserId) } },
-  { $sort: { createdAt: -1 } },
+];
+
+export const jobDetailsLookupPipeline: PipelineStage[] = [
   {
     $lookup: {
       from: 'job_applications',
@@ -34,7 +36,7 @@ export const getMyJobsPipeline = (hrUserId: string | mongoose.Types.ObjectId): P
   },
 ];
 
-export const searchJobsPipeline = (filter: IJobFilter): PipelineStage[] => {
+export const getSearchJobsBasePipeline = (filter: IJobFilter): PipelineStage[] => {
   const matchConditions: any[] = [{ status: 'active' }];
 
   if (filter.profession && filter.profession.trim() && filter.profession !== 'All') {
@@ -69,43 +71,14 @@ export const searchJobsPipeline = (filter: IJobFilter): PipelineStage[] => {
     });
   }
 
-  return [
-    { $match: { $and: matchConditions } },
-    { $sort: { createdAt: -1 } },
-    {
-      $lookup: {
-        from: 'job_applications',
-        localField: '_id',
-        foreignField: 'jobId',
-        as: 'applications',
-      },
-    },
-    {
-      $project: {
-        _id: { $toString: '$_id' },
-        id: { $toString: '$_id' },
-        title: 1,
-        companyName: 1,
-        department: 1,
-        profession: 1,
-        location: 1,
-        workplaceType: 1,
-        experienceYears: 1,
-        salaryRange: 1,
-        skills: 1,
-        description: 1,
-        status: 1,
-        applicantCount: { $size: '$applications' },
-        createdAt: 1,
-        updatedAt: 1,
-      },
-    },
-  ];
+  return [{ $match: { $and: matchConditions } }];
 };
 
-export const getJobApplicantsPipeline = (jobId: string | mongoose.Types.ObjectId): PipelineStage[] => [
+export const getJobApplicantsBasePipeline = (jobId: string | mongoose.Types.ObjectId): PipelineStage[] => [
   { $match: { jobId: new mongoose.Types.ObjectId(jobId) } },
-  { $sort: { appliedAt: -1 } },
+];
+
+export const jobApplicantsLookupPipeline: PipelineStage[] = [
   {
     $lookup: {
       from: 'users',
@@ -145,4 +118,22 @@ export const getJobApplicantsPipeline = (jobId: string | mongoose.Types.ObjectId
       },
     },
   },
+];
+
+export const getMyJobsPipeline = (hrUserId: string | mongoose.Types.ObjectId): PipelineStage[] => [
+  ...getMyJobsBasePipeline(hrUserId),
+  { $sort: { createdAt: -1 } },
+  ...jobDetailsLookupPipeline,
+];
+
+export const searchJobsPipeline = (filter: IJobFilter): PipelineStage[] => [
+  ...getSearchJobsBasePipeline(filter),
+  { $sort: { createdAt: -1 } },
+  ...jobDetailsLookupPipeline,
+];
+
+export const getJobApplicantsPipeline = (jobId: string | mongoose.Types.ObjectId): PipelineStage[] => [
+  ...getJobApplicantsBasePipeline(jobId),
+  { $sort: { appliedAt: -1 } },
+  ...jobApplicantsLookupPipeline,
 ];

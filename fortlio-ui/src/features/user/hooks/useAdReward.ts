@@ -28,7 +28,7 @@ export function useAdReward({ onSuccess, durationSeconds = 5 }: UseAdRewardOptio
       setCompleted(true);
     }
     return () => {
-      if (timer) clearInterval(timer);
+      if (timer) {clearInterval(timer);}
     };
   }, [isWatching, countdown]);
 
@@ -41,7 +41,7 @@ export function useAdReward({ onSuccess, durationSeconds = 5 }: UseAdRewardOptio
   };
 
   const claimReward = async () => {
-    if (!completed) return;
+    if (!completed) {return;}
     setIsClaiming(true);
     setError(null);
 
@@ -53,7 +53,7 @@ export function useAdReward({ onSuccess, durationSeconds = 5 }: UseAdRewardOptio
       if (onSuccess) {
         onSuccess(newCoins);
       }
-    } catch (err: any) {
+    } catch {
       // In dev or offline environments where backend returns fallback, reward gracefully
       const fallbackCoins = ((user as any)?.coins || 0) + 10;
       setEarnedCoins(fallbackCoins);

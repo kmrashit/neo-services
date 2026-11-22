@@ -4,12 +4,7 @@ import { FortiService } from './forti.service';
 import { fmtRes } from '../../core/core-utils/res-util';
 import { AppError } from '../../core/core-utils/err-util';
 import * as FORTI_MSGS from './forti.constants';
-import {
-  GetInsightsValidation,
-  GenerateInsightsValidation,
-  CandidateChatParamsValidation,
-  CandidateChatQueryValidation,
-} from './forti.validation';
+import { GetInsightsValidation, GenerateInsightsValidation, CandidateChatParamsValidation, CandidateChatQueryValidation } from './forti.validation';
 
 export class FortiController {
   constructor(private fortiService: FortiService) {}
@@ -63,7 +58,7 @@ export class FortiController {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
-      if (res.flushHeaders) res.flushHeaders();
+      if (res.flushHeaders) {res.flushHeaders();}
 
       await this.fortiService.chatWithCandidateProfile(userId, question, (chunk) => {
         res.write(`data: ${JSON.stringify({ t: chunk })}\n\n`);
@@ -96,7 +91,7 @@ export class FortiController {
         maxAge: 2 * 60 * 60 * 1000,
       });
       return fmtRes(res, { sessionId });
-    } catch (error: any) {
+    } catch {
       res.status(500).json({ error: 'Internal server error' });
     }
   };

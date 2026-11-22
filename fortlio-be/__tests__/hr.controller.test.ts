@@ -197,7 +197,10 @@ describe('HrController Unit Tests', () => {
 
       await hrController.getViewedProfiles(req, mockRes);
 
-      expect(mockHistoryService.getViewedProfiles).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockHistoryService.getViewedProfiles).toHaveBeenCalledWith(
+        VALID_USER_ID,
+        expect.any(Object),
+      );
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body.success).toBe(true);
       expect(Array.isArray(mockRes.body.data)).toBe(true);
@@ -212,7 +215,10 @@ describe('HrController Unit Tests', () => {
 
       await hrController.getSearches(req, mockRes);
 
-      expect(mockHistoryService.getSearches).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockHistoryService.getSearches).toHaveBeenCalledWith(
+        VALID_USER_ID,
+        expect.any(Object),
+      );
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body.success).toBe(true);
       expect(Array.isArray(mockRes.body.data)).toBe(true);

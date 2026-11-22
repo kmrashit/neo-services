@@ -1,49 +1,49 @@
 // components/Navbar.tsx
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Menu, X, Briefcase, Sun, Moon, Monitor } from "lucide-react";
-import { APP_NAME } from "../../constants/appName";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Menu, X, Briefcase, Sun, Moon, Monitor } from 'lucide-react';
+import { APP_NAME } from '../../constants/appName';
 
-type Theme = "light" | "dark" | "system";
+type Theme = 'light' | 'dark' | 'system';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>("system");
+  const [theme, setTheme] = useState<Theme>('system');
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
 
   // Get system preference
-  const getSystemTheme = (): "light" | "dark" => {
+  const getSystemTheme = (): 'light' | 'dark' => {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return "dark";
+      return 'dark';
     }
-    return "light";
+    return 'light';
   };
 
   // Apply theme
   const applyTheme = (selectedTheme: Theme) => {
     const root = document.documentElement;
     
-    if (selectedTheme === "system") {
+    if (selectedTheme === 'system') {
       const systemTheme = getSystemTheme();
-      if (systemTheme === "dark") {
-        root.classList.add("dark");
+      if (systemTheme === 'dark') {
+        root.classList.add('dark');
       } else {
-        root.classList.remove("dark");
+        root.classList.remove('dark');
       }
-    } else if (selectedTheme === "dark") {
-      root.classList.add("dark");
+    } else if (selectedTheme === 'dark') {
+      root.classList.add('dark');
     } else {
-      root.classList.remove("dark");
+      root.classList.remove('dark');
     }
     
     setTheme(selectedTheme);
-    localStorage.setItem("theme", selectedTheme);
+    localStorage.setItem('theme', selectedTheme);
   };
 
   // Initialize theme on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme || "system";
+    const savedTheme = localStorage.getItem('theme') as Theme || 'system';
     applyTheme(savedTheme);
   }, []);
 
@@ -52,12 +52,12 @@ export default function Navbar() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = () => {
-      if (theme === "system") {
+      if (theme === 'system') {
         const systemTheme = getSystemTheme();
-        if (systemTheme === "dark") {
-          document.documentElement.classList.add("dark");
+        if (systemTheme === 'dark') {
+          document.documentElement.classList.add('dark');
         } else {
-          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.remove('dark');
         }
       }
     };
@@ -67,9 +67,9 @@ export default function Navbar() {
   }, [theme]);
 
   const themeOptions = [
-    { value: "light", label: "Light", icon: Sun },
-    { value: "dark", label: "Dark", icon: Moon },
-    { value: "system", label: "System", icon: Monitor },
+    { value: 'light', label: 'Light', icon: Sun },
+    { value: 'dark', label: 'Dark', icon: Moon },
+    { value: 'system', label: 'System', icon: Monitor },
   ];
 
   const getCurrentThemeIcon = () => {
@@ -150,8 +150,8 @@ export default function Navbar() {
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
                           isActive
-                            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700"
+                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -216,8 +216,8 @@ export default function Navbar() {
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
                           isActive
-                            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700"
+                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700'
                         }`}
                       >
                         <Icon className="w-4 h-4" />

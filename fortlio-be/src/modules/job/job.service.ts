@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
+import { ReadPreference } from 'mongodb';
 import Job from './models/job.model';
 import JobApplication from './models/job-application.model';
 import CandidateProfile from '../candidate/models/candidate.model';
 import { IJobCreate, IJobFilter } from './job.interface';
-import { getMyJobsPipeline, searchJobsPipeline, getJobApplicantsPipeline } from './job.queries';
+import { IFilter } from '../../interface/common.interface';
+import { getMyJobsBasePipeline, getSearchJobsBasePipeline, jobDetailsLookupPipeline, getJobApplicantsBasePipeline, jobApplicantsLookupPipeline } from './job.queries';
+import { getDataWithLookupsAfterFilter } from '../../core/core-helper/mongo.helper';
 import { AppError } from '../../core/core-utils/err-util';
 import { JOB_MSGS } from './job.constants';
 
@@ -25,10 +28,18 @@ export class JobService {
     }
   }
 
-  async getMyJobs(hrUserId: string) {
+  async getMyJobs(hrUserId: string, filterQuery: IFilter = {}) {
     try {
-      const pipeline = getMyJobsPipeline(hrUserId);
-      return await Job.aggregate(pipeline).exec();
+      const basePipeline = getMyJobsBasePipeline(hrUserId);
+      const searchFields = ['title', 'companyName', 'department', 'profession', 'location', 'skills'];
+      return await getDataWithLookupsAfterFilter(
+        filterQuery,
+        basePipeline,
+        jobDetailsLookupPipeline,
+        searchFields,
+        Job,
+        ReadPreference.primary,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
@@ -53,7 +64,7 @@ export class JobService {
       await job.save();
       return job;
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_UPDATE_JOB,
         apiName: 'updateJobStatus',
@@ -64,8 +75,23 @@ export class JobService {
 
   async searchJobs(filter: IJobFilter) {
     try {
-      const pipeline = searchJobsPipeline(filter);
-      return await Job.aggregate(pipeline).exec();
+      const basePipeline = getSearchJobsBasePipeline(filter);
+      const searchFields = ['title', 'companyName', 'department', 'profession', 'location', 'skills', 'description'];
+      const filterQuery: IFilter = {
+        search: filter.search || filter.searchKey || '',
+        page: filter.page,
+        pageSize: filter.pageSize,
+        sortBy: filter.sortBy || 'createdAt',
+        sortOrder: filter.sortOrder || 'desc',
+      };
+      return await getDataWithLookupsAfterFilter(
+        filterQuery,
+        basePipeline,
+        jobDetailsLookupPipeline,
+        searchFields,
+        Job,
+        ReadPreference.primary,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
@@ -84,10 +110,11 @@ export class JobService {
       const candidateSkills = (candidateProfile?.skills || []).map((s) => s.toLowerCase());
       const candidateExp = candidateProfile?.experience || 0;
 
-      const jobs = await Job.aggregate(searchJobsPipeline({})).exec();
+      const jobsResult = await this.searchJobs({ pageSize: '50' });
+      const jobs = jobsResult?.data || [];
 
       // Compute match score based on candidate skills overlap and experience
-      return jobs.map((job) => {
+      return jobs.map((job: any) => {
         const jobSkills = (job.skills || []).map((s: string) => s.toLowerCase());
         const matchedSkills = jobSkills.filter((s: string) => candidateSkills.includes(s));
         const skillScore = jobSkills.length > 0 ? (matchedSkills.length / jobSkills.length) * 70 : 50;
@@ -98,7 +125,7 @@ export class JobService {
           ...job,
           matchScore,
         };
-      }).sort((a, b) => b.matchScore - a.matchScore);
+      }).sort((a: any, b: any) => b.matchScore - a.matchScore);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_JOBS,
@@ -134,7 +161,7 @@ export class JobService {
 
       return application;
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_APPLY_JOB,
         apiName: 'applyJob',
@@ -143,7 +170,7 @@ export class JobService {
     }
   }
 
-  async getJobApplicants(hrUserId: string, jobId: string) {
+  async getJobApplicants(hrUserId: string, jobId: string, filterQuery: IFilter = {}) {
     try {
       const job = await Job.findOne({
         _id: new mongoose.Types.ObjectId(jobId),
@@ -154,10 +181,18 @@ export class JobService {
         throw new AppError(JOB_MSGS.ERR.JOB_NOT_FOUND, { apiName: 'getJobApplicants', debugValues: { jobId } }, 404);
       }
 
-      const pipeline = getJobApplicantsPipeline(jobId);
-      return await JobApplication.aggregate(pipeline).exec();
+      const basePipeline = getJobApplicantsBasePipeline(jobId);
+      const searchFields = ['status', 'coverNote'];
+      return await getDataWithLookupsAfterFilter(
+        { ...filterQuery, sortBy: filterQuery.sortBy || 'appliedAt' },
+        basePipeline,
+        jobApplicantsLookupPipeline,
+        searchFields,
+        JobApplication,
+        ReadPreference.primary,
+      );
     } catch (error: any) {
-      if (error instanceof AppError) throw error;
+      if (error instanceof AppError) {throw error;}
       throw new AppError(error.message || 'unknown', {
         msg: JOB_MSGS.ERR.FAILED_TO_FETCH_APPLICANTS,
         apiName: 'getJobApplicants',

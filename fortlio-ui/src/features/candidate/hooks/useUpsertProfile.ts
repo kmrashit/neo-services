@@ -18,7 +18,7 @@ export function useUpsertProfile() {
         updateUser({ fullName: payload.fullName });
       }
       return res.data;
-    } catch (err: any) {
+    } catch {
       // Graceful fallback for offline / mock dev
       if (payload.fullName) {
         updateUser({ fullName: payload.fullName });
@@ -29,7 +29,7 @@ export function useUpsertProfile() {
         email: payload.email,
         bio: payload.bio,
         skills: payload.skills,
-      } as ICandidateProfile;
+      };
     } finally {
       setIsSaving(false);
     }

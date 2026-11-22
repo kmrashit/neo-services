@@ -36,7 +36,7 @@ export const VerifyEmailCard: React.FC = () => {
         setMessage(
           response.data?.message ||
             response.message ||
-            'Your email address has been verified successfully!'
+            'Your email address has been verified successfully!',
         );
         setTimeout(() => {
           navigate('/login');
@@ -46,7 +46,7 @@ export const VerifyEmailCard: React.FC = () => {
         setMessage(
           err.response?.data?.message ||
             err.message ||
-            'Verification link has expired or is invalid.'
+            'Verification link has expired or is invalid.',
         );
       } finally {
         setIsLoading(false);
@@ -58,7 +58,7 @@ export const VerifyEmailCard: React.FC = () => {
 
   const handleResend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resendEmail) return;
+    if (!resendEmail) {return;}
 
     setIsResending(true);
     setResendStatus(null);
@@ -67,13 +67,13 @@ export const VerifyEmailCard: React.FC = () => {
       setResendStatus(
         response.data?.message ||
           response.message ||
-          'Verification email has been resent successfully.'
+          'Verification email has been resent successfully.',
       );
     } catch (err: any) {
       setResendStatus(
         err.response?.data?.message ||
           err.message ||
-          'Failed to resend verification link.'
+          'Failed to resend verification link.',
       );
     } finally {
       setIsResending(false);
@@ -97,8 +97,8 @@ export const VerifyEmailCard: React.FC = () => {
           {isLoading
             ? 'Verifying Email...'
             : isSuccess
-            ? 'Email Verified'
-            : 'Verification Failed'}
+              ? 'Email Verified'
+              : 'Verification Failed'}
         </CardTitle>
 
         <CardDescription className="text-sm">

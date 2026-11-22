@@ -7,3 +7,26 @@ export const getCandidateBlogsPipeline = (filterUserId?: string): PipelineStage[
   }
   return basePipeline;
 };
+
+export const candidateBlogAuthorLookupPipeline: PipelineStage[] = [
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'candidateId',
+      foreignField: '_id',
+      as: 'author',
+    },
+  },
+  {
+    $unwind: {
+      path: '$author',
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $project: {
+      'author.password': 0,
+      'author.__v': 0,
+    },
+  },
+];

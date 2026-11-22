@@ -110,7 +110,7 @@ export default function JobsPage() {
   const [applySuccess, setApplySuccess] = useState(false);
 
   const filteredJobs = DEMO_JOBS.filter((job) => {
-    if (!searchQuery) return true;
+    if (!searchQuery) {return true;}
     const q = searchQuery.toLowerCase();
     return (
       job.title.toLowerCase().includes(q) ||

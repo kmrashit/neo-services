@@ -191,25 +191,23 @@ export function useBlogFeed(initialQuery?: BlogFilterQuery) {
     const set = new Set<string>();
     for (const b of blogs) {
       if (b.tags) {
-        for (const t of b.tags) set.add(t);
+        for (const t of b.tags) { set.add(t); }
       }
     }
     return Array.from(set);
   }, [blogs]);
 
   // Filtered view
-  const filteredBlogs = useMemo(() => {
-    return blogs.filter((blog) => {
-      const matchesSearch =
-        searchQuery.trim() === '' ||
-        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (blog.excerpt && blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (blog.tags && blog.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
+  const filteredBlogs = useMemo(() => blogs.filter((blog) => {
+    const matchesSearch =
+      searchQuery.trim() === '' ||
+      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (blog.excerpt && blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (blog.tags && blog.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
 
-      const matchesTag = selectedTag ? (blog.tags && blog.tags.includes(selectedTag)) : true;
-      return matchesSearch && matchesTag;
-    });
-  }, [blogs, searchQuery, selectedTag]);
+    const matchesTag = selectedTag ? (blog.tags && blog.tags.includes(selectedTag)) : true;
+    return matchesSearch && matchesTag;
+  }), [blogs, searchQuery, selectedTag]);
 
   const addLocalBlog = (newBlog: IBlog) => {
     setBlogs((prev) => [newBlog, ...prev]);

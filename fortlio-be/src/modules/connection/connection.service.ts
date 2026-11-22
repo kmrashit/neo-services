@@ -4,8 +4,10 @@ import ChatMessage from './models/chat-message.model';
 import Notification from './models/notification.model';
 import User from '../user/models/user.model';
 import { AppError } from '../../core/core-utils/err-util';
+import { IFilter } from '../../interface/common.interface';
+import { getDataWithLookupsAfterFilter } from '../../core/core-helper/mongo.helper';
 import * as CONNECTION_MSGS from './connection.constants';
-import { getChatHistoryPipeline, getListConnectionsPipeline, getListNotificationsPipeline } from './connection.queries';
+import { getChatHistoryBasePipeline, getListConnectionsBasePipeline, connectionsLookupPipeline, getListNotificationsBasePipeline } from './connection.queries';
 import { wsHandler } from '../../clients';
 
 export class ConnectionService {
@@ -113,12 +115,18 @@ export class ConnectionService {
     }
   }
 
-  async listConnections(userId: string, status?: string) {
+  async listConnections(userId: string, status?: string, filterQuery: IFilter = {}) {
     try {
       const userObjectId = new mongoose.Types.ObjectId(userId);
-      const pipeline = getListConnectionsPipeline(userObjectId, status);
-      const connections = await Connection.aggregate(pipeline).exec();
-      return connections;
+      const basePipeline = getListConnectionsBasePipeline(userObjectId, status);
+      const searchFields = ['message', 'status'];
+      return await getDataWithLookupsAfterFilter(
+        { ...filterQuery, sortBy: filterQuery.sortBy || 'updatedAt' },
+        basePipeline,
+        connectionsLookupPipeline,
+        searchFields,
+        Connection,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_LIST_CONNECTIONS, apiName: 'listConnections' });
     }
@@ -217,24 +225,14 @@ export class ConnectionService {
         throw new AppError(CONNECTION_MSGS.ERR.NOT_PART_OF_CONNECTION, { apiName: 'getChatHistory' }, 403);
       }
 
-      const limit = Number(pageSize);
-      const skip = (Number(page) - 1) * limit;
-
-      const pipeline = getChatHistoryPipeline(connectionObjectId, senderId, receiverId, skip, limit);
-
-      const result = await ChatMessage.aggregate(pipeline).exec();
-      const data = result[0]?.data || [];
-      const totalCount = result[0]?.totalCount[0]?.count || 0;
-      const totalPages = Math.ceil(totalCount / limit);
-
-      return {
-        data,
-        totalCount,
-        totalPages,
-        currentPage: page,
-        hasPrev: page > 1,
-        hasNext: page < totalPages,
-      };
+      const basePipeline = getChatHistoryBasePipeline(connectionObjectId, senderId, receiverId);
+      return await getDataWithLookupsAfterFilter(
+        { page: String(page), pageSize: String(pageSize), sortBy: 'createdAt', sortOrder: 'desc' },
+        basePipeline,
+        [],
+        ['message'],
+        ChatMessage,
+      );
     } catch (error: any) {
       if (error instanceof AppError) {
         throw error;
@@ -243,11 +241,17 @@ export class ConnectionService {
     }
   }
 
-  async listNotifications(userId: string) {
+  async listNotifications(userId: string, filterQuery: IFilter = {}) {
     try {
       const userObjectId = new mongoose.Types.ObjectId(userId);
-      const pipeline = getListNotificationsPipeline(userObjectId);
-      return await Notification.aggregate(pipeline).exec();
+      const basePipeline = getListNotificationsBasePipeline(userObjectId);
+      return await getDataWithLookupsAfterFilter(
+        { pageSize: '50', ...filterQuery, sortBy: filterQuery.sortBy || 'createdAt', sortOrder: 'desc' },
+        basePipeline,
+        [],
+        ['title', 'message', 'type'],
+        Notification,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_FETCH_NOTIFICATIONS, apiName: 'listNotifications' });
     }

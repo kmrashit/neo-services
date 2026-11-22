@@ -199,9 +199,9 @@ async function seedTestUsers() {
     });
   }
 
-  console.log('✅ Local test users ready:');
-  console.log('Candidate -> Email: candidate@test.com | Password: Password123!');
-  console.log('HR / Recruiter -> Email: hr@test.com | Password: Password123!');
+  console.info('✅ Local test users ready:');
+  console.info('Candidate -> Email: candidate@test.com | Password: Password123!');
+  console.info('HR / Recruiter -> Email: hr@test.com | Password: Password123!');
 
   process.exit(0);
 }

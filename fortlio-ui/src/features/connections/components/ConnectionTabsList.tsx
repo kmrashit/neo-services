@@ -38,12 +38,12 @@ export function ConnectionTabsList({
   const [searchQuery, setSearchQuery] = useState('');
 
   const filterConnections = (list: IConnection[]) => {
-    if (!searchQuery.trim()) return list;
+    if (!searchQuery.trim()) {return list;}
     const q = searchQuery.toLowerCase();
     return list.filter((c) => {
       const getTargetUserId = (target: any): string => {
-        if (!target) return '';
-        if (typeof target === 'string') return target;
+        if (!target) {return '';}
+        if (typeof target === 'string') {return target;}
         return target._id || '';
       };
       const isSender = currentUserId ? getTargetUserId(c.senderId) === currentUserId : false;
@@ -141,7 +141,7 @@ export function ConnectionTabsList({
           renderEmptyState(
             'No Active Connections Yet',
             'Connect with verified candidates, specialized professionals, and recruiters across the platform.',
-            <Users className="size-6" />
+            <Users className="size-6" />,
           )
         )
       )}
@@ -164,7 +164,7 @@ export function ConnectionTabsList({
           renderEmptyState(
             'No Pending Invitations',
             'You are all caught up! New connection requests from candidates and recruiters will appear here.',
-            <Inbox className="size-6" />
+            <Inbox className="size-6" />,
           )
         )
       )}
@@ -185,7 +185,7 @@ export function ConnectionTabsList({
           renderEmptyState(
             'No Outgoing Requests Pending',
             'Explore candidate portfolios and recruiter openings to initiate collaborative connections.',
-            <Sparkles className="size-6" />
+            <Sparkles className="size-6" />,
           )
         )
       )}
@@ -208,7 +208,7 @@ export function ConnectionTabsList({
           renderEmptyState(
             'No Connections Record Found',
             'Start your professional network on Fortlio by reaching out to peers and talent in your industry.',
-            <Users className="size-6" />
+            <Users className="size-6" />,
           )
         )
       )}

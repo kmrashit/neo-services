@@ -129,7 +129,11 @@ describe('ConnectionController Unit Tests', () => {
 
       await connectionController.listConnections(req, mockRes);
 
-      expect(mockConnectionService.listConnections).toHaveBeenCalledWith(VALID_USER_ID, 'accepted');
+      expect(mockConnectionService.listConnections).toHaveBeenCalledWith(
+        VALID_USER_ID,
+        'accepted',
+        expect.any(Object),
+      );
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body.success).toBe(true);
     });
@@ -143,7 +147,10 @@ describe('ConnectionController Unit Tests', () => {
 
       await connectionController.listNotifications(req, mockRes);
 
-      expect(mockConnectionService.listNotifications).toHaveBeenCalledWith(VALID_USER_ID);
+      expect(mockConnectionService.listNotifications).toHaveBeenCalledWith(
+        VALID_USER_ID,
+        expect.any(Object),
+      );
       expect(mockRes.statusCode).toBe(200);
       expect(mockRes.body.success).toBe(true);
     });

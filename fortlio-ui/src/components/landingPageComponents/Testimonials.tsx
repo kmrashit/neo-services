@@ -1,33 +1,33 @@
 // sections/Testimonials.tsx
-import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
-import { APP_NAME } from "../../constants/appName";
+import { motion } from 'framer-motion';
+import { Star, Quote } from 'lucide-react';
+import { APP_NAME } from '../../constants/appName';
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "Software Engineer",
-    company: "Google",
-    image: "https://i.pravatar.cc/150?img=1",
+    name: 'Sarah Johnson',
+    role: 'Software Engineer',
+    company: 'Google',
+    image: 'https://i.pravatar.cc/150?img=1',
     text: `${APP_NAME} helped me find my dream job at Google. The platform is intuitive and the job recommendations were spot on!`,
-    rating: 5
+    rating: 5,
   },
   {
-    name: "Michael Chen",
-    role: "HR Director",
-    company: "Microsoft",
-    image: "https://i.pravatar.cc/150?img=2",
+    name: 'Michael Chen',
+    role: 'HR Director',
+    company: 'Microsoft',
+    image: 'https://i.pravatar.cc/150?img=2',
     text: `We've hired 50+ amazing candidates through ${APP_NAME}. The quality of applicants is outstanding and the process is seamless.`,
-    rating: 5
+    rating: 5,
   },
   {
-    name: "Emily Rodriguez",
-    role: "Product Manager",
-    company: "Amazon",
-    image: "https://i.pravatar.cc/150?img=3",
+    name: 'Emily Rodriguez',
+    role: 'Product Manager',
+    company: 'Amazon',
+    image: 'https://i.pravatar.cc/150?img=3',
     text: `The networking opportunities on ${APP_NAME} are incredible. I've connected with industry leaders and landed my dream role.`,
-    rating: 5
-  }
+    rating: 5,
+  },
 ];
 
 export default function Testimonials() {
@@ -42,7 +42,7 @@ export default function Testimonials() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            What Our{" "}
+            What Our{' '}
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Users Say
             </span>

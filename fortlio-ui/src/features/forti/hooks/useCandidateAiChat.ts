@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import type { IChatMessage } from '../types';
 
-export function useCandidateAiChat(userId: string, candidateName: string = 'Candidate') {
+export function useCandidateAiChat(userId: string, candidateName = 'Candidate') {
   const [messages, setMessages] = useState<IChatMessage[]>([
     {
       id: 'welcome',
@@ -16,7 +16,7 @@ export function useCandidateAiChat(userId: string, candidateName: string = 'Cand
 
   const sendMessage = useCallback(async (questionToSend?: string) => {
     const q = (questionToSend || inputQuestion).trim();
-    if (!q || isStreaming) return;
+    if (!q || isStreaming) {return;}
 
     setInputQuestion('');
 
@@ -58,7 +58,7 @@ export function useCandidateAiChat(userId: string, candidateName: string = 'Cand
 
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done) {break;}
 
         const chunkText = decoder.decode(value);
         const lines = chunkText.split('\n');
@@ -76,8 +76,8 @@ export function useCandidateAiChat(userId: string, candidateName: string = 'Cand
                   accumulated += parsed.t;
                   setMessages((prev) =>
                     prev.map((msg) =>
-                      msg.id === assistantMsgId ? { ...msg, content: accumulated } : msg
-                    )
+                      msg.id === assistantMsgId ? { ...msg, content: accumulated } : msg,
+                    ),
                   );
                 }
               } catch {
@@ -90,9 +90,9 @@ export function useCandidateAiChat(userId: string, candidateName: string = 'Cand
     } catch {
       // Deterministic portfolio grounding fallback if offline / in test environment
       let fallbackText = `**${candidateName}** demonstrates proven domain expertise in distributed systems and systems architecture.\n\n` +
-        `- **Technical Depth**: Authored articles on MongoDB pipeline optimization and event streaming.\n` +
-        `- **Verified Learning Velocity**: Evaluated at **94/100** by Forti AI with rapid domain trajectory.\n` +
-        `- **Leadership & Mentorship**: Strong track record of architecture leadership and technical writing.`;
+        '- **Technical Depth**: Authored articles on MongoDB pipeline optimization and event streaming.\n' +
+        '- **Verified Learning Velocity**: Evaluated at **94/100** by Forti AI with rapid domain trajectory.\n' +
+        '- **Leadership & Mentorship**: Strong track record of architecture leadership and technical writing.';
 
       if (/lead|mentor|leadership/i.test(q)) {
         fallbackText = `**${candidateName}** demonstrates high leadership signals in **System Architecture**, **Mentorship**, and **Production Resilience**. Their published articles and lead architect background prove technical ownership.`;
@@ -102,8 +102,8 @@ export function useCandidateAiChat(userId: string, candidateName: string = 'Cand
 
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === assistantMsgId ? { ...msg, content: fallbackText } : msg
-        )
+          msg.id === assistantMsgId ? { ...msg, content: fallbackText } : msg,
+        ),
       );
     } finally {
       setIsStreaming(false);

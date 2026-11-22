@@ -11,7 +11,7 @@ import type {
 export const userApi = {
   getUserById: async (userId: string) => {
     const response = await api.get<UserApiResponse<UserProfile>>(
-      `/user/getUserById?userId=${encodeURIComponent(userId)}`
+      `/user/getUserById?userId=${encodeURIComponent(userId)}`,
     );
     return response.data;
   },
@@ -19,7 +19,7 @@ export const userApi = {
   updateUser: async (payload: UpdateUserPayload) => {
     const response = await api.put<UserApiResponse<UserProfile>>(
       '/user/updateUserById',
-      payload
+      payload,
     );
     return response.data;
   },
@@ -36,7 +36,7 @@ export const userApi = {
     const response = await api.post<UserApiResponse<WatchAdResponse>>(
       '/user/watch-ad',
       {},
-      { headers }
+      { headers },
     );
     return response.data;
   },
@@ -48,14 +48,14 @@ export const userApi = {
 
   getRolesWithPrivileges: async () => {
     const response = await api.get<UserApiResponse<{ data: Role[]; total: number }>>(
-      '/role/getRolesWithPrivileges?page=1&pageSize=100'
+      '/role/getRolesWithPrivileges?page=1&pageSize=100',
     );
     return response.data;
   },
 
   getPrivileges: async () => {
     const response = await api.get<UserApiResponse<{ data: Privilege[]; total: number }>>(
-      '/role/getPrivileges?page=1&pageSize=100'
+      '/role/getPrivileges?page=1&pageSize=100',
     );
     return response.data;
   },

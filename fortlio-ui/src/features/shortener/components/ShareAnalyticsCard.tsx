@@ -14,7 +14,7 @@ export function ShareAnalyticsCard({ links, onOpenMyLinks }: ShareAnalyticsCardP
   const avgSeconds = totalViews > 0 ? Math.round(totalSeconds / totalViews) : 0;
 
   const formatDuration = (secs: number) => {
-    if (secs < 60) return `${secs}s`;
+    if (secs < 60) {return `${secs}s`;}
     const mins = Math.floor(secs / 60);
     const remainder = secs % 60;
     return `${mins}m ${remainder}s`;

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Menu,
   Sun,
@@ -11,12 +11,12 @@ import {
   Coins,
   Tv,
   User as UserIcon,
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -24,13 +24,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   UserRoleBadge,
   UserProfileSettings,
   AdRewardModal,
-} from "@/features/user";
-import { NotificationBell } from "@/features/connections";
+} from '@/features/user';
+import { NotificationBell } from '@/features/connections';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -46,10 +46,10 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
   const [adModalOpen, setAdModalOpen] = useState(false);
 
   const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark");
+    setTheme(isDark ? 'light' : 'dark');
   };
 
-  const userInitial = (user?.fullName || user?.email || "U").charAt(0).toUpperCase();
+  const userInitial = (user?.fullName || user?.email || 'U').charAt(0).toUpperCase();
   const coinsBalance = (user as any)?.coins ?? 10;
   const roleStr = (user?.role || '').toLowerCase();
   const isHr = roleStr === 'hr' || (user?.email || '').toLowerCase().includes('hr');
@@ -98,7 +98,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           <Button
             size="sm"
             variant="outline"
-            onClick={() => navigate("/candidate-blogs")}
+            onClick={() => navigate('/candidate-blogs')}
             className="hidden lg:flex items-center gap-1.5 h-8 text-xs rounded-lg border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10"
           >
             <Sparkles className="size-3.5" />
@@ -111,7 +111,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
             variant="ghost"
             onClick={toggleTheme}
             className="size-9 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
-            title={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
+            title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
             aria-label="Toggle Theme"
           >
             {isDark ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4" />}
@@ -135,10 +135,10 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                   </Avatar>
                   <div className="hidden md:flex flex-col text-left">
                     <span className="text-xs font-semibold text-foreground truncate max-w-[120px]">
-                      {user?.fullName || (isHr ? "HR Recruiter" : "Candidate")}
+                      {user?.fullName || (isHr ? 'HR Recruiter' : 'Candidate')}
                     </span>
                     <span className="text-[10px] text-muted-foreground capitalize">
-                      {user?.role || (isHr ? "hr" : "candidate")}
+                      {user?.role || (isHr ? 'hr' : 'candidate')}
                     </span>
                   </div>
                 </button>
@@ -148,13 +148,13 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                 <DropdownMenuLabel className="font-normal px-2 py-1.5">
                   <div className="flex flex-col space-y-1">
                     <p className="text-xs font-semibold text-foreground truncate">
-                      {user?.fullName || (isHr ? "HR Recruiter" : "Candidate")}
+                      {user?.fullName || (isHr ? 'HR Recruiter' : 'Candidate')}
                     </p>
                     <p className="text-[11px] text-muted-foreground truncate">
-                      {user?.email || "candidate@test.com"}
+                      {user?.email || 'candidate@test.com'}
                     </p>
                     <div className="pt-1">
-                      <UserRoleBadge role={isHr ? "hr" : (user?.role || "candidate")} />
+                      <UserRoleBadge role={isHr ? 'hr' : (user?.role || 'candidate')} />
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -162,7 +162,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  onClick={() => navigate(isHr ? "/candidates" : "/candidate-profile")}
+                  onClick={() => navigate(isHr ? '/candidates' : '/candidate-profile')}
                   className="cursor-pointer gap-2"
                 >
                   <UserIcon className="size-4 text-muted-foreground" />

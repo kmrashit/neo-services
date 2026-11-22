@@ -7,7 +7,7 @@ const connectionSchema = new mongoose.Schema(
     status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
     message: { type: String, default: '' },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
+  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
 );
 
 // Prevent duplicate connections/requests between the same users

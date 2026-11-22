@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import { AppError } from '../../core/core-utils/err-util';
 import ShortendLink from './models/shortend-link.model';
-import { getLinkAnalyticsPipeline, getMyLinksPipeline } from './shortener.queries';
+import { getLinkAnalyticsPipeline, getMyLinksBasePipeline, myLinksLookupPipeline } from './shortener.queries';
+import { getDataWithLookupsAfterFilter } from '../../core/core-helper/mongo.helper';
+import { IFilter } from '../../interface/common.interface';
 
 export class ShortenerService {
   async fetchUrl(shortValue: string): Promise<string> {
@@ -72,11 +74,17 @@ export class ShortenerService {
     }
   }
 
-  async getMyLinks(userId: string): Promise<any[]> {
+  async getMyLinks(userId: string, filterQuery: IFilter = {}): Promise<any> {
     try {
-      const pipeline = getMyLinksPipeline(new mongoose.Types.ObjectId(userId));
-      const results = await ShortendLink.aggregate(pipeline);
-      return results || [];
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+      const basePipeline = getMyLinksBasePipeline(userObjectId);
+      return await getDataWithLookupsAfterFilter(
+        { page: '1', pageSize: '10', ...filterQuery, sortBy: filterQuery.sortBy || 'createdAt', sortOrder: 'desc' },
+        basePipeline,
+        myLinksLookupPipeline,
+        ['shortCode', 'originalUrl', 'targetType'],
+        ShortendLink,
+      );
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: 'Error fetching my links:', apiName: 'getMyLinks' });
     }
