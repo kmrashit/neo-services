@@ -8,6 +8,7 @@ export default function EditorPage() {
   const navigate = useNavigate();
   const modeParam = searchParams.get('mode');
   const initialMode = modeParam === 'blog' ? 'blog' : 'resume';
+  const initialOpenDraw = modeParam === 'draw';
 
   const { exportPdf } = useResumePdfExport();
   const { publishBlog } = useCreateBlog();
@@ -25,6 +26,7 @@ export default function EditorPage() {
     <div className="min-h-screen bg-background">
       <UnifiedMarkdownEditor
         initialMode={initialMode}
+        initialOpenDraw={initialOpenDraw}
         onExportPdf={handleExportPdf}
         onPublishBlog={handlePublishBlog}
       />

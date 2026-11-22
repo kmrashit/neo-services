@@ -182,8 +182,18 @@ export class HrController {
         searchParameters.filter_by = filterConditions.join(' && ');
       }
 
-      const result = await sensiSearch.search(TYPSENSE_COLLECTION_NAME.CANDIDATES, searchParameters);
-      const docs = result?.hits?.map((hit: any) => hit.document) || [];
+      let docs: any[] = [];
+      try {
+        const result = await sensiSearch.search(TYPSENSE_COLLECTION_NAME.CANDIDATES, searchParameters);
+        docs = result?.hits?.map((hit: any) => hit.document) || [];
+      } catch (typesenseError: any) {
+        console.warn('Typesense candidate search unavailable or failed, falling back to MongoDB:', typesenseError?.message);
+        docs = await this.hrService.searchCandidatesMongo(searchKey, minExperience, skills);
+      }
+      if (docs.length === 0 && (!searchKey || searchKey === '*')) {
+        docs = await this.hrService.searchCandidatesMongo(searchKey, minExperience, skills);
+      }
+
       const requester = await this.getRequesterInfo(req);
 
       const maskedDocs = docs.map((doc: any) => {

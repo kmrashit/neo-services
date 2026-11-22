@@ -50,7 +50,8 @@ export class ConnectionController {
         throw new AppError(CONNECTION_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'listConnections' }, 401);
       }
 
-      const connections = await this.connectionService.listConnections(loggedInUserId);
+      const status = req.query.status as string | undefined;
+      const connections = await this.connectionService.listConnections(loggedInUserId, status);
       return fmtRes(res, connections);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_LIST_CONNECTIONS, apiName: 'listConnections' }, 400);
@@ -118,6 +119,20 @@ export class ConnectionController {
       return fmtRes(res, notification);
     } catch (error: any) {
       throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_MARK_NOTIFICATION, apiName: 'markNotificationAsRead' }, error.statusCode || 400);
+    }
+  };
+
+  markAllNotificationsAsRead = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError(CONNECTION_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'markAllNotificationsAsRead' }, 401);
+      }
+
+      const result = await this.connectionService.markAllNotificationsAsRead(loggedInUserId);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      throw new AppError(error.message || 'unknown', { msg: CONNECTION_MSGS.ERR.FAILED_TO_MARK_NOTIFICATION, apiName: 'markAllNotificationsAsRead' }, 400);
     }
   };
 }

@@ -56,4 +56,33 @@ test.describe('App Shell Navigation & Theme E2E Tests', () => {
     // Should be redirected to /login
     await expect(page).toHaveURL(/\/login/);
   });
+
+  test('HR user sidebar renders recruiter discovery & hiring views', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('accessToken', 'mock-jwt-hr-token');
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          id: '678901234567890123456789',
+          fullName: 'Alex Recruiter',
+          email: 'hr@test.com',
+          role: 'hr',
+          isOnboarded: true,
+        })
+      );
+    });
+
+    await page.goto('/candidates');
+
+    // Verify HR Recruiter section title
+    await expect(page.getByText('Recruiter Discovery & Hiring')).toBeVisible();
+
+    // Verify HR-specific navigation links
+    await expect(page.getByRole('link', { name: 'Candidate Search' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Job Postings & Intake' })).toBeVisible();
+
+    // Verify Candidate-only links are not rendered
+    await expect(page.getByRole('link', { name: 'Job Suggestions & Search' })).not.toBeVisible();
+    await expect(page.getByRole('link', { name: 'Resume Builder (A4)' })).not.toBeVisible();
+  });
 });

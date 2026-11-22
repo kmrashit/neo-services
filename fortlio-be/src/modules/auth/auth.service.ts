@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import { ACCESSTOKEN_EXPIRY, EMAIL_SEND_FROM } from '../../core/core-constants/common.constants';
 import type { SecretManager } from '../../core/core-clients/secret-manager.client';
 import { IUserAccesstokenDetails } from '../../interface/user-interface';
@@ -28,8 +29,9 @@ export class AuthnService {
 
   verifyToken = async (token: string): Promise<AuthRequest> => {
     try {
+      const rawToken = token.startsWith('Bearer ') ? token.slice(7) : token;
       const JWT_SECRET = await this.secretManager.get('JWT_SECRET');
-      return jwt.verify(token, JWT_SECRET) as AuthRequest;
+      return jwt.verify(rawToken, JWT_SECRET) as AuthRequest;
     } catch (error: any) {
       if (error instanceof jwt.TokenExpiredError) {
         throw new AppError(error.message || 'unknown', { msg: AUTHN_MSGS.ERR.TOKEN_EXPIRED, apiName: 'verifyToken' });
@@ -99,7 +101,29 @@ export class AuthnService {
     if (!isValid) { throw new AppError('Invalid credentials', { msg: 'Invalid credentials', apiName: 'login' }); }
     if (!userPrivate.emailVerified) { throw new AppError('Email not verified', { msg: 'Email not verified', apiName: 'login' }); }
 
-    const accessToken = await this.generateAccessToken({ userId: user._id as any, email: user.email, name: user.fullName, roleId: user.roleId as any });
+    let roleName = 'Candidate';
+    if (user.roleId) {
+      try {
+        const RoleModel = mongoose.models['role'] || mongoose.model('role');
+        const roleDoc = (await RoleModel.findById(user.roleId).lean()) as any;
+        if (roleDoc?.roleName) {
+          roleName = roleDoc.roleName;
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    if (user.email.toLowerCase().includes('hr')) {
+      roleName = 'HR';
+    }
+
+    const accessToken = await this.generateAccessToken({
+      userId: user._id,
+      email: user.email,
+      name: user.fullName,
+      roleId: user.roleId,
+      role: roleName,
+    } as any);
     const refreshToken = randomBytes(64).toString('hex');
     const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex');
 
@@ -111,8 +135,11 @@ export class AuthnService {
       user: {
         id: user._id,
         fullName: user.fullName,
+        email: user.email,
         roleId: user.roleId,
+        role: roleName.toLowerCase(),
         isOnboarded: user.isOnboarded,
+        coins: user.coins || 0,
       },
     };
   }
@@ -198,10 +225,10 @@ export class AuthnService {
     await userPrivate.save();
 
     const accessToken = await this.generateAccessToken({
-      userId: user._id as any,
+      userId: user._id,
       email: user.email,
       name: user.fullName,
-      roleId: user.roleId as any,
+      roleId: user.roleId,
     });
 
     return { accessToken, refreshToken: newRefreshToken };

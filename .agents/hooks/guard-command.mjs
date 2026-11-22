@@ -38,6 +38,17 @@ async function main() {
     }
   }
 
+  // Guard git commit: always require asking the user before committing
+  if (/git\s+commit/i.test(commandLine)) {
+    console.log(
+      JSON.stringify({
+        decision: 'ask',
+        reason: 'Rule enforcement: Always ask user confirmation before running git commit.'
+      })
+    );
+    return;
+  }
+
   // Default: allow execution
   console.log(JSON.stringify({ decision: 'allow' }));
 }

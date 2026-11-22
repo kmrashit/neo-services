@@ -32,11 +32,13 @@ export function useCreateBlog() {
 
     try {
       const res = await blogApi.createBlog(data);
-      if (res.data) {
+      const rawBlog = (res.data as any)?.data || res.data;
+      if (rawBlog) {
         return {
           ...fallbackBlog,
-          ...res.data,
-          id: (res.data as any)._id || res.data.id || fallbackBlog.id,
+          ...rawBlog,
+          tags: rawBlog.tags || rawBlog.blogKeywords || fallbackBlog.tags,
+          id: rawBlog._id || rawBlog.id || fallbackBlog.id,
         };
       }
       return fallbackBlog;

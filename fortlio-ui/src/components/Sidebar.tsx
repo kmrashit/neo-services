@@ -14,7 +14,6 @@ import {
   Bot,
   Search,
   Briefcase,
-  Eye,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +21,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
-  const isHr = (user?.role || '').toLowerCase() === 'hr';
+  const roleStr = (user?.role || '').toLowerCase();
+  const emailStr = (user?.email || '').toLowerCase();
+  const isHr = roleStr === 'hr' || emailStr.includes('hr') || emailStr === 'hr@test.com';
 
   const candidateSections = [
     {
@@ -34,15 +35,16 @@ export default function Sidebar() {
     {
       title: "Portfolio Showcase",
       items: [
-        { name: "My Profile", path: "/candidate-profile", icon: User },
+        { name: "My Showcase Profile", path: "/candidate-profile", icon: User },
         { name: "Edit Profile", path: "/edit-profile", icon: FileText },
-        { name: "Resume Studio", path: "/editor", icon: FileCode },
+        { name: "Resume Builder (A4)", path: "/editor?mode=resume", icon: FileCode },
       ],
     },
     {
       title: "Knowledge & Creation",
       items: [
         { name: "Specialty Blogs", path: "/candidate-blogs", icon: BookOpen },
+        { name: "Create Blog (Medium)", path: "/editor?mode=blog", icon: FileText },
         { name: "Draw Imagination", path: "/editor?mode=draw", icon: Palette },
       ],
     },
@@ -64,16 +66,11 @@ export default function Sidebar() {
 
   const hrSections = [
     {
-      title: "Recruiter Discovery",
+      title: "Recruiter Discovery & Hiring",
       items: [
         { name: "Candidate Search", path: "/candidates", icon: Search },
-        { name: "Job Postings", path: "/hr/jobs", icon: Briefcase },
-      ],
-    },
-    {
-      title: "Candidate Pipeline",
-      items: [
-        { name: "Candidate Discovery", path: "/candidates", icon: Eye },
+        { name: "Job Postings & Intake", path: "/hr/jobs", icon: Briefcase },
+        { name: "Applicants Review", path: "/hr/applicants", icon: Briefcase },
       ],
     },
     {

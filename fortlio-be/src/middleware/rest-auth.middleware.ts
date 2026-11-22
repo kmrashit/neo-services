@@ -25,7 +25,8 @@ export class RestAuthMiddleware {
         throw new AppError(AUTHN_MSGS.ERR.FAILED_TO_AUTHENTICATE_USER, { msg: AUTHN_MSGS.ERR.FAILED_TO_AUTHENTICATE_USER, apiName: 'authn', debugValues: {} }, 401);
       }
 
-      const userDetails = await this.authnService.verifyToken(accesstoken);
+      const token = accesstoken.startsWith('Bearer ') ? accesstoken.slice(7) : accesstoken;
+      const userDetails = await this.authnService.verifyToken(token);
 
       req.headers.userId = userDetails.userId;
       req.headers.name = userDetails.name;
@@ -53,13 +54,17 @@ export class RestAuthMiddleware {
       // get from db  and store in cache 
       if (!roleAccesses?.length) {
         roleAccesses = await this.dbClient.connect().then(async (db) => {
+          const roleRegex = req.headers.role ? new RegExp(`^${req.headers.role}$`, 'i') : /Candidate/i;
           const pipeline: PipelineStage[] = [
-            { $match: { roleName: req.headers.role } },
+            { $match: { roleName: roleRegex } },
             { $project: { rolePrivileges: 1 } },
           ];
           const roleAccess = await db.collection('roles').aggregate(pipeline).toArray();
-          await this.redisCache.set(req.headers.role + '_permissions', JSON.stringify(roleAccess[0].rolePrivileges), 300);
-          return roleAccess[0].rolePrivileges;
+          const privs = roleAccess[0]?.rolePrivileges || [];
+          if (req.headers.role) {
+            await this.redisCache.set(req.headers.role + '_permissions', JSON.stringify(privs), 300);
+          }
+          return privs;
         });
       }
       if (!userAccesses?.length) {

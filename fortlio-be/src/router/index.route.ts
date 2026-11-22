@@ -8,6 +8,7 @@ import { ConnectionRoutes, ConnectionController, ConnectionService } from '../mo
 import { ShortnerRoutes, ShortnerController, ShortenerService } from '../modules/link-shortener';
 import { LeetcodeRoutes, LeetcodeController, LeetcodeService } from '../modules/leetcode';
 import { FortiRoutes, FortiController, FortiService } from '../modules/forti';
+import { JobRoutes, JobController, JobService } from '../modules/job';
 import { ServicesRoutes } from './services.route';
 import { CachingMiddleware } from '../middleware/cache.middleware';
 import { config } from '../../config';
@@ -29,6 +30,7 @@ const candidateService = new CandidateService();
 const hrService = new HrService();
 const connectionService = new ConnectionService();
 const historyService = new HistoryService();
+const jobService = new JobService();
 
 // ==========================================
 // 3. CONTROLLERS (ORCHESTRATION LAYER)
@@ -42,6 +44,7 @@ const leetcodeController = new LeetcodeController(leetcodeService);
 const candidateController = new CandidateController(candidateService, authnService, userService);
 const hrController = new HrController(hrService, historyService, userService, authnService);
 const connectionController = new ConnectionController(connectionService);
+const jobController = new JobController(jobService);
 
 // ==========================================
 // 1. INFRASTRUCTURE & MIDDLEWARE
@@ -64,6 +67,7 @@ const servicesRoutes = new ServicesRoutes(cacheMiddleware, leetcodeRoutes, short
 const candidateRoutes = new CandidateRoutes(candidateController, authGuard);
 const hrRoutes = new HrRoutes(hrController, authGuard, checksumVerifyMiddleware);
 const connectionRoutes = new ConnectionRoutes(connectionController, authGuard);
+const jobRoutes = new JobRoutes(jobController, authGuard);
 
 class AppRoutes {
   router: Router = Router();
@@ -78,6 +82,7 @@ class AppRoutes {
     private hrRoutes: HrRoutes,
     private connectionRoutes: ConnectionRoutes,
     private fortiRoutes: FortiRoutes,
+    private jobRoutes: JobRoutes,
   ) {
     this.initializeRoutes();
   }
@@ -91,6 +96,7 @@ class AppRoutes {
     this.router.use('/hr', this.hrRoutes.router);
     this.router.use('/connections', this.connectionRoutes.router);
     this.router.use('/forti', this.fortiRoutes.router);
+    this.router.use('/job', this.jobRoutes.router);
   }
 }
 
@@ -104,6 +110,7 @@ const appRoutes = new AppRoutes(
   hrRoutes,
   connectionRoutes,
   fortiRoutes,
+  jobRoutes,
 );
 
 export default appRoutes;

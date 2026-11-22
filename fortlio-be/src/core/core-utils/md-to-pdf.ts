@@ -44,7 +44,7 @@ export async function convertMdToPdf(markdown: string, settings?: any, s3Options
       }
     `;
 
-    const watermarkHtml = `\n\n<div class="fortlio-pdf-watermark"><span>By :</span> <strong style="color: #6366f1;">Fortlio</strong></div>`;
+    const watermarkHtml = `\n\n<div class="fortlio-pdf-watermark"><span>By :</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 2px; vertical-align: middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> <strong style="color: #7c3aed;">Fortlio</strong></div>`;
     const contentWithWatermark = markdown.includes('fortlio-pdf-watermark')
       ? markdown
       : markdown + watermarkHtml;
@@ -64,8 +64,9 @@ export async function convertMdToPdf(markdown: string, settings?: any, s3Options
         headerTemplate: '<div></div>',
         footerTemplate: `
           <div style="width: 100%; font-size: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #94a3b8; display: flex; justify-content: flex-end; align-items: center; padding-right: 15mm; box-sizing: border-box;">
-            <span style="opacity: 0.85; margin-right: 3px;">By :</span>
-            <strong style="color: #6366f1; font-weight: 700;">Fortlio</strong>
+            <span style="opacity: 0.85; margin-right: 4px;">By :</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 3px; display: inline-block; vertical-align: middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <strong style="color: #7c3aed; font-weight: 700;">Fortlio</strong>
           </div>
         `,
         ...(settings?.pdf_options || {}),
