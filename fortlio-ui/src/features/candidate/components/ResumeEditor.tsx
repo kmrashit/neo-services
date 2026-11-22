@@ -11,19 +11,11 @@ import {
   Check,
   Eye,
   Edit2,
-  UploadCloud,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { ResumeOcrModal } from './ResumeOcrModal';
 import { useResumePdfExport } from '../hooks/useResumePdfExport';
 
 const DEFAULT_RESUME_MARKDOWN = `# [Your Full Name]
@@ -110,8 +102,6 @@ export const ResumeEditor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'split' | 'edit' | 'preview'>('split');
   const [isSaved, setIsSaved] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
-  const [isParsingOcr, setIsParsingOcr] = useState(false);
-  const [ocrSuccess, setOcrSuccess] = useState(false);
 
   const { exportPdf, isExporting } = useResumePdfExport();
 
@@ -280,70 +270,15 @@ export const ResumeEditor: React.FC = () => {
         )}
       </div>
 
-      {/* AI Resume OCR Ingestion Dialog */}
-      <Dialog open={isOcrOpen} onOpenChange={setIsOcrOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base">
-              <Sparkles className="size-4 text-purple-600 dark:text-purple-400" />
-              AI Resume OCR Ingestion
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              Upload your existing PDF or image resume. Fortlio's OCR Vision engine extracts work history, education credentials, and skills directly into Markdown format.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="py-6 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-3 bg-muted/20 text-center px-4">
-            <UploadCloud className="size-10 text-muted-foreground/60" />
-            <div>
-              <p className="text-xs font-semibold text-foreground">Drag & drop your resume here, or click to browse</p>
-              <p className="text-[11px] text-muted-foreground pt-1">Supports PDF, PNG, JPG (Max 15MB)</p>
-            </div>
-            {ocrSuccess && (
-              <div className="text-xs font-semibold text-emerald-500 flex items-center gap-1">
-                <Check className="size-3.5" />
-                Resume parsed and converted to Markdown successfully!
-              </div>
-            )}
-          </div>
-
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOcrOpen(false)}
-              className="text-xs"
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setIsParsingOcr(true);
-                setTimeout(() => {
-                  setIsParsingOcr(false);
-                  setOcrSuccess(true);
-                  setTimeout(() => {
-                    setOcrSuccess(false);
-                    setIsOcrOpen(false);
-                  }, 1000);
-                }, 1200);
-              }}
-              disabled={isParsingOcr}
-              className="text-xs bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              {isParsingOcr ? (
-                <>
-                  <Loader2 className="size-3.5 animate-spin mr-1.5" />
-                  Extracting via OCR...
-                </>
-              ) : (
-                'Extract & Populate Markdown'
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* AI Resume OCR Ingestion Modal */}
+      <ResumeOcrModal
+        isOpen={isOcrOpen}
+        onClose={() => setIsOcrOpen(false)}
+        onApplyMarkdown={(extractedMd) => {
+          setMarkdown(extractedMd);
+          setIsSaved(false);
+        }}
+      />
     </div>
   );
 };

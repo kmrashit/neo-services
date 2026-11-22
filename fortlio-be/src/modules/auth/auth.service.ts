@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import { ACCESSTOKEN_EXPIRY, EMAIL_SEND_FROM } from '../../core/core-constants/common.constants';
 import type { SecretManager } from '../../core/core-clients/secret-manager.client';
 import { IUserAccesstokenDetails } from '../../interface/user-interface';
@@ -12,6 +11,7 @@ import UserPrivate from '../user/models/user-priv.model';
 import User from '../user/models/user.model';
 import { createHash, randomBytes } from 'crypto';
 import { frontendBaseURL } from '../../clients';
+import { getUserLoginAggregationPipeline } from './auth.queries';
 
 export class AuthnService {
 
@@ -89,31 +89,17 @@ export class AuthnService {
   async login(payload: { email: string; password: string }) {
     const { email, password } = payload;
     const normalizedEmail = email.toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user) {
+    const [user] = await User.aggregate(getUserLoginAggregationPipeline(normalizedEmail));
+    if (!user || !user.userPrivate) {
       throw new AppError('Invalid credentials', { msg: 'Invalid credentials', apiName: 'login', debugValues: { email } });
     }
-    const userPrivate = await UserPrivate.findOne({ userId: user._id });
-    if (!userPrivate) {
-      throw new AppError('Invalid credentials', { msg: 'Invalid credentials', apiName: 'login', debugValues: { email } });
-    }
+    const userPrivate = user.userPrivate;
     const isValid = await Bun.password.verify(password, userPrivate.passwordHash || '');
     if (!isValid) { throw new AppError('Invalid credentials', { msg: 'Invalid credentials', apiName: 'login' }); }
     if (!userPrivate.emailVerified) { throw new AppError('Email not verified', { msg: 'Email not verified', apiName: 'login' }); }
 
-    let roleName = 'Candidate';
-    if (user.roleId) {
-      try {
-        const RoleModel = mongoose.models['role'] || mongoose.model('role');
-        const roleDoc = (await RoleModel.findById(user.roleId).lean()) as any;
-        if (roleDoc?.roleName) {
-          roleName = roleDoc.roleName;
-        }
-      } catch {
-        // Fallback
-      }
-    }
-    if (user.email.toLowerCase().includes('hr')) {
+    let roleName = user.role?.roleName || 'Candidate';
+    if (user.email && user.email.toLowerCase().includes('hr')) {
       roleName = 'HR';
     }
 

@@ -15,7 +15,9 @@ export class CandidateRoutes {
   private initializeCandidateRoutes(): void {
     this.router.post('/profile', this.authGuard.checkAccess('upsertCandidateProfile'), this.candidateController.upsertProfile);
     this.router.get('/profile/:userId', this.authGuard.checkAccess('getCandidateProfile'), this.candidateController.getProfile);
+    this.router.post('/resume/ocr', this.authGuard.checkAccess('upsertCandidateProfile'), this.candidateController.resumeOcr);
     this.router.post('/blog', this.authGuard.checkAccess('createCandidateBlog'), this.candidateController.createBlog);
+    this.router.post('/blog/improve-ai', this.authGuard.checkAccess('createCandidateBlog'), this.candidateController.improveBlog);
     this.router.get('/blogs', this.candidateController.listBlogs);
     this.router.post('/md-to-pdf', this.candidateController.convertMdToPdf.bind(this.candidateController));
   }

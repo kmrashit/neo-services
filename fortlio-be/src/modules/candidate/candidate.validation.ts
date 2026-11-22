@@ -47,3 +47,17 @@ export const mdToPdfValidation = z.object({
     expiresIn: z.number().int().positive().optional(),
   }).optional(),
 });
+
+export const CandidateResumeOcrValidation = z.object({
+  resumeText: z.string().trim().min(5, { message: 'Resume text must be at least 5 characters' }).optional(),
+  fileBase64: z.string().optional(),
+  fileName: z.string().optional(),
+}).refine((data) => Boolean(data.resumeText || data.fileBase64), {
+  message: 'Either resumeText or fileBase64 is required',
+});
+
+export const CandidateBlogImproveValidation = z.object({
+  title: z.string().trim().min(1, { message: 'Title is required' }),
+  content: z.string().trim().min(5, { message: 'Content must be at least 5 characters' }),
+  aspect: z.enum(['clarity', 'technical_depth', 'structure', 'headline']).default('clarity'),
+});

@@ -9,3 +9,4 @@ export * from './components/ExperienceTimeline';
 export * from './components/EducationList';
 export * from './components/ProfileEditForm';
 export * from './components/ResumeEditor';
+export * from './components/ResumeOcrModal';

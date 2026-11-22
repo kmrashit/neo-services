@@ -91,6 +91,21 @@ export interface MdToPdfPayload {
   };
 }
 
+export interface IResumeOcrResult {
+  fullName?: string;
+  email?: string;
+  mobileNumber?: string;
+  skills?: string[];
+  experience?: number;
+  bio?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
+  markdownResume?: string;
+  authenticInputNote?: string;
+  userId?: string;
+}
+
 export interface CandidateApiResponse<T = any> {
   success: boolean;
   data: T;

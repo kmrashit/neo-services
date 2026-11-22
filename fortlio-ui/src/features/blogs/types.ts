@@ -42,6 +42,20 @@ export interface BlogFilterQuery {
   search?: string;
 }
 
+export interface ImproveBlogPayload {
+  title: string;
+  content: string;
+  aspect?: 'clarity' | 'technical_depth' | 'structure' | 'headline';
+}
+
+export interface ImproveBlogResult {
+  title: string;
+  content: string;
+  suggestions: string[];
+  aspect: string;
+  authenticInputNote: string;
+}
+
 export interface BlogApiResponse<T = any> {
   success: boolean;
   data: T;

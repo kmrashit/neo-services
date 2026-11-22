@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import { CandidateService } from './candidate.service';
 import { AuthnService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
-import { CandidateProfileUpsertValidation, CandidateBlogCreateValidation, mdToPdfValidation } from './candidate.validation';
+import { CandidateProfileUpsertValidation, CandidateBlogCreateValidation, CandidateResumeOcrValidation, CandidateBlogImproveValidation, mdToPdfValidation } from './candidate.validation';
 import { FilterQueryValidation } from '../../validations/common-validation';
 import { fmtRes } from '../../core/core-utils/res-util';
 import { AppError } from '../../core/core-utils/err-util';
 import User from '../user/models/user.model';
 import * as CANDIDATE_MSGS from './candidate.constants';
+import { getUserWithRolePipeline } from './candidate.queries';
 import { convertMdToPdf } from '../../core/core-utils/md-to-pdf';
 
 export class CandidateController {
@@ -57,12 +58,12 @@ export class CandidateController {
         return null;
       }
 
-      const user = await User.findById(userDetails.userId).populate('roleId').lean();
+      const [user] = await User.aggregate(getUserWithRolePipeline(userDetails.userId));
       if (!user) {
         return { userId: userDetails.userId, isHRorAdmin: false };
       }
 
-      const roleName = (user.roleId as any)?.roleName;
+      const roleName = user.roleId?.roleName;
       const isHRorAdmin = roleName === 'HR' || roleName === 'Admin';
       return { userId: userDetails.userId.toString(), isHRorAdmin };
     } catch {
@@ -150,6 +151,26 @@ export class CandidateController {
     }
   };
 
+  resumeOcr = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError(CANDIDATE_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'resumeOcr' }, 401);
+      }
+
+      const body = req.body;
+      CandidateResumeOcrValidation.parse(body);
+
+      const result = await this.candidateService.parseResumeOcr(loggedInUserId, body);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to process resume OCR', apiName: 'resumeOcr', error }, error.statusCode || 400);
+    }
+  };
+
   createBlog = async (req: Request, res: Response) => {
     try {
       const loggedInUserId = req.headers.userId as string;
@@ -167,6 +188,26 @@ export class CandidateController {
         throw error;
       }
       throw new AppError(error.message || 'unknown', { msg: CANDIDATE_MSGS.ERR.FAILED_TO_CREATE_BLOG, apiName: 'createBlog', error }, error.statusCode || 400);
+    }
+  };
+
+  improveBlog = async (req: Request, res: Response) => {
+    try {
+      const loggedInUserId = req.headers.userId as string;
+      if (!loggedInUserId) {
+        throw new AppError(CANDIDATE_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'improveBlog' }, 401);
+      }
+
+      const body = req.body;
+      CandidateBlogImproveValidation.parse(body);
+
+      const result = await this.candidateService.improveBlogWithAi(loggedInUserId, body);
+      return fmtRes(res, result);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(error.message || 'unknown', { msg: 'Failed to improve blog with AI', apiName: 'improveBlog', error }, error.statusCode || 400);
     }
   };
 
