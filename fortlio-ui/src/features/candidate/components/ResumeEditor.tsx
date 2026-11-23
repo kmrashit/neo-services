@@ -162,7 +162,7 @@ export const ResumeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5rem)] max-w-7xl mx-auto space-y-4 p-4 animate-in fade-in-50 duration-300">
+    <div className="flex flex-col h-screen w-full space-y-3 p-3 overflow-hidden animate-in fade-in-50 duration-300">
       {/* Editor Top Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/80 pb-4">
         <div className="flex items-center gap-3">
@@ -274,7 +274,7 @@ export const ResumeEditor: React.FC = () => {
                 onChange={(e) => setMarkdown(e.target.value)}
                 placeholder="Type your markdown resume content here..."
                 aria-label="Markdown Source Editor"
-                className="w-full flex-1 py-3 px-1.5 sm:px-2 font-mono text-xs text-foreground bg-transparent resize-none focus:outline-none focus:ring-0 leading-relaxed"
+                className="w-full flex-1 py-4 px-4 sm:px-6 font-mono text-xs text-foreground bg-transparent resize-none focus:outline-none focus:ring-0 leading-relaxed"
                 spellCheck={false}
               />
             </CardContent>
@@ -293,21 +293,21 @@ export const ResumeEditor: React.FC = () => {
                 <span className="text-[10px] text-muted-foreground">Live Render</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 sm:p-4 overflow-y-auto flex-1 bg-muted/20 text-foreground">
+            <CardContent className="p-1 sm:p-2 overflow-y-auto flex-1 bg-muted/20 text-foreground">
               <div className="w-full flex flex-col items-center space-y-4">
                 {splitMarkdownIntoA4Pages(markdown).map((pageContent, pageIdx, allPages) => {
                   const pageNum = pageIdx + 1;
                   const totalPages = allPages.length;
                   return (
                     <React.Fragment key={pageIdx}>
-                      <div className="w-full max-w-[750px] min-h-[1050px] bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 shadow-md rounded-sm p-6 sm:p-12 border border-border/80 relative flex flex-col justify-between my-2">
+                      <div className="w-full max-w-[880px] min-h-[1050px] bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 shadow-md rounded-sm p-8 sm:p-14 border border-border/80 relative flex flex-col justify-between my-2">
                         {pageNum > 1 && (
                           <div className="pb-2 mb-4 border-b border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
                             <span className="font-semibold text-foreground/80">Professional Resume</span>
                             <span className="font-mono text-[10px]">Page {pageNum} of {totalPages}</span>
                           </div>
                         )}
-                        <article className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-xl prose-h2:text-sm prose-h2:border-b prose-h2:border-neutral-200 dark:prose-h2:border-neutral-800 prose-h2:pb-1 prose-h3:text-xs prose-p:text-xs prose-p:leading-relaxed prose-li:text-xs prose-ul:my-2 flex-1">
+                        <article className="prose prose-sm dark:prose-invert text-foreground dark:text-slate-100 max-w-none prose-headings:font-bold prose-h1:text-xl prose-h2:text-sm prose-h2:border-b prose-h2:border-neutral-200 dark:prose-h2:border-neutral-800 prose-h2:pb-1 prose-h3:text-xs prose-p:text-xs prose-p:leading-relaxed prose-li:text-xs prose-ul:my-2 flex-1 dark:[&_*]:text-slate-200 dark:[&_p]:text-slate-200 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_strong]:text-white">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{pageContent}</ReactMarkdown>
                         </article>
                         <div className="pt-4 mt-6 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">

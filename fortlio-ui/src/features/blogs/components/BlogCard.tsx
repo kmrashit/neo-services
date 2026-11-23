@@ -9,7 +9,8 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ blog, onSelect }: BlogCardProps) {
-  const authorName = blog.authorDetails?.fullName || blog.author || 'Candidate';
+  const rawAuthor = blog.authorDetails?.fullName || blog.author;
+  const authorName = typeof rawAuthor === 'string' ? rawAuthor : (rawAuthor?.fullName || 'Candidate');
   const authorHeadline = blog.authorDetails?.headline;
   const tags = blog.tags || blog.blogKeywords || [];
   const score = blog.fortiAnalysisScore || 92;
@@ -33,8 +34,8 @@ export function BlogCard({ blog, onSelect }: BlogCardProps) {
       </CardHeader>
 
       <CardContent className="flex-1 space-y-4">
-        <CardDescription className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-          {blog.excerpt || blog.content.slice(0, 160) + '...'}
+        <CardDescription className="text-xs text-muted-foreground dark:text-slate-300 leading-relaxed line-clamp-3">
+          {blog.excerpt || (blog.content ? blog.content.slice(0, 160) + '...' : '')}
         </CardDescription>
 
         {tags.length > 0 && (

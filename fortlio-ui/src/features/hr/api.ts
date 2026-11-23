@@ -10,6 +10,7 @@ import type {
 export const hrApi = {
   searchCandidates: async (filter: ISearchFilter): Promise<ISearchApiResponse> => {
     const params: Record<string, string> = {};
+    if (filter.isInitial) {params.isInitial = 'true';}
     if (filter.searchKey) {params.searchKey = filter.searchKey;}
     if (filter.minExperience !== undefined && filter.minExperience > 0) {
       params.minExperience = String(filter.minExperience);

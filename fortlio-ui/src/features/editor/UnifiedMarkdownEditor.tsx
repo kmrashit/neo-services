@@ -384,7 +384,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
   const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5rem)] bg-background text-foreground">
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
       {/* Top Toolbar */}
       <div className="border-b border-border/80 bg-card/90 backdrop-blur-md px-4 py-2.5 flex items-center justify-between gap-3 shrink-0">
         {/* Left: Mode Selector & Title */}
@@ -554,7 +554,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
       )}
 
       {/* Main Workspace Panes */}
-      <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+      <div className="flex-1 min-h-0 overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
         {/* Left Pane: Markdown Source Editor */}
         {(viewTab === 'split' || viewTab === 'edit') && (
           <div className="flex flex-col h-full bg-card overflow-hidden">
@@ -567,7 +567,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
               onChange={(e) => setMarkdown(e.target.value)}
               placeholder="Write your markdown here..."
               aria-label="Markdown Source Editor"
-              className="flex-1 w-full py-3 px-1.5 md:px-2 font-mono text-xs md:text-sm bg-transparent border-0 rounded-none focus-visible:ring-0 resize-none overflow-y-auto"
+              className="flex-1 w-full py-4 px-4 sm:px-6 font-mono text-xs md:text-sm bg-transparent border-0 rounded-none focus-visible:ring-0 resize-none overflow-y-auto leading-relaxed"
             />
           </div>
         )}
@@ -582,7 +582,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
             </div>
 
             {/* PREVIEW CONTAINER BASED ON MODE */}
-            <div className="flex-1 p-2 sm:p-4 overflow-y-auto">
+            <div className="flex-1 px-1 sm:px-2 py-3 overflow-y-auto">
               {mode === 'resume' ? (
                 /* RESUME MODE: Multi-Page Paginated A4 Sheets with Page Numbers & Watermark */
                 <div className="w-full flex flex-col items-center py-2 space-y-6">
@@ -591,7 +591,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
                     const totalPages = allPages.length;
                     return (
                       <React.Fragment key={pageIdx}>
-                        <div className="w-full max-w-[794px] min-h-[1123px] bg-card text-card-foreground shadow-2xl rounded-sm p-8 sm:p-14 border border-border/80 relative flex flex-col justify-between my-2">
+                        <div className="w-full max-w-[880px] min-h-[1123px] bg-card text-card-foreground shadow-2xl rounded-sm p-8 sm:p-14 border border-border/80 relative flex flex-col justify-between my-2">
                           {/* Top Header for Page 2+ */}
                           {pageNum > 1 && (
                             <div className="pb-3 mb-4 border-b border-border/40 flex items-center justify-between text-[11px] text-muted-foreground select-none">
@@ -601,7 +601,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
                           )}
 
                           {/* Markdown Content */}
-                          <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed flex-1">
+                          <div className="prose dark:prose-invert text-foreground dark:text-slate-100 max-w-none text-xs sm:text-sm leading-relaxed flex-1 dark:[&_*]:text-slate-200 dark:[&_p]:text-slate-200 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_strong]:text-white">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{pageContent}</ReactMarkdown>
                           </div>
 
@@ -622,7 +622,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
 
                         {/* Visual Page Break Separator */}
                         {pageNum < totalPages && (
-                          <div className="w-full max-w-[794px] my-2 flex items-center justify-center gap-3 text-muted-foreground select-none">
+                          <div className="w-full max-w-[880px] my-2 flex items-center justify-center gap-3 text-muted-foreground select-none">
                             <div className="h-px flex-1 border-t-2 border-dashed border-border/60" />
                             <span className="bg-muted px-2.5 py-0.5 rounded-full font-mono text-[10px] font-medium text-muted-foreground">
                               Page Break • Page {pageNum} of {totalPages}
@@ -636,7 +636,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
                 </div>
               ) : (
                 /* BLOG MODE: Medium-Like Fluid Reading/Writing View */
-                <div className="w-full max-w-2xl mx-auto py-6 px-2 space-y-6">
+                <div className="w-full max-w-4xl mx-auto py-6 px-4 sm:px-8 space-y-6">
                   {/* Medium-like Article Header */}
                   <div className="space-y-4 pb-6 border-b border-border/60">
                     <div className="flex items-center gap-3">
@@ -659,7 +659,7 @@ export const UnifiedMarkdownEditor: React.FC<UnifiedMarkdownEditorProps> = ({
                   </div>
 
                   {/* Article Typography Body */}
-                  <div className="prose prose-neutral dark:prose-invert max-w-none text-sm md:text-base leading-relaxed">
+                  <div className="prose prose-neutral dark:prose-invert text-foreground dark:text-slate-100 max-w-none text-base md:text-lg leading-relaxed dark:[&_*]:text-slate-200 dark:[&_p]:text-slate-200 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_strong]:text-white">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
                   </div>
                 </div>

@@ -196,15 +196,33 @@ export default function CandidateSearch() {
               <span>Sorted by Typesense relevance & Forti velocity</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {candidates.map((cand) => (
-                <CandidateResultCard
-                  key={cand.id || cand.userId}
-                  candidate={cand}
-                  onOpenChat={(c) => setChatCandidate(c)}
-                />
-              ))}
-            </div>
+            {candidates.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-border bg-card/40">
+                <Users className="size-10 text-muted-foreground/40 mb-3" />
+                <h3 className="text-base font-semibold text-foreground">No candidate profiles found</h3>
+                <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                  No candidates match your current search terms or filter criteria. Try resetting filters or using broader keywords.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="mt-4 text-xs cursor-pointer"
+                >
+                  Reset All Filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {candidates.map((cand) => (
+                  <CandidateResultCard
+                    key={cand.id || cand.userId}
+                    candidate={cand}
+                    onOpenChat={(c) => setChatCandidate(c)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
 

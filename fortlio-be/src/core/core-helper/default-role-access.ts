@@ -6,6 +6,18 @@ const accessUserAnalytics = [
     'description': 'Get User',
     'tag': ['user'],
   },
+  {
+    'code': 'getUserById',
+    'name': 'Get User By ID',
+    'description': 'Allows fetching user profile by user ID',
+    'tag': ['user'],
+  },
+  {
+    'code': 'updateUserById',
+    'name': 'Update User By ID',
+    'description': 'Allows updating user profile by user ID',
+    'tag': ['user'],
+  },
 ];
 
 const accessShortener = [
@@ -211,6 +223,8 @@ export const privilegesAllDefault = [
 export const candidateDefaultAccess = [
   'createShortUrl',
   'isAvailable',
+  'getUserById',
+  'updateUserById',
   'upsertCandidateProfile',
   'getCandidateProfile',
   'getHrProfile',
@@ -234,6 +248,8 @@ export const candidateDefaultAccess = [
 export const hrDefaultAccess = [
   'createShortUrl',
   'isAvailable',
+  'getUserById',
+  'updateUserById',
   'upsertHrProfile',
   'getCandidateProfile',
   'getHrProfile',

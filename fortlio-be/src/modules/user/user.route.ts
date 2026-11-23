@@ -23,9 +23,9 @@ export class UserRoutes {
       this.userController.getUsers,
     );
 
-    this.router.get('/getUserById', this.authGuard.checkAccess('getUserById'), this.userController.getUserById);
+    this.router.get('/getUserById', this.authGuard.authenticate, this.userController.getUserById);
     this.router.post('/createUser', this.userController.createUser);
-    this.router.put('/updateUserById', this.authGuard.checkAccess('updateUserById'), this.userController.updateUserById);
+    this.router.put('/updateUserById', this.authGuard.authenticate, this.userController.updateUserById);
     this.router.delete('/deleteUserById/:userId', this.authGuard.checkAccess('deleteUserById'), this.userController.deleteUserById);
     this.router.post('/watch-ad', this.authGuard.authenticate, this.checksumVerifyMiddleware.verifyGeneralChecksum, this.userController.watchAd);
     this.router.post('/purchase-coins', this.authGuard.authenticate, this.userController.purchaseCoins);

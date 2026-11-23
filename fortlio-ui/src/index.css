@@ -60,6 +60,7 @@
 
   /* Dark mode - using Tailwind's dark class */
   .dark {
+    color-scheme: dark;
     --background: #0f172a;
     --foreground: #f8fafc;
     --card: #1e293b;
@@ -85,6 +86,15 @@
     --text-primary: #f9fafb;
     --text-secondary: #d1d5db;
     --border-color: #374151;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  button {
+    color: inherit;
   }
 }
 
@@ -351,4 +361,49 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent !important;
+}
+
+/* Typography & Prose Dark Mode Support */
+.dark .prose {
+  color: #e2e8f0 !important;
+}
+
+.dark .prose p,
+.dark .prose li,
+.dark .prose span,
+.dark .prose em,
+.dark .prose blockquote {
+  color: #e2e8f0 !important;
+}
+
+.dark .prose strong {
+  color: #ffffff !important;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: #f8fafc !important;
+}
+
+.dark .prose code {
+  color: #c084fc !important;
+  background-color: #334155 !important;
+}
+
+.dark .prose a {
+  color: #a78bfa !important;
+}
+
+.dark .prose-invert {
+  color: #e2e8f0 !important;
+}
+
+.dark .prose-invert p,
+.dark .prose-invert li,
+.dark .prose-invert span {
+  color: #e2e8f0 !important;
 }

@@ -155,15 +155,29 @@ export function useBlogFeed(initialQuery?: BlogFilterQuery) {
 
       if (res.data?.data && res.data.data.length > 0) {
         // Map backend blogs and append fallback articles if list is small
-        const fetched = res.data.data.map((item: any) => ({
-          ...item,
-          id: item._id || item.id,
-          tags: item.blogKeywords || item.tags || [],
-          author: item.author || (item.candidateId ? 'Candidate' : 'Author'),
-          date: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Recent',
-          readTime: `${Math.max(2, Math.round((item.content?.length || 500) / 400))} min read`,
-          fortiAnalysisScore: item.fortiAnalysisScore || 92,
-        }));
+        const fetched = res.data.data.map((item: any) => {
+          const authorName = typeof item.author === 'string'
+            ? item.author
+            : (item.author?.fullName || (item.candidateId ? 'Candidate' : 'Author'));
+
+          const authorDetails = typeof item.author === 'object' && item.author ? {
+            userId: item.author._id,
+            fullName: item.author.fullName || authorName,
+            email: item.author.email,
+            headline: item.author.headline || 'Specialty Author',
+          } : item.authorDetails;
+
+          return {
+            ...item,
+            id: item._id || item.id,
+            tags: item.blogKeywords || item.tags || [],
+            author: authorName,
+            authorDetails,
+            date: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Recent',
+            readTime: `${Math.max(2, Math.round((item.content?.length || 500) / 400))} min read`,
+            fortiAnalysisScore: item.fortiAnalysisScore || 92,
+          };
+        });
 
         // Merge fetched articles with the curated fallback showcase
         const merged = [...fetched, ...INITIAL_FALLBACK_BLOGS.filter(b => !fetched.some(f => f.title === b.title))];

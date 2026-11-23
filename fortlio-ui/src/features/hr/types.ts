@@ -19,6 +19,7 @@ export interface ISearchFilter {
   searchKey?: string;
   minExperience?: number;
   skills?: string[];
+  isInitial?: boolean;
 }
 
 export interface ISearchHistoryItem {

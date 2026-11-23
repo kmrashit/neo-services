@@ -26,6 +26,13 @@ export const candidateBlogAuthorLookupPipeline: PipelineStage[] = [
   {
     $project: {
       'author.password': 0,
+      'author.userPrivileges': 0,
+      'author.roleId': 0,
+      'author.coins': 0,
+      'author.tokensUsed': 0,
+      'author.tokenUsageHistory': 0,
+      'author.coinTransactions': 0,
+      'author.adWatchHistory': 0,
       'author.__v': 0,
     },
   },
@@ -52,6 +59,7 @@ export const getCandidateProfileByUserIdPipeline = (userId: string | mongoose.Ty
     {
       $project: {
         'userId.password': 0,
+        'userId.userPrivileges': 0,
         'userId.__v': 0,
       },
     },
@@ -79,6 +87,7 @@ export const getCandidateProfileByIdPipeline = (profileId: string | mongoose.Typ
     {
       $project: {
         'userId.password': 0,
+        'userId.userPrivileges': 0,
         'userId.__v': 0,
       },
     },

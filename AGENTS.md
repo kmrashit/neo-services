@@ -52,17 +52,16 @@ Prioritize focused execution over exhaustive discovery.
 
 
 # Code Intelligence Rules
-
+## Use CodeGraph to understand the relevant modules
 Before implementing or modifying code:
 
-1. Use CodeGraph to understand the relevant modules.
-2. Search for existing implementations and reusable functions.
-3. Trace callers and callees of important functions.
-4. Analyze the impact of proposed changes.
-5. Identify related tests and dependencies.
-6. Follow existing architectural patterns.
-7. Avoid duplicating existing functionality.
-8. After implementation, review the affected dependencies
-   and run relevant tests.
+ 
+1. Search for existing implementations and reusable functions.
+2. Trace callers and callees of important functions.
+3. Analyze the impact of proposed changes.
+4. Identify related tests and dependencies.
+5. Follow existing architectural patterns.
+6. Avoid duplicating existing functionality.
+7. After implementation, review the affected dependencies and run relevant tests.
 
 Use CodeGraph before falling back to broad filesystem searches.

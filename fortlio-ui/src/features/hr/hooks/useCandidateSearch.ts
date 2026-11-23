@@ -84,6 +84,28 @@ export function useCandidateSearch() {
   const [isAdGateOpen, setIsAdGateOpen] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
+  const loadInitialCandidates = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await hrApi.searchCandidates({ isInitial: true });
+      if (response?.candidates && response.candidates.length > 0) {
+        setCandidates(response.candidates);
+      }
+      if (response?.remainingCoins !== undefined) {
+        setRemainingCoins(response.remainingCoins);
+        updateUser({ coins: response.remainingCoins } as any);
+      }
+    } catch (err: any) {
+      console.warn('Could not fetch initial candidates, falling back to local demo:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [updateUser]);
+
+  useEffect(() => {
+    loadInitialCandidates();
+  }, [loadInitialCandidates]);
+
   const executeSearch = useCallback(
     async (overrideFilter?: Partial<ISearchFilter>) => {
       const activeFilter: ISearchFilter = {
@@ -104,48 +126,22 @@ export function useCandidateSearch() {
 
       try {
         const response = await hrApi.searchCandidates(activeFilter);
-        const searchResults = response.candidates && response.candidates.length > 0
-          ? response.candidates
-          : DEFAULT_DEMO_CANDIDATES.filter((c) => {
-            const query = (activeFilter.searchKey || '').toLowerCase();
-            if (!query) {return true;}
-            return (
-              c.fullName.toLowerCase().includes(query) ||
-                c.profession?.toLowerCase().includes(query) ||
-                c.skills.some((s) => s.toLowerCase().includes(query)) ||
-                c.headline?.toLowerCase().includes(query)
-            );
-          });
-
-        setCandidates(searchResults);
+        setCandidates(response.candidates || []);
         const newCoins = response.remainingCoins ?? Math.max(0, currentCoins - 5);
         setRemainingCoins(newCoins);
         updateUser({ coins: newCoins } as any);
       } catch (err: any) {
-        // If 402 or Insufficient coins
+        // If 402/403 or Insufficient coins
         if (
           err?.response?.status === 402 ||
+          err?.response?.status === 403 ||
           err?.response?.data?.message?.includes('Insufficient coins') ||
           err?.message?.includes('Insufficient coins')
         ) {
           setIsAdGateOpen(true);
           setError('Search quota depleted. Watch a short video ad to replenish 2 free candidate searches.');
         } else {
-          // Gracefully filter local demo records for smooth demo experience
-          const query = (activeFilter.searchKey || '').toLowerCase();
-          const filtered = DEFAULT_DEMO_CANDIDATES.filter((c) => {
-            if (!query) {return true;}
-            return (
-              c.fullName.toLowerCase().includes(query) ||
-              c.profession?.toLowerCase().includes(query) ||
-              c.skills.some((s) => s.toLowerCase().includes(query)) ||
-              c.headline?.toLowerCase().includes(query)
-            );
-          });
-          setCandidates(filtered);
-          const newCoins = Math.max(0, currentCoins - 5);
-          setRemainingCoins(newCoins);
-          updateUser({ coins: newCoins } as any);
+          setError(err?.response?.data?.message || err?.message || 'Failed to search candidates');
         }
       } finally {
         setIsLoading(false);
@@ -160,10 +156,10 @@ export function useCandidateSearch() {
       minExperience: 0,
       skills: [],
     });
-    setCandidates(DEFAULT_DEMO_CANDIDATES);
     setHasSearched(false);
     setError(null);
-  }, []);
+    loadInitialCandidates();
+  }, [loadInitialCandidates]);
 
   const handleCoinsReplenished = useCallback(
     (newCoins: number) => {

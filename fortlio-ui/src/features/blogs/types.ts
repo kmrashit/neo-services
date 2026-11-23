@@ -17,7 +17,7 @@ export interface IBlog {
   blogKeywords: string[];
   tags?: string[];
   status: 'draft' | 'published';
-  author?: string;
+  author?: string | any;
   authorDetails?: IBlogAuthor;
   date?: string;
   createdAt?: string;

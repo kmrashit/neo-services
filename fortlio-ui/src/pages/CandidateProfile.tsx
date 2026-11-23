@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Download,
   Share2,
@@ -45,32 +45,35 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export default function CandidateProfile() {
+  const [searchParams] = useSearchParams();
+  const candidateId = searchParams.get('candidateId') || undefined;
   const { user } = useAuth();
-  const { profile } = useCandidateProfile();
+  const { profile } = useCandidateProfile(candidateId);
   const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
   const [isChatDrawerOpen, setIsChatDrawerOpen] = useState(false);
+  const isOwner = !candidateId || candidateId === user?.id;
 
   useTrackLinkDwellTime();
   const { links } = useLinkAnalytics();
-  const { insights } = useCandidateInsights(profile?.id || user?.id);
+  const { insights } = useCandidateInsights(candidateId || profile?.id || user?.id);
 
   // Candidate portfolio data (connected to active user credentials & candidate profile)
   const candidate = {
-    fullName: profile?.fullName || user?.fullName || 'Alex Mercer',
-    headline: profile?.headline || 'Staff Systems Engineer & Distributed Architect',
-    profession: profile?.profession || 'Engineering & Technology',
-    industry: profile?.industry || 'Technology & Software',
-    educationLevel: profile?.educationLevel || "Bachelor's Degree (BS in Computer Science)",
-    email: profile?.email || user?.email || 'alex.mercer@fortlio.dev',
-    phone: profile?.mobileNumber || '+1 (555) 382-9102',
-    location: profile?.location || 'San Francisco, CA (Open to Remote)',
-    bio: profile?.bio || 'Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.',
-    skills: profile?.skills || [
+    fullName: profile?.fullName || (candidateId ? 'Candidate Profile' : user?.fullName || 'Alex Mercer'),
+    headline: profile?.headline || (candidateId ? '' : 'Staff Systems Engineer & Distributed Architect'),
+    profession: profile?.profession || (candidateId ? 'Professional' : 'Engineering & Technology'),
+    industry: profile?.industry || (candidateId ? 'Industry' : 'Technology & Software'),
+    educationLevel: profile?.educationLevel || (candidateId ? 'Degree' : 'Bachelor\'s Degree (BS in Computer Science)'),
+    email: profile?.email || (!candidateId ? user?.email : '') || 'candidate@fortlio.dev',
+    phone: profile?.mobileNumber || (!candidateId ? '+1 (555) 382-9102' : '+1 (***) ***-****'),
+    location: profile?.location || (candidateId ? 'Remote' : 'San Francisco, CA (Open to Remote)'),
+    bio: profile?.bio || (candidateId ? '' : 'Passionate systems engineer focused on high-throughput event streaming, distributed consensus, and developer tooling. Author of technical blogs on Kafka pipelines and TypeScript compilation architectures.'),
+    skills: profile?.skills || (candidateId ? [] : [
       'TypeScript', 'Go', 'Distributed Systems', 'Kubernetes', 'Kafka',
       'MongoDB Aggregations', 'Redis', 'Bun', 'PostgreSQL', 'Docker', 'Typesense',
-    ],
+    ]),
     social: profile?.social || {
       github: profile?.githubUrl || 'https://github.com',
       linkedin: profile?.linkedinUrl || 'https://linkedin.com',
@@ -219,15 +222,17 @@ export default function CandidateProfile() {
                 </Button>
               </Link>
 
-              <Link to="/edit-profile">
-                <Button
-                  size="sm"
-                  className="gap-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
-                >
-                  <Edit3 className="size-3.5" />
-                  <span>Edit Profile</span>
-                </Button>
-              </Link>
+              {isOwner && (
+                <Link to="/edit-profile">
+                  <Button
+                    size="sm"
+                    className="gap-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
+                  >
+                    <Edit3 className="size-3.5" />
+                    <span>Edit Profile</span>
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 

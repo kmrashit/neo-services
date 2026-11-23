@@ -159,10 +159,20 @@ export class HrController {
       throw new AppError(HR_MSGS.ERR.UNAUTHORIZED_ACCESS, { apiName: 'searchCandidates' }, 401);
     }
 
-    const { searchKey, minExperience, skills } = req.query as { searchKey?: string; minExperience?: string; skills?: string };
+    const { searchKey, minExperience, skills, isInitial } = req.query as {
+      searchKey?: string;
+      minExperience?: string;
+      skills?: string;
+      isInitial?: string;
+    };
     try {
-      // Deduct 5 coins
-      const updatedUser = await this.userService.deductCoins(loggedInUserId, 5);
+      let updatedUser: any = null;
+      if (isInitial === 'true') {
+        updatedUser = await this.userService.getUserByUserId(loggedInUserId);
+      } else {
+        // Deduct 5 coins
+        updatedUser = await this.userService.deductCoins(loggedInUserId, 5);
+      }
 
       const searchParameters: any = {
         q: searchKey || '*',

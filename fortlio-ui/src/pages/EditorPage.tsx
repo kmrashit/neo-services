@@ -23,7 +23,7 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen w-screen overflow-hidden bg-background">
       <UnifiedMarkdownEditor
         initialMode={initialMode}
         initialOpenDraw={initialOpenDraw}

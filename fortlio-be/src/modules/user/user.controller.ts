@@ -28,11 +28,18 @@ export class UserController {
   };
   getUserById = async (req: Request, res: Response) => {
     try {
-      const { userId } = req.query as { userId: string };
+      const queryUserId = (req.query && req.query.userId) ? (req.query.userId as string) : '';
+      const headerUserId = (req.headers && req.headers.userId) ? (req.headers.userId as string) : '';
+      const userId = queryUserId || headerUserId;
 
       UserIdValidation.parse(userId);
 
-      const user = await this.userService.getUserByUserId(userId);
+      let user = await this.userService.getUserByUserId(userId);
+
+      // If requested userId was not found but authenticated user is different, fallback to authenticated user
+      if (!user && headerUserId && headerUserId !== userId) {
+        user = await this.userService.getUserByUserId(headerUserId);
+      }
 
       if (!user) {
         throw new AppError(USER_MSGS.ERR.USER_NOT_FOUND, { msg: USER_MSGS.ERR.USER_NOT_FOUND, apiName: 'getUserById', debugValues: { userId } });
@@ -40,7 +47,7 @@ export class UserController {
 
       return fmtRes(res, user);
     } catch (error: any) {
-      throw new AppError(error.message || 'unknown', { msg: USER_MSGS.ERR.FAILED_TO_FETCH_USER, apiName: 'getUserById', error }, 400);
+      throw new AppError(error.message || 'unknown', { msg: USER_MSGS.ERR.FAILED_TO_FETCH_USER, apiName: 'getUserById', error }, error.statusCode || 400);
     }
   };
 

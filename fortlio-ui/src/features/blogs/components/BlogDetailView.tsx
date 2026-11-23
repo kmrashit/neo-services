@@ -25,7 +25,8 @@ export function BlogDetailView({ blog, isOpen, onClose }: BlogDetailViewProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   if (!blog) {return null;}
 
-  const authorName = blog.authorDetails?.fullName || blog.author || 'Candidate';
+  const rawAuthor = blog.authorDetails?.fullName || blog.author;
+  const authorName = typeof rawAuthor === 'string' ? rawAuthor : (rawAuthor?.fullName || 'Candidate');
   const authorHeadline = blog.authorDetails?.headline;
   const tags = blog.tags || blog.blogKeywords || [];
   const score = blog.fortiAnalysisScore || 92;
@@ -109,7 +110,7 @@ export function BlogDetailView({ blog, isOpen, onClose }: BlogDetailViewProps) {
           </DialogHeader>
 
           {/* Markdown Content */}
-          <div className="prose dark:prose-invert max-w-none pt-4 text-sm md:text-base leading-relaxed">
+          <div className="prose dark:prose-invert text-foreground dark:text-slate-100 max-w-none pt-4 text-sm md:text-base leading-relaxed dark:[&_*]:text-slate-200 dark:[&_p]:text-slate-200 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_strong]:text-white">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {blog.content}
             </ReactMarkdown>
